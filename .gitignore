@@ -1,6 +1,6 @@
 # Large data files (kept locally, not in git)
 data/teachings/*.json
-data/search/*.json
+# data/search/*.json
 data/poetry/gosanka_enriched.json
 
 # OS files
