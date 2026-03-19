@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Biblioteca de Publicações — Mioshie Zenshu</title>
+  <meta name="description" content="Biblioteca histórica completa das publicações de Meishu-Sama (Mokichi Okada), organizadas cronologicamente por era Showa.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Noto+Serif+JP:wght@400;600&display=swap">
+
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/library.css">
+
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#B8860B">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Mioshie Zenshu">
+
+  <script>
+    (function() {
+      document.documentElement.setAttribute('data-theme', localStorage.getItem('site_theme') || 'light');
+    })();
+  </script>
+</head>
+<body class="page-library">
+
+<!-- ─── Header ──────────────────────────────────────────────── -->
+<header class="header" role="banner">
+  <a href="browse.html" class="header__logo" aria-label="Mioshie Zenshu">
+    <div class="logo-circle" aria-hidden="true"><div class="logo-dot"></div></div>
+    <span>Mioshie Zenshu</span>
+  </a>
+  <nav class="header__nav" aria-label="Navegação principal">
+    <a href="browse.html">Ensinamentos</a>
+    <a href="poems.html">Gosanka</a>
+    <a href="kannon.html">Kannon</a>
+    <a href="johrei.html">Johrei</a>
+    <a href="library.html" class="active">Biblioteca</a>
+    <a href="timeline.html">Timeline</a>
+  </nav>
+  <!-- Controls injected by app.js -->
+</header>
+
+<!-- ─── Library Layout ───────────────────────────────────────── -->
+<div class="library-layout">
+
+  <!-- Left sidebar: chronological + category navigation -->
+  <aside class="lib-sidebar" id="libSidebar" aria-label="Navegação da biblioteca">
+
+    <div class="lib-sidebar__inner">
+
+      <!-- Chronological navigation -->
+      <div class="lib-nav-section">
+        <div class="lib-nav-heading lang-pt">Ordem Cronológica (Showa)</div>
+        <div class="lib-nav-heading lang-ja" style="display:none">昭和年代順</div>
+        <nav id="eraNav" class="lib-era-nav">
+          <!-- Populated by library.js -->
+        </nav>
+      </div>
+
+      <div class="lib-divider"></div>
+
+      <!-- Category navigation -->
+      <div class="lib-nav-section">
+        <div class="lib-nav-heading lang-pt">Por Coleção</div>
+        <div class="lib-nav-heading lang-ja" style="display:none">コレクション別</div>
+        <nav id="catNav" class="lib-cat-nav">
+          <!-- Populated by library.js -->
+        </nav>
+      </div>
+
+      <div class="lib-divider"></div>
+
+      <!-- View mode toggle -->
+      <div class="lib-nav-section">
+        <div class="lib-nav-heading lang-pt">Visualização</div>
+        <div class="lib-view-toggle">
+          <button class="lib-view-btn active" id="btnGrid" onclick="setView('grid')" title="Grade com capas">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            <span class="lang-pt">Capas</span>
+          </button>
+          <button class="lib-view-btn" id="btnList" onclick="setView('list')" title="Lista detalhada">
+            <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            <span class="lang-pt">Lista</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- Main content area -->
+  <main class="lib-main" id="main-content" role="main">
+
+    <!-- Era header (updates on navigation) -->
+    <div class="lib-era-header" id="eraHeader">
+      <div class="lib-era-header__inner">
+        <h1 class="lib-era-title" id="eraTitle">
+          <span class="lang-pt">Biblioteca de Publicações</span>
+          <span class="lang-ja" style="display:none">発行誌一覧</span>
+        </h1>
+        <p class="lib-era-subtitle" id="eraSubtitle">
+          <span class="lang-pt">Publicações históricas de Meishu-Sama, organizadas cronologicamente</span>
+          <span class="lang-ja" style="display:none">明主様の歴史的な出版物を年代別に整理</span>
+        </p>
+        <div class="lib-era-stats" id="eraStats"></div>
+      </div>
+    </div>
+
+    <!-- Publications container -->
+    <div id="publicationsContainer" class="pub-grid">
+      <!-- Loading -->
+      <div class="lib-loading" id="libLoading">
+        <div class="reader-loading__spinner"></div>
+        <p class="lang-pt">Carregando biblioteca…</p>
+        <p class="lang-ja" style="display:none">図書館を読み込んでいます…</p>
+      </div>
+    </div>
+
+  </main>
+
+</div>
+
+<!-- ─── Publication Detail Modal ─────────────────────────────── -->
+<div class="pub-modal" id="pubModal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="pub-modal__overlay" onclick="closeModal()"></div>
+  <div class="pub-modal__panel" id="pubModalPanel">
+    <!-- Populated by library.js -->
+  </div>
+</div>
+
+<!-- ─── Toast ────────────────────────────────────────────────── -->
+<div id="siteToast" class="toast" role="status" aria-live="polite"></div>
+
+<!-- ─── Footer ──────────────────────────────────────────────── -->
+<footer class="footer" role="contentinfo">
+  <div class="footer__inner">
+    <div class="footer__logo">
+      <div class="logo-circle logo-circle--sm" aria-hidden="true"><div class="logo-dot"></div></div>
+      <span>Mioshie Zenshu</span>
+    </div>
+    <p class="footer__copy">
+      <span class="lang-pt">Biblioteca Histórica — Publicações de Meishu-Sama.<br>Para uso espiritual, estudo e reflexão.</span>
+      <span class="lang-ja" style="display:none">歴史的図書館 — 明主様の出版物。<br>霊的研究と黙想のための専用使用。</span>
+    </p>
+  </div>
+</footer>
+
+<script src="js/app.js?v=4" defer></script>
+<script src="js/library.js?v=4" defer></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+  }
+</script>
+</body>
+</html>

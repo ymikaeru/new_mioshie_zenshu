@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Outras Imagens — Mioshie Zenshu</title>
+  <meta name="description" content="Galeria de imagens históricas relacionadas a Meishu-Sama: retratos, documentos sagrados, caligrafia e artefatos.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Noto+Serif+JP:wght@400;600&display=swap">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/styles.css">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#B8860B">
+
+  <script>
+    (function() {
+      var t = localStorage.getItem('site_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+
+  <style>
+    .sonota-page {
+      margin-top: var(--header-h);
+      min-height: calc(100vh - var(--header-h));
+      padding: 40px 0 80px;
+    }
+    .sonota-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .sonota-hero {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .sonota-hero h1 {
+      font-family: var(--font-ui);
+      font-size: 32px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+    .sonota-hero .jp-title {
+      font-family: var(--font-jp);
+      font-size: 18px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .sonota-hero p {
+      color: var(--text-muted);
+      font-family: var(--font-ui);
+      font-size: 14px;
+    }
+    .sonota-item {
+      display: grid;
+      grid-template-columns: minmax(200px, 1fr) 1fr;
+      gap: 32px;
+      padding: 32px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      margin-bottom: 24px;
+      align-items: start;
+      transition: border-color 0.2s;
+    }
+    .sonota-item:hover {
+      border-color: var(--accent);
+    }
+    .sonota-item--vertical {
+      grid-template-columns: 1fr;
+    }
+    .sonota-images {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .sonota-images img {
+      width: 100%;
+      max-width: 400px;
+      height: auto;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.2s;
+      border: 1px solid var(--border);
+    }
+    .sonota-images img:hover {
+      transform: scale(1.02);
+    }
+    .sonota-info {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .sonota-info h2 {
+      font-family: var(--font-ui);
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin: 0;
+    }
+    .sonota-info .jp-name {
+      font-family: var(--font-jp);
+      font-size: 15px;
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .sonota-info p {
+      font-family: var(--font-body);
+      font-size: 15px;
+      color: var(--text-main);
+      line-height: 1.7;
+      margin: 0;
+    }
+    .sonota-info .meta {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-family: var(--font-ui);
+    }
+    .sonota-caption {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-family: var(--font-ui);
+      text-align: center;
+      margin-top: 4px;
+    }
+
+    /* Lightbox */
+    .sonota-lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(0,0,0,0.9);
+      justify-content: center;
+      align-items: center;
+      cursor: zoom-out;
+    }
+    .sonota-lightbox.open {
+      display: flex;
+    }
+    .sonota-lightbox img {
+      max-width: 95vw;
+      max-height: 95vh;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+
+    @media (max-width: 768px) {
+      .sonota-item {
+        grid-template-columns: 1fr;
+        padding: 20px;
+      }
+      .sonota-images img {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── Header ──────────────────────────────────────────────── -->
+<header class="header" role="banner">
+  <a href="browse.html" class="header__logo" aria-label="Mioshie Zenshu">
+    <div class="logo-circle" aria-hidden="true"><div class="logo-dot"></div></div>
+    <span>Mioshie Zenshu</span>
+  </a>
+  <nav class="header__nav" aria-label="Navegação principal">
+    <a href="browse.html">Ensinamentos</a>
+    <a href="reader.html">Leitor</a>
+    <a href="poems.html">Gosanka</a>
+    <a href="library.html">Biblioteca</a>
+    <a href="search.html">Busca</a>
+  </nav>
+  <!-- Controls injected by app.js -->
+</header>
+
+<!-- ─── Main ──────────────────────────────────────────────── -->
+<main class="sonota-page" id="main-content" role="main">
+  <div class="sonota-container">
+
+    <div class="sonota-hero">
+      <h1>Outras Imagens</h1>
+      <div class="jp-title">その他の画像</div>
+      <p>Galeria de imagens históricas — retratos, documentos sagrados, caligrafia e artefatos relacionados a Meishu-Sama.</p>
+    </div>
+
+
+
+    <!-- ② Goreishi 御霊紙 -->
+    <div class="sonota-item">
+      <div class="sonota-images">
+        <img src="assets/_み教え/み教え/photo/goreisi1.jpg" alt="Goreishi — papel sagrado (frente)" onclick="openLightbox(this.src)">
+        <img src="assets/_み教え/み教え/photo/goreisi2.jpg" alt="Goreishi — papel sagrado (aberto)" onclick="openLightbox(this.src)">
+        <div class="sonota-caption">Goreishi aberto — aparência de papel washi comum</div>
+      </div>
+      <div class="sonota-info">
+        <div class="jp-name">御霊紙</div>
+        <h2>Goreishi — Papel Sagrado</h2>
+        <p>Data de recebimento desconhecida.</p>
+        <p>Após o falecimento de Meishu-Sama, durante o período Seimei-kyō, o Goreishi não era distribuído exceto em ocasiões especiais de purificação. Por isso, acredita-se que este exemplar seja do período em que Meishu-Sama ainda estava vivo, embora não se tenha certeza.</p>
+      </div>
+    </div>
+
+    <!-- ③ Goshin-tai 御神体 -->
+    <div class="sonota-item">
+      <div class="sonota-images">
+        <img src="assets/_み教え/み教え/photo/komyo.JPG" alt="Komyo Nyorai Gosho — dois exemplares" onclick="openLightbox(this.src)">
+      </div>
+      <div class="sonota-info">
+        <div class="jp-name">御神体 · 光明如来御書</div>
+        <h2>Goshin-tai — Komyō Nyorai Gosho</h2>
+        <p>Dois exemplares, antes da montagem (estado original de recebimento).</p>
+        <p>Foram solicitados e recebidos, porém por alguma razão não puderam ser consagrados, permanecendo guardados.</p>
+      </div>
+    </div>
+
+    <!-- ④ Hisshou 必勝 -->
+    <div class="sonota-item">
+      <div class="sonota-images">
+        <img src="assets/_み教え/み教え/photo/hissyo.JPG" alt="Gosho 'Hisshou' — caligrafia de vitória" onclick="openLightbox(this.src)">
+      </div>
+      <div class="sonota-info">
+        <div class="jp-name">御書『必勝』</div>
+        <h2>Gosho "Hisshō" — Caligrafia Sagrada</h2>
+        <p>Não montada. Foi concedida ao avô durante o período de guerra.</p>
+        <p>O avô não apreciava palavras relacionadas à guerra (embora a intenção divina fosse outra), então, junto com a caligrafia "Tekimetsu" (滅敵), permaneceu sem montagem. A caligrafia "Tekimetsu" foi cedida a um conhecido.</p>
+      </div>
+    </div>
+
+    <!-- ⑤ Omamori お守り -->
+    <div class="sonota-item">
+      <div class="sonota-images">
+        <img src="assets/_み教え/み教え/photo/omamori1.jpg" alt="Omamori — amuleto sagrado com bolsa de brocado" onclick="openLightbox(this.src)">
+      </div>
+      <div class="sonota-info">
+        <div class="jp-name">お守り様</div>
+        <h2>Omamori — Amuleto Sagrado</h2>
+        <p>Amuleto "Jōryoku" (浄力) recebido pelo pai, com a bolsa de brocado dourado da época.</p>
+        <p>Os amuletos "Kōmyō" (光明) e "Jō" (浄) foram montados como quadros.</p>
+      </div>
+    </div>
+
+    <!-- ⑥ Norito 手書きの祝詞 -->
+    <div class="sonota-item sonota-item--vertical">
+      <div class="sonota-info">
+        <div class="jp-name">手書きの祝詞</div>
+        <h2>Norito — Oração Manuscrita</h2>
+        <p>Contém a Amatsu Norito, Shinpon Norito e Zengen Sanji escritas à mão. Manuscrito da avó, detalhes desconhecidos.</p>
+        <p class="meta">Estimado final de Showa 10 (meados dos anos 1940)</p>
+      </div>
+      <div class="sonota-images" style="display:grid; grid-template-columns: auto 1fr 1fr; gap:12px; align-items:start">
+        <img src="assets/_み教え/み教え/photo/norito.JPG" alt="Norito — visão geral do manuscrito" onclick="openLightbox(this.src)" style="max-width:180px">
+        <img src="assets/_み教え/み教え/photo/norito1.jpg" alt="Detalhe — Shinpon Norito e Amatsu Norito" onclick="openLightbox(this.src)">
+        <img src="assets/_み教え/み教え/photo/norito2.jpg" alt="Detalhe — Zengen Sanji no verso" onclick="openLightbox(this.src)">
+      </div>
+      <div class="sonota-caption">Da esquerda: visão geral · Shinpon Norito até Amatsu Norito · Verso com Zengen Sanji</div>
+    </div>
+
+    <!-- ⑦ Meimei 命名の証書 -->
+    <div class="sonota-item">
+      <div class="sonota-images">
+        <img src="assets/_み教え/み教え/photo/meimei-2.JPG" alt="Certificado de nomeação por Meishu-Sama" onclick="openLightbox(this.src)">
+      </div>
+      <div class="sonota-info">
+        <div class="jp-name">命名の証書</div>
+        <h2>Meimei — Certificado de Nomeação</h2>
+        <p>Aparentemente emitido quando Meishu-Sama nomeou o avô. Data de nomeação desconhecida.</p>
+        <p class="meta">Estimado início de Showa 20 (anos 1940) — período de transição de Nihon Kannon Kyōdan para Sekai Meshiya-kyō</p>
+        <p>Após a inscrição "Jikan Meimei" (自観命名), segue-se o nome. O selo utilizado é "Tenshō Chimei" (天照地明).</p>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- Lightbox -->
+<div class="sonota-lightbox" id="sonotaLightbox" onclick="closeLightbox()">
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<!-- Toast -->
+<div id="siteToast" class="toast" role="status" aria-live="polite"></div>
+
+<!-- Footer -->
+<footer class="footer" role="contentinfo">
+  <div class="footer__inner">
+    <div class="footer__logo">
+      <div class="logo-circle logo-circle--sm" aria-hidden="true"><div class="logo-dot"></div></div>
+      <span>Mioshie Zenshu</span>
+    </div>
+    <p class="footer__copy">
+      Mioshie Zenshu — Biblioteca Sagrada dos Ensinamentos de Meishu-Sama.<br>
+      Para uso espiritual, estudo e reflexão.
+    </p>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script src="js/app.js?v=2" defer></script>
+<script>
+function openLightbox(src) {
+  const lb = document.getElementById('sonotaLightbox');
+  document.getElementById('lightboxImg').src = src;
+  lb.classList.add('open');
+}
+function closeLightbox() {
+  document.getElementById('sonotaLightbox').classList.remove('open');
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeLightbox();
+});
+</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(() => {}); });
+  }
+</script>
+</body>
+</html>

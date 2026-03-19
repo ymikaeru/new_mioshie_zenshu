@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gosanka — Mioshie Zenshu</title>
+  <meta name="description" content="10.717 poemas sagrados de Meishu-Sama (Gosanka) em japonês e português. Explore por categoria, humor e livro.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Noto+Serif+JP:wght@400;600;700&display=swap">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/poems.css">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#B8860B">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Mioshie Zenshu">
+
+  <!-- Apply theme before render -->
+  <script>
+    (function() {
+      var t = localStorage.getItem('site_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+</head>
+<body class="page-poems">
+
+<!-- ─── Header ─────────────────────────────────────────────── -->
+<header class="header" role="banner">
+  <a href="browse.html" class="header__logo" aria-label="Mioshie Zenshu">
+    <div class="logo-circle" aria-hidden="true"><div class="logo-dot"></div></div>
+    <span>Mioshie Zenshu</span>
+  </a>
+  <nav class="header__nav" aria-label="Navegação principal">
+    <a href="browse.html">Ensinamentos</a>
+    <a href="poems.html" class="active">Gosanka</a>
+    <a href="kannon.html">Kannon</a>
+    <a href="johrei.html">Johrei</a>
+    <a href="library.html">Biblioteca</a>
+    <a href="timeline.html">Timeline</a>
+  </nav>
+  <!-- Controls injected by app.js -->
+</header>
+
+<!-- ─── Poems Layout ─────────────────────────────────────────── -->
+<div class="poems-layout" id="poemsLayout">
+
+  <!-- Sidebar / Filters -->
+  <aside class="poems-sidebar" id="poemsSidebar" aria-label="Filtros e navegação">
+
+    <!-- Random poem button -->
+    <div class="sidebar-random">
+      <button class="btn-random" id="btnRandom" onclick="showRandomPoem()">
+        <svg viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
+        <span class="lang-pt">Poema Aleatório</span>
+        <span class="lang-ja" style="display:none">おみくじ</span>
+      </button>
+    </div>
+
+    <!-- Search within poems -->
+    <div class="sidebar-search">
+      <div class="poems-searchbox">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="search" id="poemsSearchInput" placeholder="Buscar poema…" aria-label="Buscar nos poemas" oninput="onPoemSearch(this.value)">
+      </div>
+    </div>
+
+    <!-- Category filter -->
+    <div class="sidebar-section">
+      <div class="sidebar-label lang-pt">Categoria</div>
+      <div class="sidebar-label lang-ja" style="display:none">カテゴリ</div>
+      <div id="categoryFilters" class="filter-list">
+        <!-- Populated by poems.js -->
+      </div>
+    </div>
+
+    <!-- Mood filter -->
+    <div class="sidebar-section" style="margin-top:8px">
+      <div class="sidebar-label lang-pt">Humor</div>
+      <div class="sidebar-label lang-ja" style="display:none">雰囲気</div>
+      <div id="moodFilters" class="filter-list">
+        <!-- Populated by poems.js -->
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="sidebar-stats" id="poemsStats">
+      <span id="poemsCount">—</span>
+      <span class="lang-pt"> poemas</span>
+      <span class="lang-ja" style="display:none"> 御歌</span>
+    </div>
+
+  </aside>
+
+  <!-- Main content -->
+  <main class="poems-main" id="main-content" role="main">
+
+    <!-- Poem detail view (hidden initially) -->
+    <div id="poemDetail" class="poem-detail" style="display:none">
+      <!-- Populated by poems.js -->
+    </div>
+
+    <!-- Poems list/grid -->
+    <div id="poemsList" class="poems-list">
+      <div class="poems-loading">
+        <div class="reader-loading__spinner"></div>
+        <p class="lang-pt">Carregando Gosanka…</p>
+        <p class="lang-ja" style="display:none">御歌を読み込んでいます…</p>
+      </div>
+    </div>
+
+    <!-- Load more -->
+    <div id="loadMoreContainer" style="display:none; text-align:center; padding:32px 0">
+      <button class="btn-load-more" id="btnLoadMore" onclick="loadMorePoems()">
+        <span class="lang-pt">Carregar mais poemas</span>
+        <span class="lang-ja" style="display:none">もっと見る</span>
+      </button>
+    </div>
+
+  </main>
+
+</div>
+
+<!-- ─── Toast ────────────────────────────────────────────────── -->
+<div id="siteToast" class="toast" role="status" aria-live="polite"></div>
+
+<!-- ─── Footer ────────────────────────────────────────────────── -->
+<footer class="footer" role="contentinfo">
+  <div class="footer__inner">
+    <div class="footer__logo">
+      <div class="logo-circle logo-circle--sm" aria-hidden="true">
+        <div class="logo-dot"></div>
+      </div>
+      <span>Mioshie Zenshu</span>
+    </div>
+    <p class="footer__copy">
+      <span class="lang-pt">
+        Gosanka — Poemas Sagrados de Meishu-Sama.<br>
+        Para uso espiritual, estudo e reflexão.
+      </span>
+      <span class="lang-ja" style="display:none">
+        御歌 — 明主様の御歌集。<br>
+        霊的研究と黙想のための専用使用。
+      </span>
+    </p>
+  </div>
+</footer>
+
+<!-- ─── Scripts ──────────────────────────────────────────────── -->
+<script src="js/app.js?v=2" defer></script>
+<script src="js/poems.js?v=1" defer></script>
+
+<!-- PWA Service Worker -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    });
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="refresh" content="0;url=browse.html">
+  <script>window.location.replace('browse.html');</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mioshie Zenshu — Biblioteca Sagrada</title>
+  <meta name="description" content="Biblioteca completa dos ensinamentos de Meishu-Sama (Mokichi Okada) em português e japonês. Ensinamentos, Gosanka, Palestras de Kannon e Johrei.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Noto+Serif+JP:wght@400;600&display=swap">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/styles.css">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#B8860B">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Mioshie Zenshu">
+
+  <!-- Apply theme before render to avoid flash -->
+  <script>
+    (function() {
+      var t = localStorage.getItem('site_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+</head>
+<body>
+
+<!-- ─── Header ─────────────────────────────────────────────── -->
+<header class="header" role="banner">
+  <a href="index.html" class="header__logo" aria-label="Mioshie Zenshu - Início">
+    <div class="logo-circle" aria-hidden="true">
+      <div class="logo-dot"></div>
+    </div>
+    <span class="lang-pt">Mioshie Zenshu</span>
+    <span class="lang-ja" style="display:none">御教え全集</span>
+  </a>
+
+  <nav class="header__nav" aria-label="Navegação principal">
+    <a href="index.html" class="active">
+      <span class="lang-pt">Início</span>
+      <span class="lang-ja" style="display:none">ホーム</span>
+    </a>
+    <a href="browse.html">
+      <span class="lang-pt">Índice</span>
+      <span class="lang-ja" style="display:none">索引</span>
+    </a>
+    <a href="reader.html">
+      <span class="lang-pt">Leitor</span>
+      <span class="lang-ja" style="display:none">御教え</span>
+    </a>
+    <a href="poems.html">
+      <span class="lang-pt">Gosanka</span>
+      <span class="lang-ja" style="display:none">御歌</span>
+    </a>
+    <a href="kannon.html">Kannon</a>
+    <a href="library.html">
+      <span class="lang-pt">Biblioteca</span>
+      <span class="lang-ja" style="display:none">出版物</span>
+    </a>
+    <a href="search.html">
+      <span class="lang-pt">Busca</span>
+      <span class="lang-ja" style="display:none">検索</span>
+    </a>
+  </nav>
+  <!-- Controls injected by app.js -->
+</header>
+
+<!-- ─── Main ────────────────────────────────────────────────── -->
+<main class="main" id="main-content" role="main">
+  <div class="container">
+    <div class="glass-pane">
+
+      <!-- Hero -->
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero__eyebrow lang-pt">Biblioteca Sagrada</div>
+        <div class="hero__eyebrow lang-ja" style="display:none">聖典図書館</div>
+
+        <h1 class="hero__title" id="hero-title">
+          <span class="lang-pt">
+            Ensinamentos de Meishu-Sama
+            <span class="ja">御教え全集</span>
+          </span>
+          <span class="lang-ja" style="display:none">
+            御教え全集
+            <span class="ja" style="font-size:0.65em; color:var(--text-muted)">Ensinamentos de Meishu-Sama</span>
+          </span>
+        </h1>
+
+        <p class="hero__subtitle">
+          <span class="lang-pt">
+            Tradução completa em português das obras de Meishu-Sama (Mokichi Okada),
+            fundador da Sekai Kyusei Kyo, organizada para estudo e reflexão.
+          </span>
+          <span class="lang-ja" style="display:none">
+            世界救世教の創設者、岡田茂吉（明主様）の御教えを、研究と黙想のためにポルトガル語で完全翻訳した全集です。
+          </span>
+        </p>
+      </section>
+
+      <!-- Stats -->
+      <div class="stats-bar" role="region" aria-label="Estatísticas do acervo">
+        <div class="stat-item">
+          <div class="stat-number">4.977</div>
+          <div class="stat-label">
+            <span class="lang-pt">Ensinamentos</span>
+            <span class="lang-ja" style="display:none">御教え</span>
+          </div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">10.717</div>
+          <div class="stat-label">
+            <span class="lang-pt">Poemas Gosanka</span>
+            <span class="lang-ja" style="display:none">御歌</span>
+          </div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">40</div>
+          <div class="stat-label">
+            <span class="lang-pt">Palestras Kannon</span>
+            <span class="lang-ja" style="display:none">観音講座</span>
+          </div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">9</div>
+          <div class="stat-label">
+            <span class="lang-pt">Categorias</span>
+            <span class="lang-ja" style="display:none">カテゴリ</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section Cards -->
+      <section aria-labelledby="sections-title">
+        <div class="section-header">
+          <h2 class="section-title" id="sections-title">
+            <span class="lang-pt">Seções</span>
+            <span class="lang-ja" style="display:none">セクション</span>
+          </h2>
+        </div>
+
+        <div class="section-grid">
+
+          <!-- Ensinamentos -->
+          <a href="browse.html" class="section-card" aria-label="Acessar Índice dos Ensinamentos">
+            <div class="section-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            </div>
+            <div class="section-card__label">
+              <span class="lang-pt">Ensinamentos</span>
+              <span class="lang-ja" style="display:none">御教え</span>
+            </div>
+            <h3 class="section-card__title">
+              <span class="lang-pt">Mioshie — Palavra de Luz</span>
+              <span class="lang-ja" style="display:none">御教え — 光の言葉</span>
+            </h3>
+            <p class="section-card__desc">
+              <span class="lang-pt">
+                Coleção completa dos ensinamentos escritos e discursados por Meishu-Sama,
+                organizados por categoria e período histórico.
+              </span>
+              <span class="lang-ja" style="display:none">
+                明主様の御教えを、カテゴリーと時代順に整理した完全な御教え集。
+              </span>
+            </p>
+            <div class="section-card__count">4.977 <span class="lang-pt">ensinamentos</span><span class="lang-ja" style="display:none">御教え</span></div>
+          </a>
+
+          <!-- Gosanka -->
+          <a href="poems.html" class="section-card" aria-label="Acessar Gosanka">
+            <div class="section-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"/><line x1="16" y1="8" x2="2" y2="22"/><line x1="17.5" y1="15" x2="9" y2="15"/></svg>
+            </div>
+            <div class="section-card__label">
+              <span class="lang-pt">Poesia Sagrada</span>
+              <span class="lang-ja" style="display:none">御歌</span>
+            </div>
+            <h3 class="section-card__title">
+              <span class="lang-pt">Gosanka — Poemas Divinos</span>
+              <span class="lang-ja" style="display:none">御歌 — 神の詩</span>
+            </h3>
+            <p class="section-card__desc">
+              <span class="lang-pt">
+                Poemas waka compostos por Meishu-Sama, com original em japonês,
+                leitura em romaji e tradução em português.
+              </span>
+              <span class="lang-ja" style="display:none">
+                明主様の和歌集。日本語原文、ローマ字読み、ポルトガル語訳付き。
+              </span>
+            </p>
+            <div class="section-card__count">10.717 <span class="lang-pt">poemas</span><span class="lang-ja" style="display:none">首</span></div>
+          </a>
+
+          <!-- Kannon -->
+          <a href="kannon.html" class="section-card" aria-label="Acessar Palestras de Kannon">
+            <div class="section-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+            </div>
+            <div class="section-card__label">Kannon Koza</div>
+            <h3 class="section-card__title">
+              <span class="lang-pt">Palestras de Kannon</span>
+              <span class="lang-ja" style="display:none">観音講座</span>
+            </h3>
+            <p class="section-card__desc">
+              <span class="lang-pt">
+                Série de palestras sobre o Movimento de Kannon e a missão
+                espiritual do Japão na obra divina.
+              </span>
+              <span class="lang-ja" style="display:none">
+                観音運動と日本の神的使命に関する講座シリーズ。
+              </span>
+            </p>
+            <div class="section-card__count">40 <span class="lang-pt">palestras</span><span class="lang-ja" style="display:none">講座</span></div>
+          </a>
+
+          <!-- Johrei -->
+          <a href="johrei.html" class="section-card" aria-label="Acessar Johrei">
+            <div class="section-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </div>
+            <div class="section-card__label">Johrei</div>
+            <h3 class="section-card__title">
+              <span class="lang-pt">Johrei — Purificação</span>
+              <span class="lang-ja" style="display:none">浄霊 — 清め</span>
+            </h3>
+            <p class="section-card__desc">
+              <span class="lang-pt">
+                Ensinamentos sobre o Johrei, o Método Divino de Saúde
+                e os princípios espirituais da cura.
+              </span>
+              <span class="lang-ja" style="display:none">
+                浄霊、神的健康法、霊的癒しの原理に関する御教え。
+              </span>
+            </p>
+            <div class="section-card__count">
+              <span class="lang-pt">Capítulos e ensinamentos</span>
+              <span class="lang-ja" style="display:none">章と御教え</span>
+            </div>
+          </a>
+
+          <!-- Search -->
+          <a href="search.html" class="section-card" aria-label="Busca Avançada">
+            <div class="section-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </div>
+            <div class="section-card__label">
+              <span class="lang-pt">Busca</span>
+              <span class="lang-ja" style="display:none">検索</span>
+            </div>
+            <h3 class="section-card__title">
+              <span class="lang-pt">Busca Avançada</span>
+              <span class="lang-ja" style="display:none">高度検索</span>
+            </h3>
+            <p class="section-card__desc">
+              <span class="lang-pt">
+                Pesquise em todo o acervo por palavra-chave, categoria,
+                publicação, período ou tag temática.
+              </span>
+              <span class="lang-ja" style="display:none">
+                キーワード、カテゴリー、出版物、時代、テーマタグで全集を検索。
+              </span>
+            </p>
+            <div class="section-card__count">4.918 <span class="lang-pt">registros indexados</span><span class="lang-ja" style="display:none">インデックス</span></div>
+          </a>
+
+          <!-- Timeline (placeholder) -->
+          <a href="timeline.html" class="section-card" aria-label="Timeline dos Ensinamentos">
+            <div class="section-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+            <div class="section-card__label">
+              <span class="lang-pt">Cronologia</span>
+              <span class="lang-ja" style="display:none">年表</span>
+            </div>
+            <h3 class="section-card__title">
+              <span class="lang-pt">Timeline</span>
+              <span class="lang-ja" style="display:none">時代別年表</span>
+            </h3>
+            <p class="section-card__desc">
+              <span class="lang-pt">
+                Explore os ensinamentos em ordem cronológica, por período
+                histórico da obra de Meishu-Sama.
+              </span>
+              <span class="lang-ja" style="display:none">
+                明主様の御教えを、時代別・歴史的な流れに沿って探索。
+              </span>
+            </p>
+            <div class="section-card__count">4.918 <span class="lang-pt">ensinamentos por era</span><span class="lang-ja" style="display:none">時代別御教え</span></div>
+          </a>
+
+        </div>
+      </section>
+
+      <div class="divider"></div>
+
+      <!-- Categories -->
+      <section aria-labelledby="categories-title">
+        <div class="section-header">
+          <h2 class="section-title" id="categories-title">
+            <span class="lang-pt">Categorias</span>
+            <span class="lang-ja" style="display:none">カテゴリ</span>
+          </h2>
+          <a href="search.html" class="section-link">
+            <span class="lang-pt">Ver todos</span>
+            <span class="lang-ja" style="display:none">すべて見る</span>
+          </a>
+        </div>
+
+        <div class="category-list" role="list">
+          <a href="search.html?cat=Agricultura" class="tag" role="listitem">
+            <span class="lang-pt">🌱 Agricultura</span>
+            <span class="lang-ja" style="display:none">🌱 農業</span>
+          </a>
+          <a href="search.html?cat=Arte+e+Beleza" class="tag" role="listitem">
+            <span class="lang-pt">🎨 Arte e Beleza</span>
+            <span class="lang-ja" style="display:none">🎨 芸術と美</span>
+          </a>
+          <a href="search.html?cat=Divindades+e+Espiritualidade" class="tag" role="listitem">
+            <span class="lang-pt">✨ Divindades e Espiritualidade</span>
+            <span class="lang-ja" style="display:none">✨ 神仏と霊性</span>
+          </a>
+          <a href="search.html?cat=Doen%C3%A7as+e+Sa%C3%BAde" class="tag" role="listitem">
+            <span class="lang-pt">🌿 Doenças e Saúde</span>
+            <span class="lang-ja" style="display:none">🌿 病気と健康</span>
+          </a>
+          <a href="search.html?cat=Filosofia+e+Ensinamentos" class="tag" role="listitem">
+            <span class="lang-pt">📖 Filosofia e Ensinamentos</span>
+            <span class="lang-ja" style="display:none">📖 哲学と御教え</span>
+          </a>
+          <a href="search.html?cat=Johrei" class="tag" role="listitem">
+            <span class="lang-pt">⚡ Johrei (Purificação)</span>
+            <span class="lang-ja" style="display:none">⚡ 浄霊</span>
+          </a>
+          <a href="search.html?cat=Organiza%C3%A7%C3%A3o+Religiosa" class="tag" role="listitem">
+            <span class="lang-pt">🏛️ Organização Religiosa</span>
+            <span class="lang-ja" style="display:none">🏛️ 宗教組織</span>
+          </a>
+          <a href="search.html?cat=Sociedade+e+Pol%C3%ADtica" class="tag" role="listitem">
+            <span class="lang-pt">🌏 Sociedade e Política</span>
+            <span class="lang-ja" style="display:none">🌏 社会と政治</span>
+          </a>
+          <a href="search.html?cat=Outros" class="tag" role="listitem">
+            <span class="lang-pt">📌 Outros</span>
+            <span class="lang-ja" style="display:none">📌 その他</span>
+          </a>
+        </div>
+      </section>
+
+    </div><!-- /.glass-pane -->
+  </div><!-- /.container -->
+</main>
+
+<!-- ─── Footer ───────────────────────────────────────────────── -->
+<footer class="footer" role="contentinfo">
+  <div class="container">
+    <p>
+      <span class="lang-pt">
+        Mioshie Zenshu — Biblioteca Sagrada dos Ensinamentos de Meishu-Sama.<br>
+        Uso exclusivo para estudo e reflexão espiritual.
+      </span>
+      <span class="lang-ja" style="display:none">
+        御教え全集 — 明主様御教え聖典図書館。<br>
+        霊的研究と黙想のための専用使用。
+      </span>
+    </p>
+  </div>
+</footer>
+
+<!-- ─── Scripts ───────────────────────────────────────────────── -->
+<script src="js/app.js" defer></script>
+
+<!-- PWA Service Worker -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .catch(() => {}); // Silently fail if sw.js doesn't exist yet
+    });
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="refresh" content="0; url=browse.html">
+  <title>Busca Avançada — Mioshie Zenshu</title>
+  <script>
+    // Redireciona para browse.html preservando query string
+    const q = new URLSearchParams(window.location.search).get('q');
+    window.location.replace(q ? 'browse.html?q=' + encodeURIComponent(q) : 'browse.html');
+  </script>
+  <meta name="description" content="Pesquise em 4.918 ensinamentos de Meishu-Sama por palavra-chave, categoria, publicação e período histórico.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Noto+Serif+JP:wght@400;600&display=swap">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/styles.css">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#B8860B">
+
+  <script>
+    (function() {
+      var t = localStorage.getItem('site_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+
+  <style>
+    .search-page {
+      margin-top: var(--header-h);
+      min-height: calc(100vh - var(--header-h));
+      padding: 40px 0 80px;
+    }
+    .search-container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .search-hero {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .search-hero h1 {
+      font-family: var(--font-ui);
+      font-size: 32px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+    .search-hero p {
+      color: var(--text-muted);
+      font-family: var(--font-ui);
+      font-size: 14px;
+    }
+    .search-box {
+      position: relative;
+      margin-bottom: 24px;
+    }
+    .search-box input {
+      width: 100%;
+      padding: 16px 56px 16px 20px;
+      font-size: 16px;
+      font-family: var(--font-ui);
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      color: var(--text-main);
+      outline: none;
+      box-sizing: border-box;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .search-box input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent);
+    }
+    .search-box__icon {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+      width: 20px; height: 20px;
+    }
+    .search-filters {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+    .search-filter {
+      padding: 7px 14px;
+      font-size: 12px;
+      font-family: var(--font-ui);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .search-filter:hover, .search-filter.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: color-mix(in srgb, var(--accent) 8%, transparent);
+    }
+    .search-meta {
+      font-family: var(--font-ui);
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      min-height: 20px;
+    }
+    .search-results {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .result-card {
+      display: block;
+      padding: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      text-decoration: none;
+      color: var(--text-main);
+      transition: all 0.15s;
+    }
+    .result-card:hover {
+      border-color: var(--accent);
+      transform: translateX(2px);
+    }
+    .result-card__cat {
+      font-size: 11px;
+      font-family: var(--font-ui);
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+    .result-card__title {
+      font-size: 16px;
+      font-weight: 500;
+      font-family: var(--font-ui);
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+    .result-card__snippet {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .result-card__meta {
+      display: flex;
+      gap: 12px;
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-family: var(--font-ui);
+    }
+    mark.search-highlight {
+      background: color-mix(in srgb, var(--accent) 25%, transparent);
+      color: inherit;
+      border-radius: 2px;
+      padding: 0 1px;
+    }
+    .search-empty {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+      font-family: var(--font-ui);
+    }
+    .search-empty svg {
+      width: 48px; height: 48px;
+      margin-bottom: 16px;
+      stroke: currentColor;
+      fill: none;
+    }
+    .search-loading {
+      text-align: center;
+      padding: 60px;
+      color: var(--text-muted);
+      font-family: var(--font-ui);
+    }
+    .load-more {
+      margin-top: 24px;
+      text-align: center;
+    }
+    .load-more button {
+      padding: 12px 28px;
+      font-family: var(--font-ui);
+      font-size: 14px;
+      font-weight: 500;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .load-more button:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── Header ──────────────────────────────────────────────── -->
+<header class="header" role="banner">
+  <a href="browse.html" class="header__logo" aria-label="Mioshie Zenshu">
+    <div class="logo-circle" aria-hidden="true"><div class="logo-dot"></div></div>
+    <span class="lang-pt">Mioshie Zenshu</span>
+    <span class="lang-ja" style="display:none">御教え全集</span>
+  </a>
+    <nav class="header__nav" aria-label="Navegação principal">
+    <a href="browse.html">Ensinamentos</a>
+    <a href="reader.html">Leitor</a>
+    <a href="poems.html">Gosanka</a>
+    <a href="library.html">Biblioteca</a>
+    <a href="search.html" class="active">Busca</a>
+  </nav>
+  <!-- Controls injected by app.js -->
+</header>
+
+<!-- ─── Search Page ──────────────────────────────────────────── -->
+<main class="search-page" id="main-content" role="main">
+  <div class="search-container">
+    <div class="search-hero">
+      <h1 class="lang-pt">Busca Avançada</h1>
+      <h1 class="lang-ja" style="display:none">高度検索</h1>
+      <p class="lang-pt" id="searchSubtitle">Carregando índice…</p>
+    </div>
+
+    <div class="search-box">
+      <input type="search" id="searchInput" placeholder="Buscar ensinamentos…" autocomplete="off" autofocus>
+      <svg class="search-box__icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </div>
+
+    <div class="search-filters" id="catFilters">
+      <!-- populated by JS -->
+    </div>
+
+    <div class="search-meta" id="searchMeta"></div>
+
+    <div id="searchResults">
+      <div class="search-loading">
+        <div class="reader-loading__spinner"></div>
+        <p class="lang-pt" style="margin-top:16px">Carregando índice de busca…</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Toast -->
+<div id="siteToast" class="toast" role="status" aria-live="polite"></div>
+
+<!-- Footer -->
+<footer class="footer" role="contentinfo">
+  <div class="footer__inner">
+    <div class="footer__logo">
+      <div class="logo-circle logo-circle--sm" aria-hidden="true"><div class="logo-dot"></div></div>
+      <span>Mioshie Zenshu</span>
+    </div>
+    <p class="footer__copy">
+      <span class="lang-pt">Mioshie Zenshu — Biblioteca Sagrada dos Ensinamentos de Meishu-Sama.</span>
+      <span class="lang-ja" style="display:none">御教え全集 — 明主様御教え聖典図書館。</span>
+    </p>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script src="js/app.js?v=2" defer></script>
+<script defer>
+let _idx = null;
+let _page = 0;
+const PAGE_SIZE = 20;
+let _filteredResults = [];
+let _activeCat = '';
+
+function escHtml(s) {
+  if (!s) return '';
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function stripMd(str) {
+  if (!str) return '';
+  return str.replace(/^#{1,6}\s+/gm,'').replace(/\*\*([^*]+)\*\*/g,'$1').replace(/\*([^*]+)\*/g,'$1').replace(/\n+/g,' ').trim();
+}
+function highlight(text, terms) {
+  if (!text || !terms.length) return escHtml(text);
+  const re = new RegExp(`(${terms.map(t => t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')})`, 'gi');
+  return escHtml(text).replace(re, '<mark class="search-highlight">$1</mark>');
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  // Check URL params
+  const params = new URLSearchParams(window.location.search);
+  const initQuery = params.get('q') || params.get('search') || '';
+  const initCat   = params.get('cat') || '';
+
+  await loadIndex();
+
+  // Build cat filters
+  const cats = {};
+  _idx.forEach(x => { const c = x.category || 'Outros'; cats[c] = (cats[c]||0)+1; });
+  const filtersHtml = `<button class="search-filter ${!initCat ? 'active' : ''}" data-cat="" onclick="filterCat(this,'')">Todos</button>` +
+    Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([c,n]) =>
+      `<button class="search-filter ${initCat===c?'active':''}" data-cat="${escHtml(c)}" onclick="filterCat(this,'${escHtml(c)}')">${escHtml(c)} <span style="opacity:0.6">${n}</span></button>`
+    ).join('');
+  document.getElementById('catFilters').innerHTML = filtersHtml;
+
+  document.getElementById('searchSubtitle').textContent = `${_idx.length.toLocaleString()} ensinamentos indexados`;
+
+  if (initCat) { _activeCat = initCat; document.querySelector(`[data-cat="${initCat}"]`)?.classList.add('active'); }
+  if (initQuery) document.getElementById('searchInput').value = initQuery;
+
+  runSearch(initQuery, initCat);
+
+  // Live search
+  let timer;
+  document.getElementById('searchInput').addEventListener('input', e => {
+    clearTimeout(timer);
+    timer = setTimeout(() => runSearch(e.target.value, _activeCat), 200);
+  });
+});
+
+async function loadIndex() {
+  if (_idx) return;
+  const res = await fetch('data/search/advanced_search_index.json');
+  _idx = await res.json();
+}
+
+window.filterCat = function(btn, cat) {
+  document.querySelectorAll('.search-filter').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  _activeCat = cat;
+  runSearch(document.getElementById('searchInput').value, cat);
+};
+
+function runSearch(query, cat) {
+  _page = 0;
+  const terms = query.trim().toLowerCase().split(/\s+/).filter(t => t.length > 1);
+  let results = _idx;
+
+  if (cat) results = results.filter(x => (x.category||'Outros') === cat);
+
+  if (terms.length) {
+    results = results.filter(x => {
+      const hay = [x.title, x.content_snippet, x.publication, x.category].join(' ').toLowerCase();
+      return terms.every(t => hay.includes(t));
+    });
+  }
+
+  _filteredResults = results;
+  renderResults(terms);
+}
+
+function renderResults(terms) {
+  const container = document.getElementById('searchResults');
+  const meta = document.getElementById('searchMeta');
+  const slice = _filteredResults.slice(0, PAGE_SIZE);
+  const total = _filteredResults.length;
+
+  if (total === 0) {
+    meta.textContent = '';
+    container.innerHTML = `<div class="search-empty">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <p class="lang-pt">Nenhum resultado encontrado.</p>
+    </div>`;
+    return;
+  }
+
+  meta.textContent = `${total.toLocaleString()} resultado${total !== 1 ? 's' : ''}`;
+
+  const cards = slice.map(x => {
+    const snippet = stripMd(x.content_snippet || '').substring(0, 180);
+    const href = x.part_file
+      ? `reader.html?id=${encodeURIComponent(x.id)}&part=${encodeURIComponent(x.part_file)}`
+      : `reader.html?cat=${encodeURIComponent(x.category||'')}`;
+    return `<a href="${href}" class="result-card">
+      <div class="result-card__cat">${escHtml(x.category||'')}</div>
+      <div class="result-card__title">${highlight(x.title||'', terms)}</div>
+      ${snippet ? `<div class="result-card__snippet">${highlight(snippet, terms)}</div>` : ''}
+      <div class="result-card__meta">
+        ${x.year ? `<span>📅 ${x.year}</span>` : ''}
+        ${x.publication ? `<span>📖 ${escHtml(String(x.publication).substring(0,60))}</span>` : ''}
+      </div>
+    </a>`;
+  }).join('');
+
+  const loadMoreHtml = total > PAGE_SIZE
+    ? `<div class="load-more"><button onclick="loadMore()">Ver mais (${total - PAGE_SIZE} restantes)</button></div>`
+    : '';
+
+  container.innerHTML = `<div class="search-results" id="resultsList">${cards}</div>${loadMoreHtml}`;
+  _page = 1;
+}
+
+window.loadMore = function() {
+  const terms = document.getElementById('searchInput').value.trim().toLowerCase().split(/\s+/).filter(t=>t.length>1);
+  const from = _page * PAGE_SIZE;
+  const slice = _filteredResults.slice(from, from + PAGE_SIZE);
+  const remaining = _filteredResults.length - (from + PAGE_SIZE);
+  const list = document.getElementById('resultsList');
+  if (!list) return;
+  slice.forEach(x => {
+    const snippet = stripMd(x.content_snippet||'').substring(0,180);
+    const href = x.part_file
+      ? `reader.html?id=${encodeURIComponent(x.id)}&part=${encodeURIComponent(x.part_file)}`
+      : `reader.html?cat=${encodeURIComponent(x.category||'')}`;
+    const div = document.createElement('a');
+    div.href = href; div.className = 'result-card';
+    div.innerHTML = `<div class="result-card__cat">${escHtml(x.category||'')}</div>
+      <div class="result-card__title">${highlight(x.title||'',terms)}</div>
+      ${snippet?`<div class="result-card__snippet">${highlight(snippet,terms)}</div>`:''}
+      <div class="result-card__meta">${x.year?`<span>📅 ${x.year}</span>`:''} ${x.publication?`<span>📖 ${escHtml(String(x.publication).substring(0,60))}</span>`:''}</div>`;
+    list.appendChild(div);
+  });
+  _page++;
+  if (remaining <= 0) document.querySelector('.load-more')?.remove();
+  else document.querySelector('.load-more button').textContent = `Ver mais (${Math.max(0,remaining)} restantes)`;
+};
+</script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(() => {}); });
+  }
+</script>
+</body>
+</html>

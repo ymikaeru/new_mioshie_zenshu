@@ -1,0 +1,43 @@
+{
+  "name": "Mioshie Zenshu",
+  "short_name": "Mioshie",
+  "description": "Biblioteca Sagrada dos Ensinamentos de Meishu-Sama",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#F8F9F5",
+  "theme_color": "#B8860B",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "img/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "img/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["books", "education", "religion"],
+  "lang": "pt-BR",
+  "shortcuts": [
+    {
+      "name": "Ensinamentos",
+      "url": "/reader.html",
+      "description": "Ler os ensinamentos de Meishu-Sama"
+    },
+    {
+      "name": "Gosanka",
+      "url": "/poems.html",
+      "description": "Poemas sagrados"
+    },
+    {
+      "name": "Busca",
+      "url": "/search.html",
+      "description": "Busca avançada"
+    }
+  ]
+}

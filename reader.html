@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ensinamentos — Mioshie Zenshu</title>
+  <meta name="description" content="Leia os ensinamentos de Meishu-Sama em português e japonês. Biblioteca completa da Mioshie Zenshu.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Noto+Serif+JP:wght@400;600&display=swap">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/reader.css">
+
+  <!-- marked.js for Markdown rendering -->
+  <script src="https://cdn.jsdelivr.net/npm/marked@9/marked.min.js" defer></script>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#B8860B">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Mioshie Zenshu">
+
+  <!-- Apply theme before render -->
+  <script>
+    (function() {
+      var t = localStorage.getItem('site_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+</head>
+<body class="page-reader">
+
+<!-- ─── Reading Progress Bar ─────────────────────────────────── -->
+<div class="progress-bar-track" aria-hidden="true">
+  <div id="progressBar" class="progress-bar-fill"></div>
+</div>
+
+<!-- ─── Header ─────────────────────────────────────────────────── -->
+<header class="header" role="banner">
+  <a href="browse.html" class="header__logo" aria-label="Mioshie Zenshu">
+    <div class="logo-circle" aria-hidden="true"><div class="logo-dot"></div></div>
+    <span>Mioshie Zenshu</span>
+  </a>
+  <nav class="header__nav" aria-label="Navegação principal">
+    <a href="browse.html">Ensinamentos</a>
+    <a href="poems.html">Gosanka</a>
+    <a href="kannon.html">Kannon</a>
+    <a href="johrei.html">Johrei</a>
+    <a href="library.html">Biblioteca</a>
+    <a href="timeline.html">Timeline</a>
+  </nav>
+  <!-- Controls injected by app.js -->
+</header>
+
+<!-- ─── Reader Layout ────────────────────────────────────────── -->
+<div class="reader-layout" id="readerLayout">
+
+  <!-- Sidebar -->
+  <aside class="reader-sidebar" id="readerSidebar" aria-label="Navegação por categoria">
+    <!-- Populated by reader.js -->
+    <div class="sidebar-loading">
+      <div class="sidebar-loading__bar"></div>
+      <div class="sidebar-loading__bar" style="width:70%"></div>
+      <div class="sidebar-loading__bar" style="width:85%"></div>
+      <div class="sidebar-loading__bar" style="width:60%"></div>
+      <div class="sidebar-loading__bar" style="width:80%"></div>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <main class="reader-main" id="main-content" role="main">
+    <div id="readerContent">
+      <!-- Loading state (replaced by reader.js) -->
+      <div class="reader-loading">
+        <div class="reader-loading__spinner"></div>
+        <p class="lang-pt">Carregando ensinamento…</p>
+        <p class="lang-ja" style="display:none">読み込み中…</p>
+      </div>
+    </div>
+  </main>
+
+</div>
+
+<!-- ─── Toast notification ───────────────────────────────────── -->
+<div id="siteToast" class="toast" role="status" aria-live="polite"></div>
+
+<!-- ─── Footer ──────────────────────────────────────────────── -->
+<footer class="footer" role="contentinfo">
+  <div class="footer__inner">
+    <div class="footer__logo">
+      <div class="logo-circle logo-circle--sm" aria-hidden="true">
+        <div class="logo-dot"></div>
+      </div>
+      <span>Mioshie Zenshu</span>
+    </div>
+    <p class="footer__copy">
+      <span class="lang-pt">
+        Mioshie Zenshu — Biblioteca Sagrada dos Ensinamentos de Meishu-Sama.<br>
+        Para uso espiritual, estudo e reflexão.
+      </span>
+      <span class="lang-ja" style="display:none">
+        御教え全集 — 明主様御教え聖典図書館。<br>
+        霊的研究と黙想のための専用使用。
+      </span>
+    </p>
+  </div>
+</footer>
+
+<!-- ─── Scripts ──────────────────────────────────────────────── -->
+<script src="js/app.js?v=6" defer></script>
+<script src="js/reader.js?v=6" defer></script>
+
+<!-- PWA Service Worker -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    });
+  }
+</script>
+
+</body>
+</html>

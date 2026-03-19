@@ -1,0 +1,1548 @@
+[
+  {
+    "file": "america.html",
+    "title_ja": "アメリカを救う",
+    "editions": [
+      {
+        "edition": "初版",
+        "edition_pt": "1ª Edição",
+        "date_showa": "S28.1.1",
+        "year": 1953,
+        "format": "B6版",
+        "pages": 148,
+        "author": "岡田茂吉",
+        "publisher": "百海聖一",
+        "publisher_org": "世界救世教出版部",
+        "price": "非売品",
+        "notes": "病気症状の解説と体験談。海外布教用冊子。",
+        "notes_pt": "Panfleto para missão exterior com testemunhos de curas."
+      }
+    ],
+    "all_images": [
+      "amerika.JPG"
+    ]
+  },
+  {
+    "file": "atarasik.html",
+    "title_ja": "新しき暴力 / 或る日の公判スケッチ",
+    "editions": [
+      {
+        "edition": "新しき暴力 初版",
+        "edition_pt": "A Nova Violência — 1ª ed.",
+        "date_showa": "S26.8.5",
+        "year": 1951,
+        "format": "B6版",
+        "pages": 148,
+        "publisher": "小坂嘉一郎",
+        "notes": "『法難手記』再録と解説",
+        "notes_pt": "Reedição comentada do Honanshu."
+      },
+      {
+        "edition": "或る日の公判スケッチ 初版",
+        "edition_pt": "Esboço de uma Tarde no Tribunal — 1ª ed.",
+        "date_showa": "S26.8.10",
+        "year": 1951,
+        "format": "A6版",
+        "pages": 18,
+        "publisher": "小坂嘉一郎",
+        "publisher_org": "杉並書房",
+        "notes": "『新しき暴力』付録",
+        "notes_pt": "Apêndice de 'A Nova Violência'."
+      }
+    ],
+    "all_images": [
+      "atarasiki.JPG",
+      "aruhino.JPG"
+    ]
+  },
+  {
+    "file": "ehagaki.html",
+    "title_ja": "箱根美術館絵葉書",
+    "editions": [
+      {
+        "edition": "初版",
+        "edition_pt": "Edição Única",
+        "date_showa": "S27頃",
+        "year": 1952,
+        "format": "絵葉書（モノクロ九葉）",
+        "publisher_org": "東京・大塚巧芸社",
+        "notes_pt": "Cartões postais em preto e branco do Museu de Arte de Hakone."
+      }
+    ],
+    "all_images": [
+      "ehagaki33.JPG",
+      "ehagaki32.JPG",
+      "ehagaki31.JPG",
+      "ehagaki34.JPG",
+      "ehagaki36.JPG",
+      "ehagaki35.JPG",
+      "ehagaki37.JPG",
+      "ehagaki38.JPG",
+      "ehagaki39.JPG"
+    ]
+  },
+  {
+    "file": "ehagaki2.html",
+    "title_ja": "神仙郷絵葉書",
+    "editions": [
+      {
+        "edition": "初版",
+        "edition_pt": "Edição Única",
+        "format": "絵葉書（カラー四葉）",
+        "publisher_org": "東京・大塚巧芸社",
+        "notes_pt": "Cartões postais coloridos do Paraíso Terrestre de Hakone."
+      }
+    ],
+    "all_images": [
+      "ehagaki11.JPG",
+      "ehagaki12.JPG",
+      "ehagaki14.JPG",
+      "ehagaki15.JPG",
+      "ehagaki13.JPG"
+    ]
+  },
+  {
+    "file": "ehagaki3.html",
+    "title_ja": "瑞雲郷絵葉書",
+    "editions": [
+      {
+        "edition": "初版",
+        "edition_pt": "Edição Única",
+        "format": "絵葉書（モノクロ四葉）",
+        "notes_pt": "Cartões postais do Paraíso Terrestre de Atami."
+      }
+    ],
+    "all_images": [
+      "ehagaki21.JPG",
+      "ehagaki23.JPG",
+      "ehagaki26.JPG",
+      "ehagaki25.JPG",
+      "ehagaki24.JPG",
+      "ehagaki22.JPG"
+    ]
+  },
+  {
+    "file": "gosinsyo.html",
+    "title_ja": "御神書（宗教篇）",
+    "editions": [
+      {
+        "edition": "初版",
+        "edition_pt": "1ª Edição",
+        "date_showa": "S29.3.25",
+        "year": 1954,
+        "format": "B5版（箱入り）",
+        "pages": 520,
+        "editor": "世界救世教教務部",
+        "publisher": "森山実太郎",
+        "publisher_org": "世界救世教出版部",
+        "notes": "重要論文集。箱入り。",
+        "notes_pt": "Coletânea de artigos fundamentais. Edição em caixa."
+      }
+    ],
+    "all_images": [
+      "shinsyo1.JPG",
+      "sinsyo2.jpg",
+      "sinsyo1.jpg"
+    ]
+  },
+  {
+    "file": "gosuiji.html",
+    "title_ja": "御垂示録",
+    "editions": [
+      {
+        "edition": "第1号",
+        "edition_pt": "Vol. 1",
+        "date_showa": "S26.9.15",
+        "year": 1951,
+        "content": "S26年8月特別御面会記録"
+      },
+      {
+        "edition": "第2号",
+        "edition_pt": "Vol. 2",
+        "date_showa": "S26.10.10",
+        "year": 1951,
+        "content": "S26年9月特別御面会記録"
+      },
+      {
+        "edition": "第3号",
+        "edition_pt": "Vol. 3",
+        "date_showa": "S26.11.25",
+        "year": 1951,
+        "content": "S26年10月特別御面会記録"
+      },
+      {
+        "edition": "第4号",
+        "edition_pt": "Vol. 4",
+        "date_showa": "S26.12.10",
+        "year": 1951,
+        "content": "S26年11月特別御面会記録"
+      },
+      {
+        "edition": "第5号",
+        "edition_pt": "Vol. 5",
+        "date_showa": "S26.12.25",
+        "year": 1951,
+        "content": "S26年12月特別御面会記録"
+      },
+      {
+        "edition": "第6号",
+        "edition_pt": "Vol. 6",
+        "date_showa": "S27.1.25",
+        "year": 1952,
+        "content": "S27年1月特別御面会記録"
+      },
+      {
+        "edition": "第7号",
+        "edition_pt": "Vol. 7",
+        "date_showa": "S27.3.10",
+        "year": 1952
+      },
+      {
+        "edition": "第8号",
+        "edition_pt": "Vol. 8",
+        "date_showa": "S27.4.25",
+        "year": 1952
+      },
+      {
+        "edition": "第9号",
+        "edition_pt": "Vol. 9",
+        "date_showa": "S27.5.15",
+        "year": 1952
+      },
+      {
+        "edition": "第10号",
+        "edition_pt": "Vol. 10",
+        "date_showa": "S27.6.15",
+        "year": 1952
+      },
+      {
+        "edition": "第11号",
+        "edition_pt": "Vol. 11",
+        "date_showa": "S27.7.15",
+        "year": 1952
+      },
+      {
+        "edition": "第12号",
+        "edition_pt": "Vol. 12",
+        "date_showa": "S27.8.25",
+        "year": 1952
+      },
+      {
+        "edition": "第13号",
+        "edition_pt": "Vol. 13",
+        "date_showa": "S27.9.25",
+        "year": 1952
+      },
+      {
+        "edition": "第14号",
+        "edition_pt": "Vol. 14",
+        "date_showa": "S27.10.15",
+        "year": 1952
+      },
+      {
+        "edition": "第15号",
+        "edition_pt": "Vol. 15",
+        "date_showa": "S27.11.15",
+        "year": 1952
+      },
+      {
+        "edition": "第16号",
+        "edition_pt": "Vol. 16",
+        "date_showa": "S27.12.15",
+        "year": 1952
+      },
+      {
+        "edition": "第17号",
+        "edition_pt": "Vol. 17",
+        "date_showa": "S28.2.15",
+        "year": 1953
+      },
+      {
+        "edition": "第18号",
+        "edition_pt": "Vol. 18",
+        "date_showa": "S28.3.15",
+        "year": 1953
+      },
+      {
+        "edition": "第19号",
+        "edition_pt": "Vol. 19",
+        "date_showa": "S28.4.15",
+        "year": 1953
+      },
+      {
+        "edition": "第20号",
+        "edition_pt": "Vol. 20",
+        "date_showa": "S28.5.15",
+        "year": 1953
+      },
+      {
+        "edition": "第21号",
+        "edition_pt": "Vol. 21",
+        "date_showa": "S28.6.15",
+        "year": 1953
+      },
+      {
+        "edition": "第22号",
+        "edition_pt": "Vol. 22",
+        "date_showa": "S28.7.15",
+        "year": 1953
+      },
+      {
+        "edition": "第23号",
+        "edition_pt": "Vol. 23",
+        "date_showa": "S28.8.15",
+        "year": 1953
+      },
+      {
+        "edition": "第24号",
+        "edition_pt": "Vol. 24",
+        "date_showa": "S28.9.15",
+        "year": 1953
+      },
+      {
+        "edition": "第25号",
+        "edition_pt": "Vol. 25",
+        "date_showa": "S28.10.15",
+        "year": 1953
+      },
+      {
+        "edition": "第26号",
+        "edition_pt": "Vol. 26",
+        "date_showa": "S28.11.15",
+        "year": 1953
+      },
+      {
+        "edition": "第27号",
+        "edition_pt": "Vol. 27",
+        "date_showa": "S28.12.15",
+        "year": 1953
+      },
+      {
+        "edition": "第28号",
+        "edition_pt": "Vol. 28",
+        "date_showa": "S29.2.15",
+        "year": 1954
+      },
+      {
+        "edition": "第29号",
+        "edition_pt": "Vol. 29",
+        "date_showa": "S29.3.15",
+        "year": 1954
+      },
+      {
+        "edition": "第30号",
+        "edition_pt": "Vol. 30",
+        "date_showa": "S29.4.15",
+        "year": 1954,
+        "content": "最終号 S26年4月〜S29年4月"
+      }
+    ],
+    "series_info": "資格者のみ御下付。第1号〜第30号 S26.9.15〜S29.4.15発行。特別御面会記録。",
+    "series_info_pt": "Restrito a membros qualificados. Vols. 1–30. Registro de encontros especiais com Meishu-Sama.",
+    "all_images": [
+      "gosuiji.JPG"
+    ]
+  },
+  {
+    "file": "hajimete.html",
+    "title_ja": "初めて浄霊を受ける方の為に",
+    "editions": [
+      {
+        "edition": "初版",
+        "edition_pt": "1ª Edição",
+        "date_showa": "S29.12.10",
+        "year": 1954,
+        "format": "A6版",
+        "pages": 20,
+        "editor": "世界救世教編集部",
+        "publisher_org": "世界救世教出版部",
+        "printer": "熱海商事株式会社",
+        "notes_pt": "Guia para quem recebe Johrei pela primeira vez."
+      }
+    ],
+    "all_images": [
+      "hajimete.JPG"
+    ]
+  },
+  {
+    "file": "hakone3.html",
+    "title_ja": "箱根美術館特別展パンフレット",
+    "editions": [
+      {
+        "edition": "初版",
+        "edition_pt": "1ª Edição",
+        "date_showa": "S28.8.26",
+        "year": 1953,
+        "format": "B5版変形",
+        "pages": 76,
+        "author": "藤懸静也・谷川徹三（寄稿）",
+        "publisher": "小坂嘉一郎",
+        "publisher_org": "報知新聞社",
+        "notes": "収録写真71枚。浮世絵・版画篇。",
+        "notes_pt": "Catálogo da exposição especial do Museu de Arte de Hakone (ukiyo-e e xilogravuras). 71 fotografias."
+      }
+    ],
+    "all_images": [
+      "hakone01.jpg",
+      "hakone02.jpg",
+      "hakone03.jpg"
+    ]
+  },
+  {
+    "file": "hawairec.html",
+    "title_ja": "明主様御講話レコード",
+    "editions": [
+      {
+        "edition": "SP版レコード",
+        "edition_pt": "Disco SP",
+        "date_showa": "S29.2.26",
+        "year": 1954,
+        "format": "SP版（レコード）",
+        "notes": "ハワイ教会落成式用録音。検閲のため式典に間に合わず。",
+        "notes_pt": "Gravação das palavras de Meishu-Sama para a inauguração da Igreja do Havaí."
+      }
+    ],
+    "all_images": [
+      "recode3.jpg",
+      "recode2.jpg",
+      "recode4.jpg"
+    ]
+  },
+  {
+    "file": "hayawaka.html",
+    "title_ja": "世界救世教早わかり",
+    "editions": [
+      {
+        "edition": "初版",
+        "edition_pt": "1ª Edição",
+        "date_showa": "S25.10.30",
+        "year": 1950,
+        "format": "A6版",
+        "pages": 57,
+        "author": "自観",
+        "publisher": "小山正男",
+        "publisher_org": "栄光社出版部",
+        "notes_pt": "Guia introdutório à Igreja Messiânica Mundial."
+      }
+    ],
+    "all_images": [
+      "hayawaka.JPG"
+    ]
+  },
+  {
+    "file": "honan.html",
+    "title_ja": "法難手記",
+    "editions": [
+      {
+        "edition": "初版",
+        "edition_pt": "1ª Edição",
+        "date_showa": "S25.10.30",
+        "year": 1950,
+        "format": "B6版",
+        "pages": 94,
+        "author": "自観",
+        "publisher": "小山正男",
+        "publisher_org": "栄光社出版部",
+        "price": "非売品",
+        "notes": "昭和25年5月8日から7月12日までの御法難（脱税容疑による拘留）手記。",
+        "notes_pt": "Memórias escritas durante a perseguição religiosa (detenção por suspeita de evasão fiscal, mai–jul 1950)."
+      }
+    ],
+    "all_images": [
+      "honan.JPG",
+      "honan1.jpg"
+    ]
+  },
+  {
+    "file": "hukuin.html",
+    "title_ja": "天国の福音書",
+    "editions": [
+      {
+        "edition": "初版",
+        "edition_pt": "1ª Edição",
+        "date_showa": "S29.8.25",
+        "year": 1954,
+        "format": "A5版",
+        "pages": 131,
+        "editor": "世界救世教教務部",
+        "publisher": "森山実太郎",
+        "publisher_org": "世界救世教出版部",
+        "notes": "重要御論文の再録 66編収録。",
+        "notes_pt": "Coletânea de 66 artigos fundamentais de Meishu-Sama."
+      }
+    ],
+    "all_images": [
+      "tengoku2.JPG",
+      "hukuin1.jpg"
+    ]
+  },
+  {
+    "file": "itisinja.html",
+    "title_ja": "一信者の告白",
+    "editions": [
+      {
+        "edition": "初版",
+        "edition_pt": "1ª Edição",
+        "date_showa": "S26.6.15",
+        "year": 1951,
+        "format": "A6版",
+        "pages": 53,
+        "author": "宮本謹爾",
+        "publisher": "小山正男",
+        "publisher_org": "世界救世教出版部",
+        "price": "非売品",
+        "notes": "信者宮本謹爾氏の体験談。はしがきに自観師の一文を収録。",
+        "notes_pt": "Testemunho pessoal do fiel Miyamoto Kinji, com prefácio de Meishu-Sama."
+      }
+    ],
+    "all_images": [
+      "shinjano.JPG",
+      "shinja1.jpg"
+    ]
+  },
+  {
+    "file": "jikanso.html",
+    "title_ja": "自観叢書",
+    "editions": [
+      {
+        "edition": "第1篇・結核と神霊療法",
+        "edition_pt": "Vol. 1 — Tuberculose e Terapia Espiritual",
+        "date_showa": "S24.6.25",
+        "year": 1949,
+        "format": "B6版",
+        "pages": 80,
+        "author": "岡田自観",
+        "publisher": "小泉守之助",
+        "publisher_org": "日本五六七教会"
+      },
+      {
+        "edition": "第2篇・無肥料栽培法",
+        "edition_pt": "Vol. 2 — Cultivo Sem Fertilizante",
+        "date_showa": "S24.7.1",
+        "year": 1949,
+        "format": "B6版",
+        "pages": 91,
+        "author": "岡田自観",
+        "publisher": "小泉守之助",
+        "publisher_org": "日本五六七教会"
+      },
+      {
+        "edition": "第3篇・霊界叢談",
+        "edition_pt": "Vol. 3 — Consultas Espirituais",
+        "date_showa": "S24.10.5",
+        "year": 1949,
+        "format": "B6版",
+        "pages": 77,
+        "author": "岡田自観",
+        "publisher": "西山舜之助",
+        "publisher_org": "二十世紀出版印刷合資会社"
+      },
+      {
+        "edition": "第4篇・奇蹟物語",
+        "edition_pt": "Vol. 4 — Histórias de Milagres",
+        "date_showa": "S24.10.5",
+        "year": 1949,
+        "format": "B6版",
+        "pages": 78,
+        "author": "岡田自観",
+        "publisher": "西山舜之助"
+      },
+      {
+        "edition": "第5篇・自観隨談",
+        "edition_pt": "Vol. 5 — Reflexões de Jikan",
+        "date_showa": "S24.8.30",
+        "year": 1949,
+        "format": "B6版",
+        "pages": 78,
+        "author": "岡田自観"
+      },
+      {
+        "edition": "第6篇・岡田自観氏の横顔",
+        "edition_pt": "Vol. 6 — Perfil de Okada Jikan",
+        "date_showa": "S24.7.15",
+        "year": 1949,
+        "format": "B6版",
+        "pages": 80,
+        "author": "須江孝雄",
+        "publisher": "小泉守之助",
+        "publisher_org": "日本五六七教会"
+      },
+      {
+        "edition": "第7篇・基佛と観音教",
+        "edition_pt": "Vol. 7 — Kibutsu e o Ensinamento Kannon",
+        "date_showa": "S24.10.25",
+        "year": 1949,
+        "format": "B6版",
+        "pages": 69,
+        "author": "日本観音教団編纂部"
+      },
+      {
+        "edition": "第8篇・明麿近詠集",
+        "edition_pt": "Vol. 8 — Antologia Poética Akemaro",
+        "date_showa": "S24.11.30",
+        "year": 1949,
+        "format": "B6版",
+        "pages": 86,
+        "author": "東山明麿",
+        "publisher": "小泉守之助",
+        "publisher_org": "日本五六七教"
+      },
+      {
+        "edition": "第9篇・光への道",
+        "edition_pt": "Vol. 9 — Caminho para a Luz",
+        "date_showa": "S24.12.30",
+        "year": 1949,
+        "format": "B6版",
+        "pages": 69,
+        "author": "岡田自観"
+      },
+      {
+        "edition": "第10篇・神示の健康法",
+        "edition_pt": "Vol. 10 — Método de Saúde Divina",
+        "date_showa": "S25.4.20",
+        "year": 1950,
+        "format": "B6版",
+        "pages": 72,
+        "author": "岡田自観",
+        "publisher": "三尋木光治郎",
+        "publisher_org": "救世新聞社出版部"
+      },
+      {
+        "edition": "第11篇・神示の病理（未刊行）",
+        "edition_pt": "Vol. 11 — Patologia Divina (não publicado)",
+        "date_showa": null,
+        "year": null,
+        "notes": "未刊行。後に「救世教奇蹟集」となったと思われる。",
+        "notes_pt": "Não publicado. Possivelmente tornou-se 'Kiseki-shu'."
+      },
+      {
+        "edition": "第12篇・自観説話集",
+        "edition_pt": "Vol. 12 — Contos de Jikan",
+        "date_showa": "S25.1.30",
+        "year": 1950,
+        "format": "B6版",
+        "pages": 77,
+        "author": "岡田自観",
+        "publisher": "小泉守之助",
+        "publisher_org": "日本五六七教",
+        "notes": "信仰雑話の続編として重要論文の再録"
+      },
+      {
+        "edition": "第13篇・世界の六大神秘家",
+        "edition_pt": "Vol. 13 — Os Seis Grandes Místicos do Mundo",
+        "date_showa": "S24.12.5",
+        "year": 1949,
+        "format": "B6版",
+        "pages": 79,
+        "author": "須江孝雄"
+      },
+      {
+        "edition": "第14篇・天国の花（未刊行）",
+        "edition_pt": "Vol. 14 — Flores do Paraíso (não publicado)",
+        "date_showa": null,
+        "year": null,
+        "notes": "未刊行。後に「笑の泉」となったと思われる。",
+        "notes_pt": "Não publicado. Possivelmente tornou-se 'Warai no Izumi'."
+      },
+      {
+        "edition": "第15篇・基督と自観師",
+        "edition_pt": "Vol. 15 — Cristo e Mestre Jikan",
+        "date_showa": "S25.1.25",
+        "year": 1950,
+        "format": "B6版",
+        "pages": 77,
+        "author": "松井誠勲",
+        "publisher": "小泉守之助",
+        "publisher_org": "日本五六七教"
+      }
+    ],
+    "all_images": [
+      "jikan1.JPG",
+      "jikan2.JPG",
+      "jikan3.JPG",
+      "kiseki.JPG",
+      "jikan5.JPG",
+      "jikan6.JPG",
+      "kibutu.JPG",
+      "akemaro.JPG",
+      "jikan9.JPG",
+      "jikan10.JPG",
+      "jikan12.JPG",
+      "jikan13.JPG",
+      "jikan15.JPG",
+      "sosyo.jpg"
+    ]
+  },
+  {
+    "file": "joreiho.html",
+    "title_ja": "浄霊法講座",
+    "editions": [
+      {
+        "edition": "（一）",
+        "edition_pt": "Vol. I",
+        "date_showa": "S28.11.1",
+        "year": 1953,
+        "format": "A6版",
+        "pages": 45,
+        "editor": "世界救世教教務部"
+      },
+      {
+        "edition": "（二）",
+        "edition_pt": "Vol. II",
+        "date_showa": "S28.10.1",
+        "year": 1953
+      },
+      {
+        "edition": "（三）",
+        "edition_pt": "Vol. III",
+        "date_showa": "S29.10.1",
+        "year": 1954
+      },
+      {
+        "edition": "（四）薬理批判",
+        "edition_pt": "Vol. IV — Crítica à Farmacologia",
+        "date_showa": "S29.11.20",
+        "year": 1954
+      },
+      {
+        "edition": "（五）結核･喘息心臓関係の症状について",
+        "edition_pt": "Vol. V — Tuberculose, Asma e Coração",
+        "date_showa": "S30.2.10",
+        "year": 1955
+      },
+      {
+        "edition": "（六）薬毒病について",
+        "edition_pt": "Vol. VI — Doenças Causadas por Medicamentos",
+        "date_showa": "S30.4.1",
+        "year": 1955
+      },
+      {
+        "edition": "（七）婦人病",
+        "edition_pt": "Vol. VII — Doenças Femininas",
+        "date_showa": "S30.4.25",
+        "year": 1955
+      },
+      {
+        "edition": "（八）胃･腸疾患",
+        "edition_pt": "Vol. VIII — Doenças Gástricas e Intestinais",
+        "date_showa": "S30.5.1",
+        "year": 1955
+      }
+    ],
+    "all_images": [
+      "jorei.JPG",
+      "joreiho.jpg"
+    ]
+  },
+  {
+    "file": "joreiiju.html",
+    "title_ja": "浄霊医術略解",
+    "editions": [
+      {
+        "edition": "初版",
+        "edition_pt": "Edição Única",
+        "format": "B6版",
+        "pages": 35,
+        "notes": "奥付がないため発行日不明。浄霊に関する論文収録。",
+        "notes_pt": "Data desconhecida. Coletânea de artigos sobre Johrei. Sem colofão."
+      }
+    ],
+    "all_images": [
+      "joreiiju.JPG"
+    ]
+  },
+  {
+    "file": "kekkaku1.html",
+    "title_ja": "結核問題ト其解決策 / 結核問題と其解決策",
+    "editions": [
+      {
+        "edition": "初版",
+        "edition_pt": "1ª Edição",
+        "date_showa": "S17.12.13",
+        "year": 1942,
+        "format": "A5版（謄写版・和紙・袋とじ）",
+        "pages": 265,
+        "author": "岡田茂吉",
+        "publisher_org": "坂井商事出版部",
+        "printer": "原清作",
+        "price": "非売品",
+        "notes": "『明日の医術』初版より抜粋"
+      },
+      {
+        "edition": "再版",
+        "edition_pt": "2ª Edição",
+        "date_showa": "S18.5.5",
+        "year": 1943,
+        "format": "B6版",
+        "pages": 181,
+        "author": "岡田茂吉",
+        "publisher": "志保澤武",
+        "printer": "熊谷印刷所",
+        "price": "定価二円",
+        "notes": "昭和19年2月発行禁止処分",
+        "notes_pt": "Proibido em fevereiro de 1944."
+      }
+    ],
+    "all_images": [
+      "kekkaku1.jpg",
+      "kekkaku3.jpg",
+      "ksono.JPG",
+      "kekkaku2.jpg"
+    ]
+  },
+  {
+    "file": "kekkaku2.html",
+    "title_ja": "結核の正体",
+    "editions": [
+      {
+        "edition": "初版",
+        "edition_pt": "1ª Edição",
+        "date_showa": "S18.11.23",
+        "year": 1943,
+        "format": "B6版",
+        "pages": 101,
+        "author": "岡田茂吉",
+        "publisher": "志保澤武"
+      }
+    ],
+    "all_images": [
+      "syotai.JPG",
+      "syotai2.jpg"
+    ]
+  },
+  {
+    "file": "kekkaku3.html",
+    "title_ja": "結核の革命的療法",
+    "editions": [
+      {
+        "edition": "初版",
+        "edition_pt": "1ª Edição",
+        "date_showa": "S26.8.15",
+        "year": 1951,
+        "format": "B6版",
+        "pages": 255,
+        "author": "岡田自観",
+        "publisher_org": "世界救世教出版部"
+      }
+    ],
+    "all_images": [
+      "kekkaku.jpg"
+    ]
+  },
+  {
+    "file": "kekkaku5.html",
+    "title_ja": "結核信仰療法",
+    "editions": [
+      {
+        "edition": "初版",
+        "edition_pt": "1ª Edição",
+        "date_showa": "S27.12.1",
+        "year": 1952,
+        "format": "B6版",
+        "pages": 235,
+        "author": "岡田自観",
+        "publisher": "阿部晴三",
+        "publisher_org": "世界救世教出版部",
+        "price": "非売品",
+        "notes": "百人の体験談を付録として収録。",
+        "notes_pt": "Inclui apêndice com 100 testemunhos de cura."
+      }
+    ],
+    "all_images": [
+      "kshinko.JPG",
+      "kshinko3.jpg"
+    ]
+  },
+  {
+    "file": "kiseki.html",
+    "title_ja": "世界救世教奇蹟集",
+    "editions": [
+      {
+        "edition": "初版",
+        "edition_pt": "1ª Edição",
+        "date_showa": "S28.9.10",
+        "year": 1953,
+        "format": "B6版",
+        "pages": 300,
+        "author": "岡田茂吉",
+        "publisher": "森山実太郎",
+        "publisher_org": "世界救世教出版部",
+        "printer": "熱海商事株式会社",
+        "price": "非売品",
+        "notes": "120例の体験談を収録。",
+        "notes_pt": "Coletânea de 120 testemunhos de milagres."
+      }
+    ],
+    "all_images": [
+      "kisekisy.JPG"
+    ]
+  },
+  {
+    "file": "kyogi.html",
+    "title_ja": "世界救世教教義",
+    "editions": [
+      {
+        "edition": "教義解説（病貧争）",
+        "edition_pt": "Doutrina — Doença, Pobreza e Guerra",
+        "date_showa": "S26.6.1",
+        "year": 1951,
+        "format": "A6版",
+        "pages": 29,
+        "author": "松籟生",
+        "publisher": "小山正男",
+        "publisher_org": "世界救世教出版部",
+        "price": "非売品"
+      },
+      {
+        "edition": "教義（地上天国と自然栽培）",
+        "edition_pt": "Doutrina — Paraíso Terrestre e Agricultura Natural",
+        "date_showa": "S26.10.10",
+        "year": 1951,
+        "format": "A6版",
+        "pages": 32,
+        "author": "松籟生",
+        "publisher": "小山正男",
+        "publisher_org": "世界救世教出版部",
+        "price": "非売品"
+      }
+    ],
+    "all_images": [
+      "kyogi1.JPG",
+      "kyog2.JPG"
+    ]
+  },
+  {
+    "file": "kyosyu.html",
+    "title_ja": "教修要綱",
+    "editions": [
+      {
+        "edition": "初版",
+        "edition_pt": "1ª Edição",
+        "date_showa": "S29.3.10",
+        "year": 1954,
+        "format": "A5版",
+        "pages": 42,
+        "editor": "世界救世教本部",
+        "publisher": "森山実太郎",
+        "publisher_org": "熱海商事株式会社",
+        "price": "非売品",
+        "notes": "入信教修テキスト。",
+        "notes_pt": "Manual de instrução para novos membros."
+      }
+    ],
+    "all_images": [
+      "kyosyu.JPG",
+      "kyosyu2.jpg"
+    ]
+  },
+  {
+    "file": "miosiesy.html",
+    "title_ja": "御教え集",
+    "editions": [
+      {
+        "edition": "第1号",
+        "edition_pt": "Vol. 1",
+        "date_showa": "S26.9.20",
+        "year": 1951,
+        "content": "S26年8月面会記録"
+      },
+      {
+        "edition": "第2〜33号",
+        "edition_pt": "Vols. 2–33",
+        "date_showa": "S26〜S29",
+        "year": null,
+        "notes": "第1号〜第33号 S26.9.20〜S29年4月発行。明主様との面会記録。",
+        "notes_pt": "Vols. 1–33. Registro de encontros com Meishu-Sama (ago/1951–abr/1954)."
+      }
+    ],
+    "series_info": "第1号〜第33号 S26.9.20〜S29年4月発行。明主様との面会記録。",
+    "series_info_pt": "Vols. 1–33. Registro de encontros com Meishu-Sama. Restrito a membros qualificados.",
+    "all_images": [
+      "mioshie.JPG"
+    ]
+  },
+  {
+    "file": "myoniti1.html",
+    "title_ja": "明日の医術",
+    "editions": [
+      {
+        "edition": "初版",
+        "edition_pt": "1ª Edição",
+        "date_showa": "S17.9.28",
+        "year": 1942,
+        "format": "和綴じ 238×167mm",
+        "author": "岡田茂吉",
+        "price": "非売品",
+        "notes": "原本が手元にないため奥付不明。",
+        "notes_pt": "Edição original. Encadernação tradicional japonesa. Colofão desconhecido."
+      },
+      {
+        "edition": "再版 第一・二篇",
+        "edition_pt": "2ª Edição — Vols. I e II",
+        "date_showa": "S18.2.5",
+        "year": 1943,
+        "format": "A5版",
+        "pages_note": "第一編 P208 / 第二編 P275",
+        "author": "岡田茂吉",
+        "publisher": "志保澤武",
+        "printer": "熊谷印刷所",
+        "price": "非売品",
+        "images": [
+          "myoniti1.jpg",
+          "myoniti3.JPG",
+          "myoniti4.jpg",
+          "myoniti2.jpg"
+        ]
+      },
+      {
+        "edition": "再々版 第一・二篇",
+        "edition_pt": "3ª Edição — Vols. I e II",
+        "date_showa": "S18.10.5",
+        "year": 1943,
+        "format": "B6版",
+        "pages_note": "第一編 P309 / 第二編 P344",
+        "author": "岡田茂吉",
+        "publisher": "志保澤武",
+        "printer": "熊谷印刷所",
+        "notes": "昭和19年2月発行禁止処分",
+        "notes_pt": "Proibido em fevereiro de 1944.",
+        "images": [
+          "myoniti5.jpg",
+          "myoniti8.jpg"
+        ]
+      },
+      {
+        "edition": "第三篇（初版）",
+        "edition_pt": "Vol. III — 1ª Edição",
+        "date_showa": "S18.10.23",
+        "year": 1943,
+        "format": "B6版",
+        "pages_note": "第3編 P298",
+        "author": "岡田茂吉",
+        "publisher": "志保澤武",
+        "printer": "熊谷印刷所",
+        "notes": "昭和19年2月発行禁止処分",
+        "notes_pt": "Proibido em fevereiro de 1944.",
+        "images": [
+          "myouniti.JPG",
+          "myoniti7.jpg",
+          "myoniti6.jpg"
+        ]
+      }
+    ],
+    "all_images": [
+      "myoniti1.jpg",
+      "myoniti2.jpg",
+      "myoniti4.jpg",
+      "myoniti3.JPG",
+      "myouniti.JPG",
+      "myoniti7.jpg",
+      "myoniti5.jpg",
+      "myoniti8.jpg",
+      "myoniti6.jpg"
+    ]
+  },
+  {
+    "file": "ohikari.html",
+    "title_ja": "御光話録",
+    "editions": [
+      {
+        "edition": "（補）",
+        "edition_pt": "Suplemento",
+        "date_showa": "S26頃",
+        "year": 1951,
+        "content": "S23年1月〜10月御面会記録"
+      },
+      {
+        "edition": "第1号",
+        "edition_pt": "Vol. 1",
+        "date_showa": "S23.12.8",
+        "year": 1948
+      },
+      {
+        "edition": "第2号",
+        "edition_pt": "Vol. 2",
+        "date_showa": "S24.1.8",
+        "year": 1949
+      },
+      {
+        "edition": "第3号",
+        "edition_pt": "Vol. 3",
+        "date_showa": "S24.2.8",
+        "year": 1949
+      },
+      {
+        "edition": "第6号",
+        "edition_pt": "Vol. 6",
+        "date_showa": "S24.4.23",
+        "year": 1949
+      },
+      {
+        "edition": "第7号",
+        "edition_pt": "Vol. 7",
+        "date_showa": "S24.5.13",
+        "year": 1949
+      },
+      {
+        "edition": "第8号",
+        "edition_pt": "Vol. 8",
+        "date_showa": "S24.5.30",
+        "year": 1949
+      },
+      {
+        "edition": "第9号",
+        "edition_pt": "Vol. 9",
+        "date_showa": "S24.7.10",
+        "year": 1949
+      },
+      {
+        "edition": "第10号",
+        "edition_pt": "Vol. 10",
+        "date_showa": "S24.7.30",
+        "year": 1949
+      },
+      {
+        "edition": "第11号",
+        "edition_pt": "Vol. 11",
+        "date_showa": "S24.8.21",
+        "year": 1949
+      },
+      {
+        "edition": "第12号",
+        "edition_pt": "Vol. 12",
+        "date_showa": "S24.9.21",
+        "year": 1949
+      },
+      {
+        "edition": "第13号",
+        "edition_pt": "Vol. 13",
+        "date_showa": "S24.10.21",
+        "year": 1949
+      },
+      {
+        "edition": "第14号",
+        "edition_pt": "Vol. 14",
+        "date_showa": "S24.11.20",
+        "year": 1949
+      },
+      {
+        "edition": "第15号",
+        "edition_pt": "Vol. 15",
+        "date_showa": "S24.12.10",
+        "year": 1949
+      },
+      {
+        "edition": "第16号",
+        "edition_pt": "Vol. 16",
+        "date_showa": "S25.1.20",
+        "year": 1950
+      },
+      {
+        "edition": "第17号",
+        "edition_pt": "Vol. 17",
+        "date_showa": "S25.2.28",
+        "year": 1950
+      },
+      {
+        "edition": "第18号",
+        "edition_pt": "Vol. 18",
+        "date_showa": "S25.4.23",
+        "year": 1950
+      },
+      {
+        "edition": "第19号",
+        "edition_pt": "Vol. 19",
+        "date_showa": "S25.6.13",
+        "year": 1950
+      },
+      {
+        "edition": "再版（1〜8号）",
+        "edition_pt": "Reedição — Vols. 1–8",
+        "date_showa": "S30.4.30",
+        "year": 1955,
+        "notes": "明主様御昇天後記念再発行。",
+        "notes_pt": "Reedição comemorativa após ascensão de Meishu-Sama."
+      }
+    ],
+    "series_info": "S23年10月〜S25年4月の御面会記録 (1〜19号)。",
+    "series_info_pt": "Registro de encontros com Meishu-Sama (out/1948–jun/1950). Vols. 1–19.",
+    "all_images": [
+      "ohikari.JPG",
+      "gokowa1.jpg",
+      "gokowa2.jpg"
+    ]
+  },
+  {
+    "file": "osieno.html",
+    "title_ja": "教えの光",
+    "editions": [
+      {
+        "edition": "初版",
+        "edition_pt": "1ª Edição",
+        "date_showa": "S26.5.20",
+        "year": 1951,
+        "format": "A6版",
+        "pages": 160,
+        "editor": "世界救世教編集部",
+        "publisher": "小山正男",
+        "publisher_org": "栄光社出版部",
+        "notes": "地上天国掲載「妙智の光」から抜粋。質問応答集。",
+        "notes_pt": "Coletânea de perguntas e respostas extraídas da revista 'Chijo Tengoku'."
+      }
+    ],
+    "all_images": [
+      "oshie.JPG"
+    ]
+  },
+  {
+    "file": "sanka1.html",
+    "title_ja": "讃歌集",
+    "editions": [
+      {
+        "edition": "初版（和綴じ）",
+        "edition_pt": "1ª Edição — Encadernação Tradicional",
+        "date_showa": "S23.7.1",
+        "year": 1948,
+        "format": "A5版 和綴じ本",
+        "pages": 117,
+        "publisher": "藤常武",
+        "publisher_org": "日本観音教団教務部"
+      },
+      {
+        "edition": "普及版",
+        "edition_pt": "Edição Popular",
+        "date_showa": "S23.7.1",
+        "year": 1948,
+        "format": "B6版",
+        "pages": 59,
+        "author": "岡田明麿",
+        "publisher": "西山舜之助",
+        "publisher_org": "合資会社廿世紀社"
+      },
+      {
+        "edition": "贈呈版",
+        "edition_pt": "Edição Presenteável",
+        "date_showa": "S24",
+        "year": 1949,
+        "format": "B6版",
+        "pages": 107,
+        "author": "岡田明麿",
+        "price": "非売品"
+      },
+      {
+        "edition": "改訂版",
+        "edition_pt": "Edição Revisada",
+        "date_showa": "S26.5.28",
+        "year": 1951,
+        "format": "B6版",
+        "pages": 107,
+        "author": "岡田明麿",
+        "publisher": "小山正男",
+        "publisher_org": "世界救世教出版部",
+        "price": "非売品",
+        "notes": "以降度々発行。",
+        "notes_pt": "Reeditada diversas vezes após esta edição."
+      }
+    ],
+    "all_images": [
+      "sanka1.jpg",
+      "sanka3.JPG",
+      "sanka2.jpg"
+    ]
+  },
+  {
+    "file": "seiten.html",
+    "title_ja": "世界救世教聖典（芸術篇・社会篇）",
+    "editions": [
+      {
+        "edition": "初版",
+        "edition_pt": "1ª Edição",
+        "date_showa": "S30.9.1",
+        "year": 1955,
+        "format": "B5版",
+        "editor": "世界救世教教務部",
+        "publisher": "森山実太郎",
+        "publisher_org": "世界救世教出版部",
+        "notes_pt": "Escrituras Sagradas — Arte e Sociedade."
+      }
+    ],
+    "all_images": [
+      "seiten.JPG"
+    ]
+  },
+  {
+    "file": "shinbun.html",
+    "title_ja": "機関紙『光』『救世』『栄光』",
+    "editions": [
+      {
+        "edition": "『光』1〜47号",
+        "edition_pt": "'Hikari' — Vols. 1–47",
+        "date_showa": "S24.3.8〜S25.1.28",
+        "year": 1949,
+        "notes": "日本観音教団の機関紙。",
+        "notes_pt": "Jornal oficial da organização japonesa Kannon."
+      },
+      {
+        "edition": "『救世』48〜65号",
+        "edition_pt": "'Kyusei' — Vols. 48–65",
+        "date_showa": "S25.2.4〜S25.6.3",
+        "year": 1950,
+        "notes": "『光』を改題。世界救世教創立に伴う改名。",
+        "notes_pt": "Renomeado de 'Hikari' com a fundação da Igreja Messiânica."
+      },
+      {
+        "edition": "『栄光』66号〜",
+        "edition_pt": "'Eiko' — Vol. 66 em diante",
+        "date_showa": "S25.8.23〜",
+        "year": 1950,
+        "notes": "『救世』を改題。",
+        "notes_pt": "Renomeado de 'Kyusei'."
+      }
+    ],
+    "all_images": [
+      "shinbun1.jpg",
+      "shinbun3.jpg",
+      "shinbun2.jpg"
+    ]
+  },
+  {
+    "file": "sinkozat.html",
+    "title_ja": "信仰雑話",
+    "editions": [
+      {
+        "edition": "初版",
+        "edition_pt": "1ª Edição",
+        "date_showa": "S23.9.5",
+        "year": 1948,
+        "format": "B6版",
+        "pages": 117,
+        "publisher": "藤常武",
+        "publisher_org": "日本観音教団教務部",
+        "printer": "日本厚生観光通信社",
+        "price": "非売品"
+      },
+      {
+        "edition": "再版",
+        "edition_pt": "2ª Edição",
+        "date_showa": "S24.3.5",
+        "year": 1949,
+        "format": "B6版",
+        "pages": 117,
+        "author": "岡田自観",
+        "publisher": "小泉守之助",
+        "publisher_org": "日本五六七教会",
+        "printer": "廿世紀出版合資会社",
+        "price": "定価100円"
+      },
+      {
+        "edition": "贈呈用再版",
+        "edition_pt": "Reedição Presenteável",
+        "date_showa": "S26.10.10",
+        "year": 1951,
+        "format": "B6版",
+        "pages": 106,
+        "author": "岡田自観",
+        "publisher": "百海聖一",
+        "publisher_org": "世界救世教出版部",
+        "price": "非売品",
+        "notes": "贈呈用は何度か印刷発行された。",
+        "notes_pt": "Reeditada diversas vezes para distribuição como presente."
+      }
+    ],
+    "all_images": [
+      "shinkou0.JPG",
+      "shinkou1.JPG",
+      "shinkou2.JPG",
+      "shinko3.jpg",
+      "shinko4.jpg"
+    ]
+  },
+  {
+    "file": "sizen.html",
+    "title_ja": "自然農法解説",
+    "editions": [
+      {
+        "edition": "初版",
+        "edition_pt": "1ª Edição",
+        "date_showa": "S26.1.15",
+        "year": 1951,
+        "format": "A6版",
+        "pages": 63,
+        "author": "自観",
+        "publisher": "小山正男",
+        "publisher_org": "栄光社出版部"
+      },
+      {
+        "edition": "増補版・革命的増産の自然農法解説",
+        "edition_pt": "Edição Ampliada — Agricultura Natural para Aumento Revolucionário da Produção",
+        "date_showa": "S28.5.5",
+        "year": 1953,
+        "format": "A6版",
+        "pages": 236,
+        "author": "岡田茂吉",
+        "publisher": "森山実太郎",
+        "publisher_org": "世界救世教出版部",
+        "notes_pt": "Edição expandida."
+      }
+    ],
+    "all_images": [
+      "nohokai2.JPG",
+      "noho1.jpg",
+      "nohokai.JPG",
+      "noho2.jpg"
+    ]
+  },
+  {
+    "file": "tebiki.html",
+    "title_ja": "世界メシヤ教手引",
+    "editions": [
+      {
+        "edition": "再版",
+        "edition_pt": "2ª Edição",
+        "date_showa": "S28.8.11",
+        "year": 1953,
+        "format": "A6版",
+        "pages": 83,
+        "author": "樋口喜代子",
+        "publisher_org": "世界救世教出版部",
+        "printer": "熱海商事株式会社",
+        "notes": "海外入信者用。漢字にすべて振り仮名付き。",
+        "notes_pt": "Para membros no exterior. Todos os kanjis têm furigana."
+      }
+    ],
+    "all_images": [
+      "tebiki.JPG"
+    ]
+  },
+  {
+    "file": "tengoku1.html",
+    "title_ja": "天国の福音",
+    "editions": [
+      {
+        "edition": "初版",
+        "edition_pt": "1ª Edição",
+        "date_showa": "S22.2.5",
+        "year": 1947,
+        "format": "B6版",
+        "pages": 409,
+        "author": "岡田茂吉",
+        "publisher": "坂井克行",
+        "printer": "玉友印刷合資会社"
+      }
+    ],
+    "all_images": [
+      "tengoku.JPG"
+    ]
+  },
+  {
+    "file": "tijodeki.html",
+    "title_ja": "地上天国出来るまで",
+    "editions": [
+      {
+        "edition": "初版",
+        "edition_pt": "1ª Edição",
+        "date_showa": "S25.9.21",
+        "year": 1950,
+        "format": "B6版",
+        "pages": 15,
+        "author": "自観",
+        "publisher_org": "栄光社出版部",
+        "printer": "太陽印刷株式会社",
+        "price": "非売品",
+        "notes": "巻頭に十首のお歌あり。",
+        "notes_pt": "Inclui dez poemas no início."
+      }
+    ],
+    "all_images": [
+      "tijou.JPG",
+      "dekiru2.jpg"
+    ]
+  },
+  {
+    "file": "tijou.html",
+    "title_ja": "地上天国（機関誌）",
+    "editions": [
+      {
+        "edition": "創刊号",
+        "edition_pt": "Vol. 1 — Número inaugural",
+        "date_showa": "S23.12.1",
+        "year": 1948,
+        "format": "A5版",
+        "pages": 64,
+        "publisher": "深町孝之亮",
+        "publisher_org": "日本五六七教会",
+        "printer": "廿世紀出版合資会社",
+        "notes": "創刊号〜4号まで同表紙。12号からメシヤ観音、44号から茶色、70号から緑色の表紙。",
+        "notes_pt": "Revista oficial. Vols. 1–4 com mesma capa; vol. 12 em diante 'Messiah Kannon'; vol. 44 capa marrom; vol. 70 verde."
+      }
+    ],
+    "all_images": [
+      "chijou1.JPG",
+      "chijo5.jpg",
+      "chijo6.JPG",
+      "chijo.JPG",
+      "chijo8.jpg"
+    ]
+  },
+  {
+    "file": "warai.html",
+    "title_ja": "笑の泉",
+    "editions": [
+      {
+        "edition": "初版",
+        "edition_pt": "1ª Edição",
+        "date_showa": "S26.1.30",
+        "year": 1951,
+        "format": "B6版",
+        "pages": 115,
+        "author": "自観（明烏阿呆名義）",
+        "publisher": "小山正男",
+        "publisher_org": "栄光社出版部",
+        "price": "非売品",
+        "notes": "笑い冠沓句集。",
+        "notes_pt": "Coletânea de haicais humorísticos (kanku-shu)."
+      }
+    ],
+    "all_images": [
+      "warai.JPG",
+      "warai2.jpg"
+    ]
+  },
+  {
+    "file": "yamato.html",
+    "title_ja": "歌集「山と水」",
+    "editions": [
+      {
+        "edition": "初版",
+        "edition_pt": "1ª Edição",
+        "date_showa": "S24.12.23",
+        "year": 1949,
+        "format": "A5版 和装箱製",
+        "pages": 301,
+        "author": "東山明麿",
+        "publisher": "小坂嘉一郎",
+        "publisher_org": "文化社",
+        "notes": "昭和6〜10年に詠んだ千数百首より選集。",
+        "notes_pt": "Seleção de centenas de poemas compostos entre 1931 e 1935."
+      },
+      {
+        "edition": "再版",
+        "edition_pt": "2ª Edição",
+        "date_showa": "S25.3.25",
+        "year": 1950,
+        "format": "A5版 和装箱製",
+        "pages": 301,
+        "author": "東山明麿",
+        "publisher": "小坂嘉一郎",
+        "publisher_org": "文化社",
+        "notes": "御真筆が印刷に変更、紙質・内容（一首）に微差あり。岡田茂吉全集には再版のみ収録。",
+        "notes_pt": "Caligrafia original substituída por impressão. Pequenas diferenças de papel e conteúdo. Somente esta edição foi incluída na obra completa de Okada Mokichi."
+      }
+    ],
+    "all_images": [
+      "yamatomi.JPG",
+      "yamato-2.JPG",
+      "yamato3.jpg"
+    ]
+  }
+]

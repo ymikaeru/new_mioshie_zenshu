@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mioshie Zenshu — Biblioteca Sagrada</title>
+  <meta name="description" content="Índice completo de 4.918 ensinamentos de Meishu-Sama organizados por tipo, era histórica Showa e ordem alfabética.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Noto+Serif+JP:wght@400;600&display=swap">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/browse.css">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#B8860B">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Mioshie Zenshu">
+
+  <script>
+    (function() {
+      var t = localStorage.getItem('site_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+</head>
+<body>
+
+<!-- ─── Header ──────────────────────────────────────────────── -->
+<header class="header" role="banner">
+  <a href="browse.html" class="header__logo" aria-label="Mioshie Zenshu">
+    <div class="logo-circle" aria-hidden="true"><div class="logo-dot"></div></div>
+    <span>Mioshie Zenshu</span>
+  </a>
+
+  <nav class="header__nav" aria-label="Navegação principal">
+    <a href="browse.html" class="active">Ensinamentos</a>
+    <a href="poems.html">Gosanka</a>
+    <a href="kannon.html">Kannon</a>
+    <a href="johrei.html">Johrei</a>
+    <a href="library.html">Biblioteca</a>
+    <a href="timeline.html">Timeline</a>
+  </nav>
+  <!-- Controls injected by app.js -->
+</header>
+
+<!-- ─── Main Layout ─────────────────────────────────────────── -->
+<div class="browse-page" id="browsePage">
+
+  <!-- ══ SIDEBAR ══════════════════════════════════════════════ -->
+  <aside class="browse-sidebar" id="browseSidebar" role="navigation" aria-label="Filtros de navegação">
+
+    <!-- Search -->
+    <div class="sidebar-search">
+      <input type="search" id="sidebarSearchInput" class="sidebar-search-input"
+        placeholder="Buscar nos ensinamentos…" autocomplete="off">
+    </div>
+
+    <!-- ① Ensaios (御論文) -->
+    <div class="sidebar-section" id="sectionRonbun">
+      <div class="sidebar-section-header" onclick="toggleSection('sectionRonbun')">
+        <span class="sidebar-section-title">御論文 <small>Ensaios</small></span>
+        <div style="display:flex;align-items:center;gap:4px">
+          <span class="sidebar-section-count" id="countRonbun">—</span>
+          <svg class="sidebar-chevron" viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+      <div class="sidebar-section-body" style="max-height:9999px">
+
+        <div class="sidebar-nav-item" data-type="ensaio" onclick="setFilter('type','ensaio')">
+          <span>Todos os Ensaios</span>
+          <span class="sidebar-nav-item__count" id="countEnsaio">—</span>
+        </div>
+
+        <div class="sidebar-sub-label">Por Era (Showa)</div>
+        <div class="sidebar-era-grid" id="sidebarEraGrid"><!-- js --></div>
+
+        <div class="sidebar-sub-label">Índice A–Z</div>
+        <div class="sidebar-az" id="sidebarAZ"><!-- js --></div>
+
+      </div>
+    </div>
+
+    <!-- ② Ensinamentos (御教え) -->
+    <div class="sidebar-section" id="sectionOshie">
+      <div class="sidebar-section-header" onclick="toggleSection('sectionOshie')">
+        <span class="sidebar-section-title">Ensinamentos</span>
+        <svg class="sidebar-chevron" viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="sidebar-section-body" style="max-height:9999px">
+        <div class="sidebar-nav-item" data-type="palestra" onclick="setFilter('type','palestra')">
+          <span>御講話 <small>Palestras</small></span>
+          <span class="sidebar-nav-item__count" id="countPalestra">—</span>
+        </div>
+        <div class="sidebar-nav-item" data-type="qa" onclick="setFilter('type','qa')">
+          <span>質問応答 <small>Perguntas e Respostas</small></span>
+          <span class="sidebar-nav-item__count" id="countQa">—</span>
+        </div>
+        <div class="sidebar-nav-item" data-type="dialogo" onclick="setFilter('type','dialogo')">
+          <span>対談 <small>Diálogos</small></span>
+          <span class="sidebar-nav-item__count" id="countDialogo">—</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ③ Compilação e Tradução (編集・翻訳) -->
+    <div class="sidebar-section" id="sectionHenshu">
+      <div class="sidebar-section-header" onclick="toggleSection('sectionHenshu')">
+        <span class="sidebar-section-title">Compilação e Tradução</span>
+        <svg class="sidebar-chevron" viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="sidebar-section-body" style="max-height:9999px">
+        <div class="sidebar-nav-item" data-type="revelacao" onclick="setFilter('type','revelacao')">
+          <span>御垂示録 <small>Gosuijiroku</small></span>
+          <span class="sidebar-nav-item__count" id="countRevelacao">—</span>
+        </div>
+        <div class="sidebar-nav-item" data-type="miosie" onclick="setFilter('type','miosie')">
+          <span>御教え集 <small>Mioshieshu</small></span>
+          <span class="sidebar-nav-item__count" id="countMiosie">—</span>
+        </div>
+        <div class="sidebar-nav-item" data-type="viagem" onclick="setFilter('type','viagem')">
+          <span>御光話録 <small>Ohikari Kowa Roku</small></span>
+          <span class="sidebar-nav-item__count" id="countViagem">—</span>
+        </div>
+        <div class="sidebar-nav-item" data-type="hikarinochie" onclick="setFilter('type','hikarinochie')">
+          <span>神智之光 <small>Hikari no Chie</small></span>
+          <span class="sidebar-nav-item__count" id="countHikari">—</span>
+        </div>
+        <div class="sidebar-nav-item" data-type="jorei" onclick="setFilter('type','jorei')">
+          <span>浄霊法講座 <small>Johrei Ho Koza</small></span>
+          <span class="sidebar-nav-item__count" id="countJorei">—</span>
+        </div>
+        <div class="sidebar-nav-item" data-type="dendo" onclick="setFilter('type','dendo')">
+          <span>伝道の引き <small>Dendo no Shiori</small></span>
+          <span class="sidebar-nav-item__count" id="countDendo">—</span>
+        </div>
+        <div class="sidebar-nav-item" data-type="english" onclick="setFilter('type','english')">
+          <span>ENGLISH</span>
+          <span class="sidebar-nav-item__count" id="countEnglish">—</span>
+        </div>
+        <a href="library.html" class="sidebar-nav-item" style="text-decoration:none">
+          <span>出版物一覧 <small>Lista de Publicações</small></span>
+        </a>
+      </div>
+    </div>
+
+    <!-- ④ Material de Referência (参考資料) -->
+    <div class="sidebar-section" id="sectionSanko">
+      <div class="sidebar-section-header" onclick="toggleSection('sectionSanko')">
+        <span class="sidebar-section-title">Material de Referência</span>
+        <svg class="sidebar-chevron" viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="sidebar-section-body" style="max-height:9999px">
+        <div class="sidebar-nav-item" data-type="sanko" onclick="setFilter('type','sanko')">
+          <span>参考資料 <small>Material de Referência</small></span>
+          <span class="sidebar-nav-item__count" id="countSanko">—</span>
+        </div>
+        <div class="sidebar-nav-item" data-type="sasshi" onclick="setFilter('type','sasshi')">
+          <span>明主様関連寄稿 <small>Contribuições sobre Meishu-sama</small></span>
+          <span class="sidebar-nav-item__count" id="countSasshi">—</span>
+        </div>
+        <div class="sidebar-nav-item" data-type="hakkousi" onclick="setFilter('type','hakkousi')">
+          <span>その他の寄稿 <small>Outras Contribuições</small></span>
+          <span class="sidebar-nav-item__count" id="countHakkousi">—</span>
+        </div>
+        <div class="sidebar-nav-item" data-type="kanren" onclick="setFilter('type','kanren')">
+          <span>関連出版物 <small>Publicações Relacionadas</small></span>
+          <span class="sidebar-nav-item__count" id="countKanren">—</span>
+        </div>
+        <div class="sidebar-nav-item" data-type="revelacao" onclick="setFilter('type','revelacao')">
+          <span>お陰話（五十音）<small>Relatos de Graças</small></span>
+          <span class="sidebar-nav-item__count" id="countOkage">—</span>
+        </div>
+        <a href="sonota.html" class="sidebar-nav-item" style="text-decoration:none">
+          <span>その他の画像 <small>Outras Imagens</small></span>
+        </a>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ══ MAIN ══════════════════════════════════════════════════ -->
+  <div class="browse-main" id="browseMainArea">
+
+    <!-- Publication header (shown when filtering by pub from library) -->
+    <h2 id="browsePublicationHeader" class="browse-pub-header" style="display:none"></h2>
+
+    <!-- Active filters bar -->
+    <div class="browse-active-filters" id="activeBadges" aria-live="polite">
+      <span class="browse-no-filters">Carregando…</span>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="browse-toolbar" role="search">
+      <div class="browse-search-box">
+        <input type="search" id="browseSearchInput" placeholder="Filtrar resultados…" autocomplete="off">
+        <svg viewBox="0 0 24 24" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </div>
+
+      <div class="browse-meta" id="browseMeta">Carregando…</div>
+
+      <div class="browse-per-page">
+        <label for="perPageSelect">Por página:</label>
+        <select id="perPageSelect" onchange="setPerPage(this.value)">
+          <option value="20">20</option>
+          <option value="50" selected>50</option>
+          <option value="100">100</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="browse-table-wrap" role="main" id="main-content">
+      <table class="browse-table" aria-label="Lista de ensinamentos">
+        <thead>
+          <tr>
+            <th class="col-num">#</th>
+            <th class="col-title sortable" data-col="title" onclick="setSort('title')">Título</th>
+            <th class="col-pub">Publicação</th>
+            <th class="col-issue">Edição</th>
+            <th class="col-era sortable sort-asc" data-col="era" onclick="setSort('era')">Era</th>
+            <th class="col-notes">Notas</th>
+            <th class="col-read">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="15" height="15"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            </th>
+          </tr>
+        </thead>
+        <tbody id="browseTableBody">
+          <tr><td colspan="7">
+            <div class="browse-loading">
+              <div class="reader-loading__spinner"></div>
+              <span>Carregando índice completo…</span>
+            </div>
+          </td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <nav class="browse-pagination" id="browsePagination" aria-label="Paginação"></nav>
+
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="siteToast" class="toast" role="status" aria-live="polite"></div>
+
+<!-- Footer -->
+<footer class="footer" role="contentinfo">
+  <div class="footer__inner">
+    <div class="footer__logo">
+      <div class="logo-circle logo-circle--sm" aria-hidden="true"><div class="logo-dot"></div></div>
+      <span>Mioshie Zenshu</span>
+    </div>
+    <p class="footer__copy">
+      Mioshie Zenshu — Biblioteca Sagrada dos Ensinamentos de Meishu-Sama.<br>Para uso espiritual, estudo e reflexão.
+    </p>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script src="js/app.js?v=3" defer></script>
+<script src="js/browse.js?v=5" defer></script>
+
+<script>
+window.toggleSection = function(id) {
+  const el = document.getElementById(id);
+  el?.classList.toggle('collapsed');
+};
+// On mobile (<900px), collapse all sidebar sections except the first by default
+if (window.innerWidth <= 900) {
+  document.addEventListener('DOMContentLoaded', function() {
+    ['sectionOshie','sectionHenshu','sectionSanko'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.classList.add('collapsed');
+    });
+  });
+}
+</script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    });
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Timeline — Mioshie Zenshu</title>
+  <meta name="description" content="Timeline cronológica dos ensinamentos de Meishu-Sama por era Showa.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Noto+Serif+JP:wght@400;600&display=swap">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/styles.css">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#B8860B">
+
+  <script>
+    (function() {
+      var t = localStorage.getItem('site_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+
+  <style>
+    /* ─── Page layout ─────────────────────────────────── */
+    .timeline-page {
+      margin-top: var(--header-h);
+      min-height: calc(100vh - var(--header-h));
+      padding: 40px clamp(16px, 4vw, 60px) 80px;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .timeline-hero {
+      text-align: center;
+      padding: 32px 0 48px;
+    }
+    .timeline-hero__label {
+      font-family: var(--font-ui);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .timeline-hero__title {
+      font-family: var(--font-content, 'Crimson Pro', serif);
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 600;
+      color: var(--text-main);
+      margin: 0 0 12px;
+    }
+    .timeline-hero__sub {
+      font-family: var(--font-ui);
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    /* ─── Filter bar ──────────────────────────────────── */
+    .timeline-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 40px;
+      justify-content: center;
+    }
+    .tl-filter-btn {
+      padding: 6px 16px;
+      border-radius: 99px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-muted);
+      font-family: var(--font-ui);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .tl-filter-btn:hover,
+    .tl-filter-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    /* ─── Timeline track ──────────────────────────────── */
+    .timeline-track {
+      position: relative;
+    }
+    .timeline-track::before {
+      content: '';
+      position: absolute;
+      left: 110px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--accent), var(--border));
+      border-radius: 2px;
+    }
+
+    /* ─── Era group ───────────────────────────────────── */
+    .tl-era-group {
+      margin-bottom: 4px;
+    }
+    .tl-era-group[data-era-group].hidden {
+      display: none;
+    }
+
+    /* ─── Year row ────────────────────────────────────── */
+    .tl-year-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+      cursor: pointer;
+      padding: 4px 0;
+    }
+    .tl-year-label {
+      width: 110px;
+      flex-shrink: 0;
+      text-align: right;
+      padding-right: 28px;
+      padding-top: 14px;
+      position: relative;
+    }
+    .tl-year-showa {
+      font-family: var(--font-ui);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1;
+    }
+    .tl-year-greg {
+      font-family: var(--font-ui);
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .tl-year-dot {
+      position: absolute;
+      right: -5px;
+      top: 18px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid var(--bg-color, #F8F9F5);
+      flex-shrink: 0;
+    }
+    .tl-year-body {
+      flex: 1;
+      padding: 8px 0 8px 28px;
+    }
+    .tl-year-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 44px;
+    }
+    .tl-year-count {
+      font-family: var(--font-ui);
+      font-size: 12px;
+      color: var(--text-muted);
+      background: var(--hover-bg);
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      padding: 2px 10px;
+      white-space: nowrap;
+    }
+    .tl-year-pubs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .tl-pub-chip {
+      font-family: var(--font-ui);
+      font-size: 11px;
+      color: var(--accent);
+      background: color-mix(in srgb, var(--accent) 10%, transparent);
+      border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+      border-radius: 6px;
+      padding: 2px 8px;
+      cursor: pointer;
+      transition: background 0.15s;
+      text-decoration: none;
+    }
+    .tl-pub-chip:hover {
+      background: color-mix(in srgb, var(--accent) 20%, transparent);
+    }
+    .tl-toggle-icon {
+      margin-left: auto;
+      color: var(--text-muted);
+      font-size: 16px;
+      line-height: 1;
+      transition: transform 0.2s;
+      flex-shrink: 0;
+    }
+    .tl-year-row.open .tl-toggle-icon { transform: rotate(90deg); }
+
+    /* ─── Expanded teachings list ─────────────────────── */
+    .tl-year-teachings {
+      display: none;
+      padding: 8px 0 16px;
+      border-left: 1px dashed var(--border);
+      margin-left: 0;
+      padding-left: 16px;
+    }
+    .tl-year-row.open + .tl-year-teachings {
+      display: block;
+    }
+    .tl-teaching-item {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border);
+      font-family: var(--font-ui);
+    }
+    .tl-teaching-item:last-child { border-bottom: none; }
+    .tl-teaching-title {
+      font-size: 13px;
+      color: var(--text-main);
+      text-decoration: none;
+      flex: 1;
+      line-height: 1.4;
+    }
+    .tl-teaching-title:hover { color: var(--accent); }
+    .tl-teaching-pub {
+      font-size: 11px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      max-width: 180px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .tl-teaching-type {
+      font-size: 10px;
+      color: var(--text-muted);
+      background: var(--hover-bg);
+      border-radius: 4px;
+      padding: 1px 6px;
+      white-space: nowrap;
+    }
+    .tl-show-more {
+      font-family: var(--font-ui);
+      font-size: 12px;
+      color: var(--accent);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px 0;
+      text-decoration: underline;
+    }
+
+    /* ─── Special rows (sem data / inédito) ─────────────── */
+    .tl-special-group {
+      margin-top: 32px;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .tl-special-card {
+      flex: 1;
+      min-width: 200px;
+      padding: 20px 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+    .tl-special-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 4px 16px var(--shadow);
+    }
+    .tl-special-card__label {
+      font-family: var(--font-ui);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .tl-special-card__count {
+      font-family: var(--font-content, 'Crimson Pro', serif);
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+    .tl-special-card__desc {
+      font-family: var(--font-ui);
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* ─── Loading ─────────────────────────────────────── */
+    .tl-loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px;
+      gap: 16px;
+      color: var(--text-muted);
+      font-family: var(--font-ui);
+    }
+
+    @media (max-width: 600px) {
+      .timeline-track::before { left: 70px; }
+      .tl-year-label { width: 70px; padding-right: 20px; }
+      .tl-year-body { padding-left: 20px; }
+      .tl-year-dot { right: -4px; }
+    }
+  </style>
+</head>
+<body class="page-browse">
+
+<!-- ─── Header ──────────────────────────────────────────────── -->
+<header class="header" role="banner">
+  <a href="browse.html" class="header__logo" aria-label="Mioshie Zenshu">
+    <div class="logo-circle" aria-hidden="true"><div class="logo-dot"></div></div>
+    <span>Mioshie Zenshu</span>
+  </a>
+  <nav class="header__nav" aria-label="Navegação principal">
+    <a href="browse.html">Ensinamentos</a>
+    <a href="reader.html">Leitor</a>
+    <a href="poems.html">Gosanka</a>
+    <a href="library.html">Biblioteca</a>
+    <a href="timeline.html" class="active">Timeline</a>
+  </nav>
+  <!-- Controls injected by app.js -->
+</header>
+
+<!-- ─── Main ────────────────────────────────────────────────── -->
+<main class="timeline-page" role="main">
+
+  <div class="timeline-hero">
+    <div class="timeline-hero__label">Cronologia</div>
+    <h1 class="timeline-hero__title">Timeline dos Ensinamentos</h1>
+    <p class="timeline-hero__sub" id="tlHeroSub">Carregando…</p>
+  </div>
+
+  <!-- Era filter -->
+  <div class="timeline-filters" id="tlFilters" style="display:none">
+    <button class="tl-filter-btn active" data-era="all" onclick="setEraFilter('all')">Todas as eras</button>
+    <button class="tl-filter-btn" data-era="early" onclick="setEraFilter('early')">Fase Inicial (S5–S16)</button>
+    <button class="tl-filter-btn" data-era="war" onclick="setEraFilter('war')">S17–18 (Guerra)</button>
+    <button class="tl-filter-btn" data-era="postwar" onclick="setEraFilter('postwar')">S22–23 (Pós-guerra)</button>
+    <button class="tl-filter-btn" data-era="mature" onclick="setEraFilter('mature')">S24–30 (Maturidade)</button>
+  </div>
+
+  <!-- Timeline track -->
+  <div id="tlTrack">
+    <div class="tl-loading">
+      <div class="reader-loading__spinner"></div>
+      <span>Carregando índice…</span>
+    </div>
+  </div>
+
+</main>
+
+<!-- Toast -->
+<div id="siteToast" class="toast" role="status" aria-live="polite"></div>
+
+<!-- Footer -->
+<footer class="footer" role="contentinfo">
+  <div class="footer__inner">
+    <div class="footer__logo">
+      <div class="logo-circle logo-circle--sm" aria-hidden="true"><div class="logo-dot"></div></div>
+      <span>Mioshie Zenshu</span>
+    </div>
+    <p class="footer__copy">
+      <span class="lang-pt">Mioshie Zenshu — Biblioteca Sagrada dos Ensinamentos de Meishu-Sama.</span>
+      <span class="lang-ja" style="display:none">御教え全集 — 明主様御教え聖典図書館。</span>
+    </p>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script src="js/app.js?v=2" defer></script>
+<script defer>
+const IDX_URL = 'data/search/advanced_search_index.json';
+
+// Era groups for filter
+const ERA_MAP = {
+  early:   y => y && y <= 1941,
+  war:     y => y && y >= 1942 && y <= 1943,
+  postwar: y => y && y >= 1947 && y <= 1948,
+  mature:  y => y && y >= 1949 && y <= 1955,
+};
+
+let _idx = null;
+let _currentEra = 'all';
+
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const res = await fetch(IDX_URL);
+  _idx = await res.json();
+  renderTimeline();
+});
+
+window.setEraFilter = function(era) {
+  _currentEra = era;
+  document.querySelectorAll('.tl-filter-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.era === era);
+  });
+  // Show/hide era groups
+  document.querySelectorAll('[data-era-group]').forEach(el => {
+    const g = el.dataset.eraGroup;
+    if (era === 'all') {
+      el.classList.remove('hidden');
+    } else {
+      el.classList.toggle('hidden', g !== era);
+    }
+  });
+};
+
+window.toggleYear = function(el) {
+  el.classList.toggle('open');
+};
+
+window.showMoreTeachings = function(btn, id) {
+  const container = btn.closest('.tl-year-teachings');
+  const hidden = container.querySelectorAll('.tl-teaching-item.more-hidden');
+  hidden.forEach(item => item.classList.remove('more-hidden'));
+  btn.remove();
+};
+
+function renderTimeline() {
+  const track = document.getElementById('tlTrack');
+
+  // Group by year
+  const byYear = {};
+  let noYear = [];
+  let inedito = [];
+
+  for (const x of _idx) {
+    if (x.unpublished) { inedito.push(x); continue; }
+    if (!x.year) { noYear.push(x); continue; }
+    if (!byYear[x.year]) byYear[x.year] = [];
+    byYear[x.year].push(x);
+  }
+
+  const years = Object.keys(byYear).map(Number).sort((a, b) => a - b);
+
+  // Determine era group per year
+  function eraGroup(y) {
+    if (y <= 1941) return 'early';
+    if (y <= 1943) return 'war';
+    if (y <= 1948) return 'postwar';
+    return 'mature';
+  }
+
+  // Update hero subtitle
+  const sub = document.getElementById('tlHeroSub');
+  if (sub) sub.textContent = `${_idx.length.toLocaleString()} ensinamentos · ${years.length} anos · ${Object.keys(byYear).length} períodos documentados`;
+
+  // Show filters
+  const filtersEl = document.getElementById('tlFilters');
+  if (filtersEl) filtersEl.style.display = '';
+
+  let html = '<div class="timeline-track">';
+
+  for (const year of years) {
+    const items = byYear[year];
+    const showa = year - 1925;
+    const era = eraGroup(year);
+
+    // Count publications for this year
+    const pubCounts = {};
+    for (const x of items) {
+      const p = x.publication || '';
+      if (p) pubCounts[p] = (pubCounts[p] || 0) + 1;
+    }
+    const topPubs = Object.entries(pubCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+
+    // Build teachings list (max 20 shown, rest hidden)
+    const SHOW_MAX = 20;
+    const teachingsHtml = items.map((x, i) => {
+      const href = x.part_file
+        ? `reader.html?id=${encodeURIComponent(x.id)}&part=${encodeURIComponent(x.part_file)}`
+        : `reader.html?id=${encodeURIComponent(x.id)}`;
+      const hidden = i >= SHOW_MAX ? ' more-hidden' : '';
+      const pubShort = x.publication ? x.publication.substring(0, 40) : '';
+      return `<div class="tl-teaching-item${hidden}">
+        <a href="${esc(href)}" class="tl-teaching-title">${esc(x.title || '(sem título)')}</a>
+        ${pubShort ? `<span class="tl-teaching-pub">${esc(pubShort)}</span>` : ''}
+      </div>`;
+    }).join('');
+
+    const showMoreBtn = items.length > SHOW_MAX
+      ? `<button class="tl-show-more" onclick="showMoreTeachings(this)">+ ${items.length - SHOW_MAX} mais ensinamentos</button>`
+      : '';
+
+    const pubChips = topPubs.map(([pub, cnt]) =>
+      `<a href="browse.html?pub=${encodeURIComponent(pub)}" class="tl-pub-chip" title="${esc(cnt + ' ensinamentos')}">${esc(pub.substring(0,30))}${pub.length > 30 ? '…' : ''}</a>`
+    ).join('');
+
+    html += `
+      <div class="tl-era-group" data-era-group="${era}">
+        <div class="tl-year-row" onclick="toggleYear(this)">
+          <div class="tl-year-label">
+            <div class="tl-year-showa">S${showa}</div>
+            <div class="tl-year-greg">${year}</div>
+            <div class="tl-year-dot"></div>
+          </div>
+          <div class="tl-year-body">
+            <div class="tl-year-header">
+              <span class="tl-year-count">${items.length} ensinamentos</span>
+              <div class="tl-year-pubs">${pubChips}</div>
+              <span class="tl-toggle-icon">›</span>
+            </div>
+          </div>
+        </div>
+        <div class="tl-year-teachings">
+          ${teachingsHtml}
+          ${showMoreBtn}
+        </div>
+      </div>`;
+  }
+
+  html += '</div>';
+
+  // Special cards
+  html += `<div class="tl-special-group">
+    <a href="browse.html?era=semdata" class="tl-special-card">
+      <div class="tl-special-card__label">Sem data</div>
+      <div class="tl-special-card__count">${noYear.length}</div>
+      <div class="tl-special-card__desc">ensinamentos sem data conhecida</div>
+    </a>
+    <a href="browse.html?era=inedito" class="tl-special-card">
+      <div class="tl-special-card__label">Não publicados / Inéditos</div>
+      <div class="tl-special-card__count">${inedito.length}</div>
+      <div class="tl-special-card__desc">ensinamentos inéditos ou não publicados</div>
+    </a>
+  </div>`;
+
+  track.innerHTML = html;
+
+  // Handle .more-hidden via CSS
+  const style = document.createElement('style');
+  style.textContent = '.tl-teaching-item.more-hidden { display: none; }';
+  document.head.appendChild(style);
+}
+</script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(() => {}); });
+  }
+</script>
+</body>
+</html>

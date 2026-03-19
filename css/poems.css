@@ -1,0 +1,398 @@
+/* =============================================================
+   Mioshie Zenshu Modern — poems.css
+   ============================================================= */
+
+/* ─── Layout ─────────────────────────────────────────────────── */
+.poems-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: calc(100vh - var(--nav-height));
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.poems-sidebar {
+  position: sticky;
+  top: var(--nav-height);
+  height: calc(100vh - var(--nav-height));
+  overflow-y: auto;
+  border-right: 1px solid var(--border);
+  padding: 20px 0 40px;
+  background: var(--bg-color);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.poems-sidebar::-webkit-scrollbar { width: 4px; }
+.poems-sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.poems-main {
+  padding: 32px 40px 80px;
+  min-width: 0;
+}
+
+/* ─── Sidebar Sections ───────────────────────────────────────── */
+.sidebar-random {
+  padding: 0 16px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+
+.btn-random {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid var(--accent);
+  border-radius: 20px;
+  background: var(--accent-soft);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  cursor: pointer;
+  transition: all 0.15s var(--ease);
+}
+.btn-random:hover {
+  background: var(--accent);
+  color: var(--bg-color);
+}
+.btn-random svg {
+  width: 14px; height: 14px;
+  stroke: currentColor; fill: none;
+  stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+}
+
+.sidebar-search {
+  padding: 0 16px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+
+.poems-searchbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  transition: border-color 0.15s;
+}
+.poems-searchbox:focus-within { border-color: var(--accent); }
+.poems-searchbox svg {
+  width: 14px; height: 14px;
+  stroke: var(--text-muted); fill: none;
+  stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+  flex-shrink: 0;
+}
+.poems-searchbox input {
+  border: none; background: none; outline: none;
+  font-family: var(--font-ui); font-size: 13px;
+  color: var(--text-main); width: 100%;
+}
+.poems-searchbox input::placeholder { color: var(--text-muted); }
+
+.sidebar-section { padding: 0 16px; margin-bottom: 4px; }
+
+.filter-list { display: flex; flex-direction: column; gap: 2px; }
+
+.filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  text-align: left;
+  padding: 7px 10px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: none;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.12s var(--ease);
+}
+.filter-btn:hover { background: var(--accent-soft); color: var(--text-main); }
+.filter-btn.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+
+.filter-count {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.sidebar-stats {
+  padding: 16px 24px 0;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border);
+  margin-top: 16px;
+}
+
+/* ─── Poems Grid ─────────────────────────────────────────────── */
+.poems-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+.poem-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.18s var(--ease);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.poem-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.07);
+  transform: translateY(-2px);
+}
+
+.poem-card__japanese {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: var(--text-main);
+  letter-spacing: 0.04em;
+}
+
+.poem-card__translation {
+  font-family: var(--font-serif);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  font-style: italic;
+  border-left: 2px solid var(--accent-soft);
+  padding-left: 10px;
+}
+
+.poem-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.poem-mood {
+  background: var(--accent-soft);
+  color: var(--accent);
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+/* Load more */
+.btn-load-more {
+  padding: 12px 32px;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  background: var(--surface);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s var(--ease);
+}
+.btn-load-more:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+/* ─── Poem Detail ─────────────────────────────────────────────── */
+.poem-detail__inner {
+  max-width: 640px;
+}
+
+.poem-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  background: none;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 28px;
+  transition: color 0.15s;
+}
+.poem-back-btn:hover { color: var(--accent); }
+.poem-back-btn svg {
+  width: 14px; height: 14px;
+  stroke: currentColor; fill: none;
+  stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+}
+
+.poem-detail__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 32px;
+}
+
+.chip {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 500;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+.chip--mood {
+  background: var(--accent-soft);
+  border-color: transparent;
+  color: var(--accent);
+}
+.chip--date { font-variant-numeric: tabular-nums; }
+
+/* The poem itself — large, beautiful display */
+.poem-detail__ja {
+  font-family: 'Noto Serif JP', serif;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 600;
+  line-height: 2;
+  letter-spacing: 0.06em;
+  color: var(--text-main);
+  margin-bottom: 20px;
+}
+
+.poem-detail__reading {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 1rem;
+  color: var(--text-muted);
+  line-height: 2;
+  letter-spacing: 0.03em;
+  margin-bottom: 12px;
+}
+
+.poem-detail__romaji {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  font-style: italic;
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+
+.poem-detail__divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 28px 0;
+}
+
+.poem-detail__translation-label {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.poem-detail__pt {
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  line-height: 1.8;
+  font-style: italic;
+  color: var(--text-main);
+  border-left: 3px solid var(--accent);
+  padding-left: 20px;
+  margin: 0 0 24px;
+}
+
+.poem-detail__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 28px;
+}
+
+.tag--sm {
+  font-size: 11px;
+  padding: 3px 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text-muted);
+  font-family: var(--font-ui);
+}
+
+.poem-detail__actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 40px;
+}
+
+.poem-detail__nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+/* Empty state */
+.poems-empty {
+  grid-column: 1 / -1;
+  padding: 60px 0;
+  text-align: center;
+  color: var(--text-muted);
+  font-family: var(--font-ui);
+  font-size: 15px;
+}
+
+/* Loading state */
+.poems-loading {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 0;
+  gap: 20px;
+  color: var(--text-muted);
+  font-family: var(--font-ui);
+  font-size: 15px;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .poems-layout { grid-template-columns: 220px 1fr; }
+  .poems-main   { padding: 24px 24px 60px; }
+  .poems-list   { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+}
+
+@media (max-width: 768px) {
+  .poems-layout { grid-template-columns: 1fr; }
+  .poems-sidebar {
+    position: static;
+    height: auto;
+    max-height: 220px;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    padding: 12px 0;
+  }
+  .poems-main { padding: 20px 16px 60px; }
+  .poems-list { grid-template-columns: 1fr; }
+  .poem-detail__ja { font-size: 1.3rem; }
+  .poem-detail__pt { font-size: 1.1rem; }
+}

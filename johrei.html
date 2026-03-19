@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Johrei — Mioshie Zenshu</title>
+  <meta name="description" content="Série de capítulos sobre a prática do Johrei, em português.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Noto+Serif+JP:wght@400;600&display=swap">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/reader.css">
+
+  <!-- marked.js -->
+  <script src="https://cdn.jsdelivr.net/npm/marked@9/marked.min.js" defer></script>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#B8860B">
+
+  <script>
+    (function() {
+      var t = localStorage.getItem('site_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+
+  <style>
+    .johrei-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 0;
+      min-height: calc(100vh - var(--header-h) - 60px);
+      margin-top: var(--header-h);
+    }
+    .johrei-sidebar {
+      border-right: 1px solid var(--border);
+      padding: 24px 0;
+      overflow-y: auto;
+      position: sticky;
+      top: var(--header-h);
+      height: calc(100vh - var(--header-h));
+      background: var(--surface);
+    }
+    .johrei-sidebar-title {
+      font-family: var(--font-ui);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 0 20px 12px;
+    }
+    .johrei-sidebar-group {
+      padding: 16px 20px 4px;
+      font-family: var(--font-ui);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .johrei-nav-item {
+      display: block;
+      padding: 9px 20px;
+      font-family: var(--font-ui);
+      font-size: 13px;
+      color: var(--text-main);
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: all 0.15s;
+      line-height: 1.4;
+    }
+    .johrei-nav-item:hover {
+      background: var(--hover-bg);
+      color: var(--accent);
+    }
+    .johrei-nav-item.active {
+      border-left-color: var(--accent);
+      background: var(--hover-bg);
+      color: var(--accent);
+      font-weight: 500;
+    }
+    .johrei-main {
+      padding: 40px;
+      max-width: 760px;
+    }
+    .johrei-loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 40px;
+      color: var(--text-muted);
+      gap: 16px;
+      font-family: var(--font-ui);
+    }
+    .johrei-browse {
+      padding: 40px;
+    }
+    .johrei-browse h1 {
+      font-family: var(--font-ui);
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+    .johrei-browse-pub {
+      font-family: var(--font-ui);
+      font-size: 13px;
+      color: var(--text-muted);
+      margin: 20px 0 8px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .johrei-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+      margin-top: 8px;
+      margin-bottom: 32px;
+    }
+    .johrei-card {
+      display: block;
+      padding: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      text-decoration: none;
+      color: var(--text-main);
+      transition: all 0.2s;
+    }
+    .johrei-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px var(--shadow);
+    }
+    .johrei-card__pub {
+      font-size: 11px;
+      font-family: var(--font-ui);
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .johrei-card__title {
+      font-size: 15px;
+      font-weight: 500;
+      font-family: var(--font-ui);
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+    .johrei-card__snippet {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    @media (max-width: 768px) {
+      .johrei-layout {
+        grid-template-columns: 1fr;
+      }
+      .johrei-sidebar {
+        display: none;
+      }
+      .johrei-main, .johrei-browse {
+        padding: 24px 16px;
+      }
+    }
+  </style>
+</head>
+<body class="page-reader">
+
+<!-- ─── Header ──────────────────────────────────────────────── -->
+<header class="header" role="banner">
+  <a href="browse.html" class="header__logo" aria-label="Mioshie Zenshu">
+    <div class="logo-circle" aria-hidden="true"><div class="logo-dot"></div></div>
+    <span>Mioshie Zenshu</span>
+  </a>
+  <nav class="header__nav" aria-label="Navegação principal">
+    <a href="browse.html">Ensinamentos</a>
+    <a href="reader.html">Leitor</a>
+    <a href="poems.html">Gosanka</a>
+    <a href="library.html">Biblioteca</a>
+    <a href="johrei.html" class="active">Johrei</a>
+  </nav>
+  <!-- Controls injected by app.js -->
+</header>
+
+<!-- ─── Layout ──────────────────────────────────────────────── -->
+<div class="johrei-layout" id="johreiLayout">
+
+  <!-- Sidebar -->
+  <aside class="johrei-sidebar" id="johreiSidebar">
+    <div class="johrei-sidebar-title">
+      <span class="lang-pt">Johrei — Luz Divina</span>
+      <span class="lang-ja" style="display:none">浄霊法講座</span>
+    </div>
+    <div id="sidebarContent">
+      <!-- populated by JS -->
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="johrei-main" id="johreiMain" role="main">
+    <div id="johreiContent">
+      <div class="johrei-loading">
+        <div class="reader-loading__spinner"></div>
+        <p class="lang-pt">Carregando capítulos…</p>
+        <p class="lang-ja" style="display:none">読み込み中…</p>
+      </div>
+    </div>
+  </main>
+
+</div>
+
+<!-- Toast -->
+<div id="siteToast" class="toast" role="status" aria-live="polite"></div>
+
+<!-- Footer -->
+<footer class="footer" role="contentinfo">
+  <div class="footer__inner">
+    <div class="footer__logo">
+      <div class="logo-circle logo-circle--sm" aria-hidden="true"><div class="logo-dot"></div></div>
+      <span>Mioshie Zenshu</span>
+    </div>
+    <p class="footer__copy">
+      <span class="lang-pt">Mioshie Zenshu — Biblioteca Sagrada dos Ensinamentos de Meishu-Sama.</span>
+      <span class="lang-ja" style="display:none">御教え全集 — 明主様御教え聖典図書館。</span>
+    </p>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script src="js/app.js?v=2" defer></script>
+<script defer>
+// Johrei page logic
+const JOHREI_DATA = 'data/johrei/johrei_chapters_extracted.json';
+let _allJohrei = null;
+let _currentJohrei = null;
+
+function escHtml(s) {
+  if (!s) return '';
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function stripMd(str) {
+  if (!str) return '';
+  return str.replace(/^#{1,6}\s+/gm,'').replace(/\*\*([^*]+)\*\*/g,'$1').replace(/\*([^*]+)\*/g,'$1').replace(/\n+/g,' ').trim();
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadJohrei();
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  if (id) openJohrei(id);
+  else showBrowse();
+});
+
+async function loadJohrei() {
+  if (_allJohrei) return;
+  const res = await fetch(JOHREI_DATA);
+  _allJohrei = await res.json();
+}
+
+function showBrowse() {
+  const content = document.getElementById('johreiContent');
+  const main = document.getElementById('johreiMain');
+  main.className = '';
+  main.style.maxWidth = '';
+  main.style.padding = '0';
+
+  buildSidebar(null);
+
+  // Agrupar por publicação
+  const byPub = {};
+  for (const item of _allJohrei) {
+    const pub = item.publication || 'Outros';
+    if (!byPub[pub]) byPub[pub] = [];
+    byPub[pub].push(item);
+  }
+
+  let html = `
+    <div class="johrei-browse">
+      <h1 class="lang-pt">Johrei — Luz Divina</h1>
+      <p style="color:var(--text-muted);font-family:var(--font-ui);font-size:14px;margin:4px 0 24px">${_allJohrei.length} capítulos</p>`;
+
+  for (const [pub, items] of Object.entries(byPub)) {
+    const cards = items.map(k => {
+      const snippet = stripMd(k.content_ptbr || k.content_snippet || '').substring(0, 140);
+      return `<a href="johrei.html?id=${encodeURIComponent(k.id)}" class="johrei-card" onclick="navigateJohrei('${escHtml(k.id)}'); return false;">
+        <div class="johrei-card__pub">${escHtml(pub)}</div>
+        <div class="johrei-card__title">${escHtml(k.title || '')}</div>
+        ${snippet ? `<div class="johrei-card__snippet">${escHtml(snippet)}…</div>` : ''}
+      </a>`;
+    }).join('');
+
+    html += `<div class="johrei-browse-pub">${escHtml(pub)}</div>
+      <div class="johrei-grid">${cards}</div>`;
+  }
+
+  html += `</div>`;
+  content.innerHTML = html;
+}
+
+function buildSidebar(activeId) {
+  if (!_allJohrei) return;
+
+  // Agrupar por publicação para o sidebar
+  const byPub = {};
+  for (const item of _allJohrei) {
+    const pub = item.publication || 'Outros';
+    if (!byPub[pub]) byPub[pub] = [];
+    byPub[pub].push(item);
+  }
+
+  let html = '';
+  for (const [pub, items] of Object.entries(byPub)) {
+    html += `<div class="johrei-sidebar-group">${escHtml(pub)}</div>`;
+    html += items.map(k => {
+      const isActive = k.id === activeId;
+      return `<a href="johrei.html?id=${encodeURIComponent(k.id)}" class="johrei-nav-item${isActive ? ' active' : ''}" onclick="navigateJohrei('${escHtml(k.id)}'); return false;">${escHtml(k.title || '')}</a>`;
+    }).join('');
+  }
+
+  document.getElementById('sidebarContent').innerHTML = html;
+
+  if (activeId) {
+    setTimeout(() => {
+      document.querySelector('.johrei-nav-item.active')?.scrollIntoView({ block: 'nearest' });
+    }, 100);
+  }
+}
+
+function openJohrei(id) {
+  const item = _allJohrei?.find(k => k.id === id);
+  if (!item) { showBrowse(); return; }
+  _currentJohrei = item;
+
+  const idx = _allJohrei.findIndex(k => k.id === id);
+  const prev = idx > 0 ? _allJohrei[idx - 1] : null;
+  const next = idx < _allJohrei.length - 1 ? _allJohrei[idx + 1] : null;
+
+  const rawContent = item.content_ptbr || item.content_snippet || '';
+
+  let htmlContent;
+  if (typeof marked !== 'undefined') {
+    htmlContent = marked.parse(rawContent);
+  } else {
+    htmlContent = rawContent.split(/\n{2,}/).filter(Boolean).map(p => `<p>${p.replace(/\n/g,'<br>')}</p>`).join('');
+  }
+
+  const main = document.getElementById('johreiMain');
+  const content = document.getElementById('johreiContent');
+  main.className = 'johrei-main';
+
+  buildSidebar(id);
+
+  const catLabel = [item.publication, item.category].filter(Boolean).join(' · ');
+
+  content.innerHTML = `
+    <nav class="breadcrumbs" aria-label="Caminho">
+      <a href="johrei.html" onclick="showBrowse();return false;" class="lang-pt">Johrei</a>
+      <span> / </span>
+      <span>${escHtml(item.title || '')}</span>
+    </nav>
+    <article class="teaching-article">
+      <header class="teaching-header">
+        ${catLabel ? `<div class="teaching-category lang-pt">${escHtml(catLabel)}</div>` : ''}
+        <h1 class="teaching-title">${escHtml(item.title || '')}</h1>
+        <div class="teaching-actions">
+          <button class="action-btn" onclick="toggleFavJohrei()" id="johreiFavBtn" title="Salvar">
+            <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            <span class="lang-pt">Salvar</span>
+          </button>
+        </div>
+      </header>
+      <div class="reader-content" id="johreiText">${htmlContent}</div>
+      <div class="reader-nav-footer">
+        ${prev ? `<a href="johrei.html?id=${encodeURIComponent(prev.id)}" class="nav-footer-btn" onclick="navigateJohrei('${escHtml(prev.id)}');return false;"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg><span>Anterior</span></a>` : '<span></span>'}
+        ${next ? `<a href="johrei.html?id=${encodeURIComponent(next.id)}" class="nav-footer-btn nav-footer-btn--next" onclick="navigateJohrei('${escHtml(next.id)}');return false;"><span>Próximo</span><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>` : '<span></span>'}
+      </div>
+    </article>`;
+
+  document.title = `${item.title || 'Johrei'} — Mioshie Zenshu`;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+window.navigateJohrei = function(id) {
+  window.history.pushState({ id }, '', `johrei.html?id=${encodeURIComponent(id)}`);
+  openJohrei(id);
+};
+
+window.toggleFavJohrei = function() {
+  if (!_currentJohrei) return;
+  let favs = [];
+  try { favs = JSON.parse(localStorage.getItem('zenshu_favorites') || '[]'); } catch(e) {}
+  const idx = favs.findIndex(f => f.id === _currentJohrei.id);
+  if (idx !== -1) favs.splice(idx, 1);
+  else favs.unshift({ id: _currentJohrei.id, title: _currentJohrei.title, cat: 'Johrei', time: Date.now() });
+  try { localStorage.setItem('zenshu_favorites', JSON.stringify(favs.slice(0,100))); } catch(e) {}
+  showToast?.(idx !== -1 ? 'Removido dos salvos' : 'Salvo!');
+};
+
+window.addEventListener('popstate', () => {
+  const id = new URLSearchParams(window.location.search).get('id');
+  if (id) openJohrei(id); else showBrowse();
+});
+</script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(() => {}); });
+  }
+</script>
+</body>
+</html>
