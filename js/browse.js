@@ -52,7 +52,8 @@ const CONTENT_TYPES = [
   { id: 'ensaio',       label: '御論文',           match: x => urlPrefix(x) === 'search1',                        css: 'type-ensaio'   },
 
   // 編纂・翻訳 — search2 subfolders
-  { id: 'revelacao',    label: '御垂示録',         match: x => folder2(x) === 'okage' || urlPrefix(x) === 'gosuiji', css: 'type-revelacao'},
+  { id: 'okage',        label: 'お陰話',           match: x => folder2(x) === 'okage', css: 'type-other' },
+  { id: 'revelacao',    label: '御垂示録',         match: x => urlPrefix(x) === 'gosuiji', css: 'type-revelacao'},
   { id: 'viagem',       label: '御光話録',         match: x => folder2(x) === 'kikou' || folder2(x) === 'kikou2', css: 'type-viagem'   },
   { id: 'jorei',        label: '浄霊法講座',       match: x => folder2(x) === 'jorei',                            css: 'type-other'    },
   { id: 'sanko',        label: '参考資料',         match: x => folder2(x) === 'sanko',                            css: 'type-other'    },
@@ -228,7 +229,7 @@ function populateCounts() {
   set('countSasshi',      _typeCounts['sasshi']       || 0);
   set('countHakkousi',    _typeCounts['hakkousi']     || 0);
   set('countKanren',      _typeCounts['kanren']       || 0);
-  set('countOkage',       _typeCounts['revelacao']    || 0);
+  set('countOkage',       _typeCounts['okage']        || 0);
 }
 
 function buildEraGrid() {
