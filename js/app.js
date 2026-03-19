@@ -63,6 +63,11 @@ let searchLoading = false;
 
 // ─── Init ─────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+  if (sessionStorage.getItem('mioshie_auth') !== 'true') {
+    renderLoginOverlay();
+    return;
+  }
+  document.documentElement.style.display = '';
   applyTheme(currentTheme, false);
   applyLanguage(currentLang, false);
   buildHeader();
@@ -70,6 +75,72 @@ document.addEventListener('DOMContentLoaded', () => {
   buildThemePanel();
   buildToast();
 });
+
+function renderLoginOverlay() {
+  document.documentElement.style.display = '';
+  
+  const overlay = document.createElement('div');
+  overlay.className = 'login-overlay';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg,#F8F9F5);z-index:9999999;display:flex;align-items:center;justify-content:center;font-family:"Outfit",sans-serif;color:var(--text,#333);';
+  
+  overlay.innerHTML = `
+    <div style="background:var(--surface,#fff);padding:40px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.1);text-align:center;max-width:400px;width:90%;">
+      <div style="margin-bottom:20px;display:inline-block;">
+        <div style="width:48px;height:48px;border-radius:50%;background:#B8860B;margin:0 auto;display:flex;align-items:center;justify-content:center;">
+          <div style="width:12px;height:12px;background:#fff;border-radius:50%;"></div>
+        </div>
+      </div>
+      <h2 style="margin-top:0;margin-bottom:10px;font-weight:600;font-size:1.5rem;">Mioshie Zenshu</h2>
+      <p style="margin-bottom:24px;font-size:0.95rem;color:var(--text-muted,#666);">Por favor, insira a senha de acesso.</p>
+      <input type="password" id="loginPwInput" placeholder="Senha" style="width:100%;padding:12px;margin-bottom:15px;border:1px solid #ccc;border-radius:6px;font-size:1rem;font-family:inherit;box-sizing:border-box;text-align:center;">
+      <button id="loginSubmitBtn" style="width:100%;padding:12px;background:#B8860B;color:#fff;border:none;border-radius:6px;font-size:1rem;font-weight:600;cursor:pointer;transition:background 0.2s;">Entrar</button>
+      <div id="loginErrorMsg" style="color:#d32f2f;margin-top:12px;font-size:0.9rem;display:none;">Senha incorreta. Tente novamente.</div>
+    </div>
+  `;
+  
+  Array.from(document.body.children).forEach(child => {
+    if (child.style) {
+      child.dataset.originalDisplay = child.style.display || '';
+      child.style.display = 'none';
+    }
+  });
+  
+  document.body.appendChild(overlay);
+
+  const submitBtn = overlay.querySelector('#loginSubmitBtn');
+  const pwInput = overlay.querySelector('#loginPwInput');
+  const errorMsg = overlay.querySelector('#loginErrorMsg');
+
+  const attemptLogin = () => {
+    if (pwInput.value === 'Mioshie?567') {
+      sessionStorage.setItem('mioshie_auth', 'true');
+      overlay.remove();
+      Array.from(document.body.children).forEach(child => {
+        if (child.style && child.dataset.originalDisplay !== undefined) {
+          child.style.display = child.dataset.originalDisplay;
+          delete child.dataset.originalDisplay;
+        }
+      });
+      applyTheme(currentTheme, false);
+      applyLanguage(currentLang, false);
+      buildHeader();
+      buildMobileNav();
+      buildThemePanel();
+      buildToast();
+    } else {
+      errorMsg.style.display = 'block';
+      pwInput.value = '';
+      pwInput.focus();
+    }
+  };
+
+  submitBtn.addEventListener('click', attemptLogin);
+  pwInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') attemptLogin();
+  });
+  
+  setTimeout(() => pwInput.focus(), 100);
+}
 
 // ─── Theme ───────────────────────────────────────────────────
 function applyTheme(theme, save = true) {
