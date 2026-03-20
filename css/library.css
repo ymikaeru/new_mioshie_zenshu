@@ -324,6 +324,41 @@
   align-self: flex-start;
 }
 
+/* Edition count badge (grouped works) */
+.pub-card__ed-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.62);
+  color: #e8c97a;
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 3px 7px;
+  border-radius: 20px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  pointer-events: none;
+  user-select: none;
+}
+
+.pub-list-item__ed-count {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-soft);
+  padding: 2px 7px;
+  border-radius: 10px;
+}
+
+.era-stat-sub {
+  font-size: 11px;
+  font-weight: 400;
+  opacity: 0.7;
+}
+
 /* ─── List View ───────────────────────────────────────────────── */
 .pub-list {
   display: flex;

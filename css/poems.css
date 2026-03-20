@@ -30,6 +30,65 @@
   min-width: 0;
 }
 
+/* ─── Back to library link ──────────────────────────────────── */
+.poems-back-to-library {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--text-muted);
+  text-decoration: none;
+  margin-bottom: 20px;
+  transition: color 0.2s;
+}
+.poems-back-to-library:hover { color: var(--accent); }
+
+/* ─── Book collection banner ────────────────────────────────── */
+.poems-book-banner {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: var(--accent-soft);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 24px;
+}
+.poems-book-banner__ja {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+.poems-book-banner__pt {
+  font-family: var(--font-serif);
+  font-size: 13px;
+  color: var(--text-muted);
+  flex: 1;
+}
+.poems-book-banner__count {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--bg-color);
+  padding: 2px 8px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+
+/* ─── Book source tag on poem cards ─────────────────────────── */
+.poem-book-tag {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 10px;
+  color: var(--accent);
+  background: var(--accent-soft);
+  padding: 1px 6px;
+  border-radius: 8px;
+}
+
 /* ─── Sidebar Sections ───────────────────────────────────────── */
 .sidebar-random {
   padding: 0 16px 16px;

@@ -13,6 +13,7 @@ const PAGE_SIZE  = 40;
 let _activeCategory = '';
 let _activeMood     = '';
 let _searchTerm     = '';
+let _bookFilter     = '';  // filter by source book (e.g. 'waraino.html')
 
 // ─── Init ─────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
@@ -35,11 +36,41 @@ async function loadPoems() {
     const res  = await fetch('data/poetry/gosanka_enriched.json');
     _allPoems  = await res.json();
 
+    // Check for ?book= filter (e.g. from library modal)
+    const params = new URLSearchParams(window.location.search);
+    _bookFilter = params.get('book') || '';
+
+    const BOOK_TITLES = {
+      'waraino.html': { ja: '笑の泉', pt: 'A Fonte do Riso — Coletânea de Haicais Humorísticos' },
+      'akemaro.html': { ja: '明麿近詠集', pt: 'Akemaro — Coletânea de Poemas Recentes' },
+      'sanka1.html':  { ja: '讃歌集 第一', pt: 'Sanka-shu Vol. I' },
+      'sanka2.html':  { ja: '讃歌集 第二', pt: 'Sanka-shu Vol. II' },
+    };
+
+    if (_bookFilter) {
+      _allPoems = _allPoems.filter(p =>
+        (p.book === _bookFilter) || (p.source_book === _bookFilter)
+      );
+      // Show back link to library
+      const backEl = document.getElementById('poemsBackToLibrary');
+      if (backEl) backEl.style.display = '';
+      // Show book banner
+      const bookInfo = BOOK_TITLES[_bookFilter];
+      const bannerEl = document.getElementById('poemsBookBanner');
+      if (bannerEl && bookInfo) {
+        bannerEl.innerHTML = `
+          <span class="poems-book-banner__ja">${bookInfo.ja}</span>
+          <span class="poems-book-banner__pt">${bookInfo.pt}</span>
+          <span class="poems-book-banner__count" id="poemsBookCount">${_allPoems.length} poemas</span>`;
+        bannerEl.style.display = 'flex';
+      }
+    }
+
     buildFilters();
     applyFilters();
 
     // Check if URL has a poem id
-    const id = new URLSearchParams(window.location.search).get('poem');
+    const id = params.get('poem');
     if (id) {
       const poem = _allPoems.find(p => p.id === id);
       if (poem) showPoem(poem);
@@ -194,6 +225,7 @@ function buildPoemCard(poem, isPt) {
         ${mood ? `<span class="poem-mood">${moodEmoji[mood]||'◦'} ${escHtml(mood)}</span>` : ''}
         ${date ? `<span>${escHtml(date)}</span>` : ''}
         ${cat  ? `<span>${escHtml(cat)}</span>`  : ''}
+        ${!_bookFilter && poem.book === 'waraino.html' ? `<span class="poem-book-tag">笑の泉</span>` : ''}
       </div>
     </article>`;
 }
