@@ -14,7 +14,7 @@
 
   <!-- Styles -->
   <link rel="stylesheet" href="css/styles.css">
-  <link rel="stylesheet" href="css/browse.css">
+  <link rel="stylesheet" href="css/browse.css?v=2">
 
   <!-- PWA -->
   <link rel="manifest" href="manifest.json">
@@ -220,8 +220,8 @@
           <tr>
             <th class="col-num">#</th>
             <th class="col-title sortable" data-col="title" onclick="setSort('title')">Título</th>
-            <th class="col-pub">Publicação</th>
-            <th class="col-issue">Edição</th>
+            <th class="col-pub sortable" data-col="pub" onclick="setSort('pub')">Publicação</th>
+            <th class="col-issue sortable" data-col="page" onclick="setSort('page')">Edição</th>
             <th class="col-era sortable sort-asc" data-col="era" onclick="setSort('era')">Era</th>
             <th class="col-notes">Notas</th>
             <th class="col-read">
@@ -261,7 +261,7 @@
 
 <!-- Scripts -->
 <script src="js/app.js?v=3" defer></script>
-<script src="js/browse.js?v=5" defer></script>
+<script src="js/browse.js?v=6" defer></script>
 
 <script>
 window.toggleSection = function(id) {

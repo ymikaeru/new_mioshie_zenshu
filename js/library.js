@@ -629,7 +629,12 @@ function openModal(pub) {
 function renderEditionsTable(hakData, pub) {
   const perEditionMap = HAKKOUSI_EDITION_PUB_MAP[hakData.file] || null;
 
-  const cards = hakData.editions.map((ed, edIdx) => {
+  // Sort editions by year ascending (oldest first), preserving original index for perEditionMap
+  const sortedEditions = hakData.editions
+    .map((ed, origIdx) => ({ ed, origIdx }))
+    .sort((a, b) => (a.ed.year || 9999) - (b.ed.year || 9999));
+
+  const cards = sortedEditions.map(({ ed, origIdx: edIdx }) => {
     // 1. Meta line: Date, Year, Format, Pages, Price
     const metaItems = [];
     if (ed.date_showa) metaItems.push(`<span class="ed-meta-date">${escHtml(ed.date_showa)}</span>`);

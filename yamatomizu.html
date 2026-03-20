@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <script>if(sessionStorage.getItem('mioshie_auth')!=='true')document.documentElement.style.display='none';</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yama to Mizu — 山と水 — Mioshie Zenshu</title>
+  <meta name="description" content="Antologia poética 山と水 (Yama to Mizu — Montanha e Água) de Meishu-Sama. 1.238 tanka com comentários sobre kigo, kototama e profundidade espiritual.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400;1,600&family=Noto+Serif+JP:wght@400;600;700&display=swap">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/yamatomizu.css?v=4">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#B8860B">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Mioshie Zenshu">
+
+  <!-- Apply theme before render -->
+  <script>
+    (function() {
+      var t = localStorage.getItem('site_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+</head>
+<body class="page-yamatomizu">
+
+<!-- ─── Header ─────────────────────────────────────────────── -->
+<header class="header" role="banner">
+  <a href="browse.html" class="header__logo" aria-label="Mioshie Zenshu">
+    <div class="logo-circle" aria-hidden="true"><div class="logo-dot"></div></div>
+    <span>Mioshie Zenshu</span>
+  </a>
+  <nav class="header__nav" aria-label="Navegação principal">
+    <a href="browse.html">Ensinamentos</a>
+    <a href="reader.html">Leitor</a>
+    <a href="poems.html">Gosanka</a>
+    <a href="library.html">Biblioteca</a>
+    <a href="yamatomizu.html" class="active">Yama to Mizu</a>
+  </nav>
+  <!-- Controls injected by app.js -->
+</header>
+
+<!-- ─── Main Layout ───────────────────────────────────────── -->
+<div class="ym-layout" id="ymLayout">
+
+  <!-- ── Toolbar ──────────────────────────────────────────── -->
+  <div class="ym-toolbar" role="toolbar" aria-label="Controles Yama to Mizu">
+
+    <div class="ym-toolbar__brand">
+      <span class="ym-toolbar__title">山と水</span>
+      <span class="ym-toolbar__subtitle">Yama to Mizu</span>
+    </div>
+    <div class="ym-toolbar__sep" aria-hidden="true"></div>
+
+    <!-- Search -->
+    <div class="ym-toolbar__search" role="search">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input
+        type="search"
+        id="ymSearchInput"
+        placeholder="Buscar poema…"
+        aria-label="Buscar nos poemas"
+        oninput="onSearch(this.value)"
+      >
+    </div>
+
+    <!-- Counter -->
+    <span class="ym-counter" id="ymCounter" aria-live="polite"></span>
+  </div>
+
+  <!-- ── Left sidebar — Sections ──────────────────────────── -->
+  <aside class="ym-sidebar" id="ymSidebar" aria-label="Seções da antologia">
+    <div class="ym-sidebar__header">Seções</div>
+    <div id="ymSections">
+      <!-- Populated by yamatomizu.js -->
+      <div class="ym-empty" style="padding:40px 16px">
+        <div class="ym-empty__icon">🌿</div>
+        <div class="ym-empty__text">Carregando seções…</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Center — Poem viewer ─────────────────────────────── -->
+  <main class="ym-center" id="ymCenter" role="main" aria-label="Poema">
+    <div class="ym-empty">
+      <div class="ym-empty__icon">山</div>
+      <div class="ym-empty__text">Selecione uma seção para começar</div>
+    </div>
+  </main>
+
+  <!-- ── Right panel — Commentary ─────────────────────────── -->
+  <aside class="ym-commentary" id="ymCommentary" aria-label="Comentário e estudo">
+    <!-- Populated by yamatomizu.js -->
+  </aside>
+
+</div>
+
+<!-- Scripts -->
+<script src="js/app.js" defer></script>
+<script src="js/yamatomizu.js?v=3" defer></script>
+</body>
+</html>

@@ -145,6 +145,21 @@ async function loadIndex() {
     for (const ct of CONTENT_TYPES) {
       if (ct.match(x)) { x._type = ct.id; break; }
     }
+    // ─── Title normalization ───────────────────────────────────
+    // gosuiji (revelacao): always "Gosuijiroku N" from URL
+    if (x._type === 'revelacao') {
+      const m = (x.url||'').match(/sui(\d+)/i);
+      if (m) x.title = `Gosuijiroku ${parseInt(m[1], 10)}`;
+    // miosie whole-issue pages: "Mioshieshu N" from URL
+    } else if (/miosie\/miosie\d+/i.test(x.url||'')) {
+      const m = (x.url||'').match(/miosie(\d+)/i);
+      if (m) x.title = `Mioshieshu ${parseInt(m[1], 10)}`;
+    // Others: strip "Coletânea/Coleção de X —" header artifact
+    } else {
+      const raw = x.title || '';
+      const dm = raw.match(/^(?:D[ao]\s+)?(?:Coletânea|Coleção|Compilação|Do\s+Acervo)\s+de\s+[^—–\n]+\s*[—–]+\s*(.+)$/is);
+      if (dm && dm[1].trim().length > 3) x.title = dm[1].trim();
+    }
     // Showa era
     const y = x.year;
     if (x.unpublished) {
@@ -338,6 +353,14 @@ function applyFilters() {
     } else if (_sortCol === 'title') {
       va = (a.title||'').toLowerCase();
       vb = (b.title||'').toLowerCase();
+    } else if (_sortCol === 'pub') {
+      const pa = (a.publication||'').toLowerCase();
+      const pb = (b.publication||'').toLowerCase();
+      // Items without publication go to end
+      if (!pa && pb) return _sortAsc ? 1 : -1;
+      if (pa && !pb) return _sortAsc ? -1 : 1;
+      va = pa; vb = pb;
+      if (pa === pb) { va = (a.title||'').toLowerCase(); vb = (b.title||'').toLowerCase(); }
     } else {
       va = a.year || 9999;
       vb = b.year || 9999;
@@ -579,8 +602,22 @@ function showLoading() {
   </div></td></tr>`;
 }
 
+// ─── Sync toolbar height so sticky thead is never obscured ───
+function syncToolbarHeight() {
+  const toolbar = document.querySelector('.browse-toolbar');
+  if (!toolbar) return;
+  document.documentElement.style.setProperty(
+    '--toolbar-height', toolbar.getBoundingClientRect().height + 'px'
+  );
+}
+
 // ─── Main search + per-page binding ──────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+  syncToolbarHeight();
+  const ro = new ResizeObserver(syncToolbarHeight);
+  const toolbar = document.querySelector('.browse-toolbar');
+  if (toolbar) ro.observe(toolbar);
+
   const input = document.getElementById('browseSearchInput');
   if (input) {
     let timer;

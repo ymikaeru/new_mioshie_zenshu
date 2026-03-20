@@ -299,8 +299,20 @@ function renderTeaching(item, indexEntry, searchQuery) {
 }
 
 // ─── Content rendering ────────────────────────────────────────
+// Strip publication header lines that bleed in from the original site
+function stripPubHeader(raw) {
+  if (!raw) return raw;
+  // Remove leading lines matching: ## ―― Coletânea/Coleção ... ――  or  ―― Coletânea ... ――
+  raw = raw.replace(
+    /^(?:#{1,3}\s+)?[――─\-]{0,4}\s*(?:Coletânea|Coleção|Compilação|Da?\s+Coletânea|Do\s+Acervo)\s+de\s+[^\n]*\n?/gi,
+    ''
+  );
+  return raw.trimStart();
+}
+
 function renderContent(raw, isPt) {
   if (!raw) return '<p class="empty-content">Conteúdo não disponível.</p>';
+  raw = stripPubHeader(raw);
 
   // Markdown (PT content uses markdown)
   if (isPt && /^#{1,3}\s|^\*\*|\n\n/.test(raw)) {

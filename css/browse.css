@@ -432,7 +432,7 @@
 }
 .browse-table thead {
   position: sticky;
-  top: calc(var(--nav-height, 60px) + 60px); /* header + toolbar */
+  top: calc(var(--nav-height, 60px) + var(--toolbar-height, 60px)); /* header + toolbar */
   z-index: 5;
   background: var(--surface);
 }
@@ -460,6 +460,9 @@
   border-bottom: 1px solid var(--border);
   vertical-align: middle;
   line-height: 1.45;
+}
+.browse-table tbody tr:first-child td {
+  padding-top: 18px;
 }
 .browse-table tr:hover td {
   background: var(--hover-bg);
