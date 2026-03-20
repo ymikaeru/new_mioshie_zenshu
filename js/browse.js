@@ -13,12 +13,12 @@ const COMPILATION_INFO = {
   miosie:       { title: '御教え集', subtitle: 'Mioshieshu — Coletânea de Ensinamentos', img: 'assets/img/mioshie.JPG', desc: 'Coletânea de Artigos do Mestre Okada Jikan — Coletânea de Ensinamentos por Publicação (Números 1 a 33)' },
   viagem:       { title: '御光話録', subtitle: 'Ohikari Kowa Roku', img: 'assets/img/ohikari.JPG', desc: 'Coletânea de Ensaios do Mestre Okada Jikanshi — Registro dos Diálogos com Meishu-Sama (Volumes 1 a 19 e Suplemento)' },
   hikarinochie: { title: '神智之光', subtitle: 'Hikari no Chie — A Luz da Sabedoria Divina', img: 'assets/img/gokowa1.jpg', desc: 'Coletânea de Sermões Complementares — 50 seções temáticas' },
-  jorei:        { title: '浄霊法講座', subtitle: 'Johrei Ho Koza — Curso sobre o Método do Johrei', img: 'assets/img/joreiho.jpg', desc: 'Curso sobre o Método do Johrei (Volumes I a VIII)' },
+  jorei:        { title: '浄霊法講座', subtitle: 'Johrei Ho Koza — Curso sobre o Método do Johrei', img: 'assets/img/joreiho.jpg', desc: 'Curso sobre o Método do Johrei (Volumes I a VIII)', redirect: 'johrei.html' },
   dendo:        { title: '伝道の引き', subtitle: 'Dendo no Shiori — Guia para a Difusão', img: null, desc: 'Guia para a Difusão I e II — Manual prático para a propagação da fé' },
   english:      { title: 'ENGLISH', subtitle: 'Traduções em Inglês', img: null, desc: 'Ensinamentos traduzidos para o idioma inglês' },
   sanko:        { title: '参考資料', subtitle: 'Material de Referência', img: null, desc: 'Materiais de referência e documentos complementares' },
   sasshi:       { title: '明主様関連寄稿', subtitle: 'Contribuições sobre Meishu-sama', img: null, desc: 'Artigos e contribuições relacionadas a Meishu-sama' },
-  hakkousi:     { title: 'その他の寄稿', subtitle: 'Outras Contribuições', img: null, desc: 'Contribuições diversas, testemunhos e diários espirituais' },
+  hakkousi:     { title: 'その他の寄稿', subtitle: 'Outras Contribuições — Artigos de colaboradores diversos', img: null, desc: '180 artigos de contribuidores como Kaian-sei (槐安生), Iwasaki Sakae (岩崎栄), Inoue Motokichi (井上茂登吉) e outros' },
   kanren:       { title: '関連出版物', subtitle: 'Publicações Relacionadas', img: null, desc: 'Publicações relacionadas aos ensinamentos de Meishu-sama' },
 };
 
@@ -96,6 +96,29 @@ const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 function urlPrefix(x) { return (x.url||'').split('/')[0] || ''; }
 function folder1(x)   { const p=(x.url||'').split('/'); return p[0]==='search1' ? (p[1]||'') : ''; }
 function folder2(x)   { const p=(x.url||'').split('/'); return p[0]==='search2' ? (p[1]||'') : ''; }
+
+// ─── Sonota (その他の寄稿) special listing ──────────────────────
+let _sonotaEntries = null; // loaded on demand
+
+async function loadSonota() {
+  if (_sonotaEntries) return _sonotaEntries;
+  const res = await fetch('data/sonota_listing.json');
+  const data = await res.json();
+  _sonotaEntries = data.entries.map((e, i) => ({
+    id:           e.id || null,
+    title:        e.title_ja || '',
+    title_pt:     e.title_pt || '',
+    publication:  e.publication_ja || '',
+    issue_page:   e.date_showa || '',
+    author:       e.author || '',
+    url:          e.url || '',
+    part_file:    e.part_file || '',
+    _type:        'hakkousi',
+    _sonota:      true,
+    _sortIndex:   i,
+  }));
+  return _sonotaEntries;
+}
 
 // ─── State ────────────────────────────────────────────────────
 let _idx      = null;
@@ -242,7 +265,7 @@ function populateCounts() {
   // ④ 参考資料
   set('countSanko',       _typeCounts['sanko']        || 0);
   set('countSasshi',      _typeCounts['sasshi']       || 0);
-  set('countHakkousi',    _typeCounts['hakkousi']     || 0);
+  set('countHakkousi',    180);  // curated listing from sonota_listing.json
   set('countKanren',      _typeCounts['kanren']       || 0);
   set('countOkage',       _typeCounts['okage']        || 0);
 }
@@ -286,6 +309,11 @@ function bindSidebarSearch() {
 
 // ─── Filters ──────────────────────────────────────────────────
 window.setFilter = function(key, val) {
+  // Redirect to dedicated page if compilation has one
+  if (key === 'type' && val && COMPILATION_INFO[val]?.redirect) {
+    window.location.href = COMPILATION_INFO[val].redirect;
+    return;
+  }
   _filters[key] = _filters[key] === val ? '' : val;
   _page = 0;
   refreshSidebarActive();
@@ -323,8 +351,26 @@ function refreshSidebarActive() {
   });
 }
 
-function applyFilters() {
+async function applyFilters() {
   const terms = _filters.search.toLowerCase().split(/\s+/).filter(t => t.length > 1);
+
+  // Special case: その他の寄稿 uses curated listing
+  if (_filters.type === 'hakkousi') {
+    const sonota = await loadSonota();
+    _filtered = sonota.filter(x => {
+      if (terms.length) {
+        const hay = [x.title, x.title_pt, x.publication, x.author].join(' ').toLowerCase();
+        if (!terms.every(t => hay.includes(t))) return false;
+      }
+      return true;
+    });
+    // Keep original order by default
+    _filtered.sort((a, b) => a._sortIndex - b._sortIndex);
+    renderFilterBadges();
+    renderTable();
+    renderPagination();
+    return;
+  }
 
   _filtered = _idx.filter(x => {
     if (_filters.type   && x._type   !== _filters.type)      return false;
@@ -471,8 +517,44 @@ function renderTable() {
     return;
   }
 
+  // Sonota entries use a different rendering
+  const isSonota = slice.length > 0 && slice[0]._sonota;
+
   el.innerHTML = slice.map((x, i) => {
     const num  = start + i + 1;
+
+    if (x._sonota) {
+      const href = x.id && x.part_file
+        ? `${READER}?id=${encodeURIComponent(x.id)}&part=${encodeURIComponent(x.part_file)}`
+        : '#';
+      const titleJa = hlText(x.title || '', terms);
+      const titlePt = x.title_pt ? `<div class="td-title-pt">${hlText(x.title_pt, terms)}</div>` : '';
+      const pub = x.publication ? esc(x.publication) : '';
+      const date = x.issue_page ? esc(x.issue_page) : '';
+      const author = x.author ? esc(x.author) : '';
+      const hasLink = x.id && x.part_file;
+
+      return `<tr>
+        <td class="col-num">${num}</td>
+        <td class="col-title">
+          <div class="td-title">${hasLink
+            ? `<a href="${href}" onclick="navigate(event,${JSON.stringify(x.id)},${JSON.stringify(x.part_file||'')})">${titleJa}</a>`
+            : `<span class="td-title-nolink">${titleJa}</span>`}
+          </div>
+          ${titlePt}
+        </td>
+        <td class="col-pub td-pub">${pub}</td>
+        <td class="col-issue td-pub">${date}</td>
+        <td class="col-era"><span class="td-era">${author}</span></td>
+        <td class="col-notes td-pub"></td>
+        <td class="col-read">
+          ${hasLink ? `<a href="${href}" class="td-read-btn" onclick="navigate(event,${JSON.stringify(x.id)},${JSON.stringify(x.part_file||'')})" title="Ler">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>` : ''}
+        </td>
+      </tr>`;
+    }
+
     const ct   = CONTENT_TYPES.find(t => t.id === x._type) || CONTENT_TYPES[CONTENT_TYPES.length-1];
     const href = x.part_file
       ? `${READER}?id=${encodeURIComponent(x.id)}&part=${encodeURIComponent(x.part_file)}`

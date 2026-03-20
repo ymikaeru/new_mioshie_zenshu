@@ -176,6 +176,36 @@
 .filter-btn:hover { background: var(--accent-soft); color: var(--text-main); }
 .filter-btn.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
 
+/* Collection link button */
+.filter-btn--collection {
+  text-decoration: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: 'Noto Serif JP', serif;
+  font-size: 13px;
+  color: var(--text-main);
+}
+.filter-btn--collection:hover { border-color: var(--accent); color: var(--accent); }
+.filter-collection-label {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+/* Theme badge on kanku cards */
+.poem-card__theme {
+  display: inline-block;
+  font-family: 'Noto Serif JP', serif;
+  font-size: 11px;
+  color: var(--accent);
+  background: var(--accent-soft);
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  letter-spacing: 0.04em;
+}
+
 .filter-count {
   margin-left: auto;
   font-size: 11px;
@@ -321,6 +351,19 @@
   color: var(--accent);
 }
 .chip--date { font-variant-numeric: tabular-nums; }
+.chip--num  { font-variant-numeric: tabular-nums; font-family: var(--font-ui); opacity: .7; }
+
+.poem-detail__penname {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+.poem-detail__penname strong {
+  font-family: 'Noto Serif JP', serif;
+  color: var(--text-main);
+  margin-left: 6px;
+}
 
 /* The poem itself — large, beautiful display */
 .poem-detail__ja {

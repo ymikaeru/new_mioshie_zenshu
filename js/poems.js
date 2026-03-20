@@ -12,6 +12,7 @@ const PAGE_SIZE  = 40;
 
 let _activeCategory = '';
 let _activeMood     = '';
+let _activeTheme    = '';  // filter by theme/title (used in book mode)
 let _searchTerm     = '';
 let _bookFilter     = '';  // filter by source book (e.g. 'waraino.html')
 
@@ -31,14 +32,26 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ─── Data loading ─────────────────────────────────────────────
+
+// Books that have their own dedicated JSON (correctly parsed)
+const BOOK_JSON = {
+  'waraino.html': 'data/poetry/waraino_poems.json',
+};
+
 async function loadPoems() {
   try {
-    const res  = await fetch('data/poetry/gosanka_enriched.json');
-    _allPoems  = await res.json();
-
     // Check for ?book= filter (e.g. from library modal)
     const params = new URLSearchParams(window.location.search);
     _bookFilter = params.get('book') || '';
+
+    // Load dedicated JSON if available, otherwise load full gosanka
+    if (_bookFilter && BOOK_JSON[_bookFilter]) {
+      const res = await fetch(BOOK_JSON[_bookFilter]);
+      _allPoems = await res.json();
+    } else {
+      const res = await fetch('data/poetry/gosanka_enriched.json');
+      _allPoems = await res.json();
+    }
 
     const BOOK_TITLES = {
       'waraino.html': { ja: '笑の泉', pt: 'A Fonte do Riso — Coletânea de Haicais Humorísticos' },
@@ -48,9 +61,12 @@ async function loadPoems() {
     };
 
     if (_bookFilter) {
-      _allPoems = _allPoems.filter(p =>
-        (p.book === _bookFilter) || (p.source_book === _bookFilter)
-      );
+      // If no dedicated JSON, filter the full gosanka by book field
+      if (!BOOK_JSON[_bookFilter]) {
+        _allPoems = _allPoems.filter(p =>
+          (p.book === _bookFilter) || (p.source_book === _bookFilter)
+        );
+      }
       // Show back link to library
       const backEl = document.getElementById('poemsBackToLibrary');
       if (backEl) backEl.style.display = '';
@@ -84,6 +100,39 @@ async function loadPoems() {
 
 // ─── Filters ──────────────────────────────────────────────────
 function buildFilters() {
+  const catEl  = document.getElementById('categoryFilters');
+  const moodEl = document.getElementById('moodFilters');
+  const catLabel  = document.querySelector('.sidebar-label-cat');
+  const moodLabel = document.querySelector('.sidebar-label-mood');
+
+  // ── Book mode: show theme filters instead of category/mood ──
+  if (_bookFilter) {
+    const themeMap = {};
+    _allPoems.forEach(p => {
+      const t = p.title || '';
+      if (t) themeMap[t] = (themeMap[t] || 0) + 1;
+    });
+    const themeOrder = Object.entries(themeMap).sort((a,b) => b[1]-a[1]);
+
+    if (catLabel)  { catLabel.textContent  = 'Tema'; }
+    if (moodLabel) { moodLabel.style.display = 'none'; }
+    if (moodEl)    { moodEl.closest('.sidebar-section').style.display = 'none'; }
+    const colSection = document.getElementById('collectionSection');
+    if (colSection) colSection.style.display = 'none';
+
+    catEl.innerHTML = [
+      `<button class="filter-btn active" data-type="theme" data-val="" onclick="setFilter('theme','')">
+         Todos<span class="filter-count">${_allPoems.length}</span>
+       </button>`
+    ].concat(themeOrder.map(([t, n]) =>
+      `<button class="filter-btn" data-type="theme" data-val="${escHtml(t)}" onclick="setFilter('theme','${escHtml(t)}')">
+         ${escHtml(t)}<span class="filter-count">${n}</span>
+       </button>`
+    )).join('');
+    return;
+  }
+
+  // ── Normal mode: category + mood + collections ──
   const catMap  = {};
   const moodMap = {};
 
@@ -104,7 +153,7 @@ function buildFilters() {
     'Divino':'✨', 'Natureza':'🌿', 'Sociedade':'🏛️', 'Vida':'🌱', 'Ensino':'📖', 'Arte':'🎨', 'Outro':'◦'
   };
 
-  document.getElementById('categoryFilters').innerHTML = [
+  catEl.innerHTML = [
     `<button class="filter-btn active" data-type="cat" data-val="" onclick="setFilter('cat','')">
        <span class="lang-pt">Todas</span><span class="lang-ja" style="display:none">すべて</span>
        <span class="filter-count">${_allPoems.length}</span>
@@ -115,7 +164,7 @@ function buildFilters() {
      </button>`
   )).join('');
 
-  document.getElementById('moodFilters').innerHTML = [
+  moodEl.innerHTML = [
     `<button class="filter-btn active" data-type="mood" data-val="" onclick="setFilter('mood','')">
        <span class="lang-pt">Todos</span><span class="lang-ja" style="display:none">すべて</span>
        <span class="filter-count">${_allPoems.length}</span>
@@ -125,11 +174,26 @@ function buildFilters() {
        ${moodEmoji[m] || '◦'} ${escHtml(m)}<span class="filter-count">${n}</span>
      </button>`
   )).join('');
+
+  // Collections section
+  const colEl = document.getElementById('collectionFilters');
+  if (colEl) {
+    colEl.innerHTML = `
+      <a href="yamatomizu.html" class="filter-btn filter-btn--collection">
+        山と水 <span class="filter-collection-label">Yama to Mizu</span>
+        <span class="filter-count">1236</span>
+      </a>
+      <a href="poems.html?book=waraino.html" class="filter-btn filter-btn--collection">
+        笑の泉 <span class="filter-collection-label">Warai no Izumi</span>
+        <span class="filter-count">1063</span>
+      </a>`;
+  }
 }
 
 window.setFilter = function(type, val) {
-  if (type === 'cat')  _activeCategory = val;
-  if (type === 'mood') _activeMood     = val;
+  if (type === 'cat')   _activeCategory = val;
+  if (type === 'mood')  _activeMood     = val;
+  if (type === 'theme') _activeTheme    = val;
 
   // Update active states
   document.querySelectorAll(`[data-type="${type}"]`).forEach(btn => {
@@ -147,6 +211,7 @@ window.onPoemSearch = function(val) {
 function applyFilters() {
   let list = _allPoems;
 
+  if (_activeTheme)    list = list.filter(p => p.title    === _activeTheme);
   if (_activeCategory) list = list.filter(p => p.category === _activeCategory);
   if (_activeMood)     list = list.filter(p => p.mood     === _activeMood);
   if (_searchTerm) {
@@ -216,15 +281,18 @@ function buildPoemCard(poem, isPt) {
     return escHtml(str).replace(re, '<mark class="search-highlight">$1</mark>');
   };
 
+  const theme = _bookFilter ? (poem.title || '') : '';
+
   return `
     <article class="poem-card" onclick="openPoem('${escHtml(poem.id)}')" role="button" tabindex="0"
              onkeydown="if(event.key==='Enter')openPoem('${escHtml(poem.id)}')">
+      ${theme ? `<div class="poem-card__theme">${escHtml(theme)}</div>` : ''}
       <div class="poem-card__japanese">${hl(jaText)}</div>
       ${isPt && ptText ? `<div class="poem-card__translation">${hl(ptText)}</div>` : ''}
       <div class="poem-card__meta">
         ${mood ? `<span class="poem-mood">${moodEmoji[mood]||'◦'} ${escHtml(mood)}</span>` : ''}
         ${date ? `<span>${escHtml(date)}</span>` : ''}
-        ${cat  ? `<span>${escHtml(cat)}</span>`  : ''}
+        ${cat && !_bookFilter ? `<span>${escHtml(cat)}</span>` : ''}
         ${!_bookFilter && poem.book === 'waraino.html' ? `<span class="poem-book-tag">笑の泉</span>` : ''}
       </div>
     </article>`;
@@ -287,6 +355,7 @@ function showPoem(poem) {
 
       <!-- Meta chips -->
       <div class="poem-detail__chips">
+        ${poem.num  ? `<span class="chip chip--num">#${poem.num}</span>` : ''}
         ${cat  ? `<span class="chip">${escHtml(cat)}</span>`  : ''}
         ${mood ? `<span class="chip chip--mood">${moodEmoji[mood]||'◦'} ${escHtml(mood)}</span>` : ''}
         ${date ? `<span class="chip chip--date">${escHtml(date)}</span>` : ''}
@@ -311,6 +380,14 @@ function showPoem(poem) {
           <div class="poem-detail__translation-label lang-pt">Tradução</div>
           <div class="poem-detail__translation-label lang-ja" style="display:none">ポルトガル語訳</div>
           <blockquote class="poem-detail__pt">${escHtml(ptText)}</blockquote>
+        </div>` : ''}
+
+      <!-- Author pen name (kanku) -->
+      ${poem.author_penname ? `
+        <div class="poem-detail__penname">
+          <span class="lang-pt">Nome de pluma:</span>
+          <span class="lang-ja" style="display:none">俳号：</span>
+          <strong>${escHtml(poem.author_penname)}</strong>
         </div>` : ''}
 
       <!-- Tags -->
