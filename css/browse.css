@@ -69,8 +69,8 @@
 
 /* ─── Layout ─────────────────────────────────────────────────── */
 .browse-page {
-  margin-top: var(--header-h);
-  min-height: calc(100vh - var(--header-h));
+  margin-top: var(--nav-height, 60px);
+  min-height: calc(100vh - var(--nav-height, 60px));
   display: grid;
   grid-template-columns: 270px 1fr;
   align-items: start; /* allows sticky to work correctly */
@@ -79,8 +79,8 @@
 /* ─── Sidebar ─────────────────────────────────────────────────── */
 .browse-sidebar {
   position: sticky;
-  top: var(--header-h);
-  max-height: calc(100vh - var(--header-h));
+  top: var(--nav-height, 60px);
+  max-height: calc(100vh - var(--nav-height, 60px));
   overflow-y: auto;
   border-right: 1px solid var(--border);
   background: var(--surface);
@@ -352,7 +352,7 @@
   background: var(--surface);
   flex-wrap: wrap;
   position: sticky;
-  top: var(--header-h);
+  top: var(--nav-height, 60px);
   z-index: 10;
 }
 .browse-search-box {
@@ -432,7 +432,7 @@
 }
 .browse-table thead {
   position: sticky;
-  top: calc(var(--header-h) + 60px); /* header + toolbar */
+  top: calc(var(--nav-height, 60px) + 60px); /* header + toolbar */
   z-index: 5;
   background: var(--surface);
 }
@@ -670,9 +670,9 @@ mark.bh {
   }
   .browse-sidebar {
     position: sticky;
-    top: var(--header-h);
+    top: var(--nav-height, 60px);
     height: auto;
-    max-height: calc(100vh - var(--header-h));
+    max-height: calc(100vh - var(--nav-height, 60px));
     border-right: none;
     border-bottom: 1px solid var(--border);
     z-index: 10;

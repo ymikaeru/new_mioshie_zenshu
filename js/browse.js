@@ -315,7 +315,11 @@ function applyFilters() {
     if (_filters.type   && x._type   !== _filters.type)      return false;
     if (_filters.era    && x._era    !== _filters.era)        return false;
     if (_filters.letter && x._letter !== _filters.letter)     return false;
-    if (_filters.pub    && !(x.publication || '').startsWith(_filters.pub))  return false;
+    if (_filters.pub) {
+      const pubNames = _filters.pub.split('|||');
+      const xPub = x.publication || '';
+      if (!pubNames.some(p => xPub.startsWith(p))) return false;
+    }
     if (terms.length) {
       const hay = [x.title, x.publication, x.url, x.category].join(' ').toLowerCase();
       if (!terms.every(t => hay.includes(t))) return false;
@@ -369,7 +373,8 @@ function renderFilterBadges() {
   if (!container) return;
   const badges = [];
   if (_filters.pub) {
-    badges.push(`<span class="browse-filter-badge browse-filter-badge--pub">${esc(pubDisplay(_filters.pub))} <span class="browse-filter-badge__remove" onclick="clearFilter('pub')">x</span></span>`);
+    const pubLabel = _filters.pub.includes('|||') ? pubDisplay(_filters.pub.split('|||')[0]) : pubDisplay(_filters.pub);
+    badges.push(`<span class="browse-filter-badge browse-filter-badge--pub">${esc(pubLabel)} <span class="browse-filter-badge__remove" onclick="clearFilter('pub')">x</span></span>`);
   }
   if (_filters.type) {
     const ct = CONTENT_TYPES.find(t => t.id === _filters.type);
@@ -406,7 +411,8 @@ function renderTable() {
   if (pubHeader) {
     const compInfo = _filters.type ? COMPILATION_INFO[_filters.type] : null;
     if (_filters.pub) {
-      pubHeader.innerHTML = `<span class="browse-pub-back" onclick="clearFilter('pub')" title="Voltar para todos">‹</span> ${esc(pubDisplay(_filters.pub))}`;
+      const pubHeaderLabel = _filters.pub.includes('|||') ? pubDisplay(_filters.pub.split('|||')[0]) : pubDisplay(_filters.pub);
+      pubHeader.innerHTML = `<span class="browse-pub-back" onclick="clearFilter('pub')" title="Voltar para todos">‹</span> ${esc(pubHeaderLabel)}`;
       pubHeader.style.display = '';
     } else if (compInfo) {
       const imgHtml = compInfo.img ? `<img class="comp-header-img" src="${compInfo.img}" alt="${esc(compInfo.title)}">` : '';
@@ -448,7 +454,23 @@ function renderTable() {
     const href = x.part_file
       ? `${READER}?id=${encodeURIComponent(x.id)}&part=${encodeURIComponent(x.part_file)}`
       : `${READER}?cat=${encodeURIComponent(x.category||'')}`;
-    const eraLabel    = x.year ? `S${x.year-1925}` : '&mdash;';
+    let eraLabel = '&mdash;';
+    if (x.date_iso) {
+      try {
+        const parts = x.date_iso.split('-');
+        const y = parseInt(parts[0]);
+        if (!isNaN(y)) {
+          eraLabel = `S${y - 1925}`;
+          const m = parseInt(parts[1]);
+          if (!isNaN(m)) eraLabel += `.${m}`;
+          const d = parseInt(parts[2]);
+          if (!isNaN(d)) eraLabel += `.${d}`;
+        }
+      } catch(e) {}
+    }
+    if (eraLabel === '&mdash;' && x.year) {
+      eraLabel = `S${x.year - 1925}`;
+    }
     const titleHl     = hlText(x.title || '', terms);
     const pub         = x.publication ? hlText(pubDisplay(String(x.publication)).substring(0,60), terms) : '';
     const issue       = x.issue_page  ? esc(String(x.issue_page).substring(0,20)) : '';

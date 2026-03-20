@@ -174,7 +174,23 @@ function renderTeaching(item, indexEntry, searchQuery) {
 
   // Meta
   const category   = indexEntry?.category || item.category || '';
-  const date       = item.date || '';
+  let date         = item.date || '';
+  if (!date && item.date_iso) {
+    try {
+      const parts = item.date_iso.split('-');
+      const y = parseInt(parts[0]);
+      if (!isNaN(y)) {
+        date = `S${y - 1925}`;
+        const m = parseInt(parts[1]);
+        if (!isNaN(m)) date += `.${m}`;
+        const d = parseInt(parts[2]);
+        if (!isNaN(d)) date += `.${d}`;
+      }
+    } catch(e) {}
+  }
+  if (!date && item.year) {
+    date = String(item.year).includes('昭和') ? item.year : `S${parseInt(item.year) - 1925}`;
+  }
   const pub        = item.publication || '';
   const collection = item.collection  || '';
   const status     = item.status === 'Unpublished'
@@ -346,36 +362,30 @@ function buildSidebar(indexEntry) {
   const layout = document.getElementById('readerLayout');
   const currentId = indexEntry?.id || _currentItem?.id || '';
 
-  // ── 1. Build publication/compilation index (siblings in same type) ──
-  if (_searchIdx && indexEntry) {
-    // Find siblings: same _type classification as current item
-    const currentType = classifyType(indexEntry);
-    let siblings = [];
-    if (currentType && currentType !== 'ensaio' && currentType !== 'outro') {
-      siblings = _searchIdx.filter(x => classifyType(x) === currentType);
-    }
-    // Fallback: same publication_group
-    if (siblings.length < 2) {
-      const pubGroup = indexEntry.publication_group || indexEntry.publication;
-      if (pubGroup) {
-        siblings = _searchIdx.filter(x => (x.publication_group || x.publication) === pubGroup);
-      }
-    }
+  // ── 1. Build context index (siblings in same category/context) ──
+  if (_searchIdx && _currentList && _currentList.length > 1) {
+    const siblings = _currentList;
+    const typeLabel = indexEntry?.category || _currentItem?.category || 'Ensinamentos';
 
-    if (siblings.length > 1) {
-      // Sort by year then title
-      siblings.sort((a, b) => {
-        const ya = a.year || 9999, yb = b.year || 9999;
-        if (ya !== yb) return ya - yb;
-        return (a.title || '').localeCompare(b.title || '');
-      });
-
-      const typeLabel = getTypeLabel(currentType);
       const currentIdx = siblings.findIndex(x => x.id === currentId);
 
       const items = siblings.map((x, i) => {
         const isActive = x.id === currentId;
-        const eraStr = x.year ? `S${x.year - 1925}` : '';
+        let eraStr = '';
+        if (x.date_iso) {
+          try {
+            const parts = x.date_iso.split('-');
+            const y = parseInt(parts[0]);
+            if (!isNaN(y)) {
+              eraStr = `S${y - 1925}`;
+              const m = parseInt(parts[1]);
+              if (!isNaN(m)) eraStr += `.${m}`;
+              const d = parseInt(parts[2]);
+              if (!isNaN(d)) eraStr += `.${d}`;
+            }
+          } catch(e) {}
+        }
+        if (!eraStr && x.year) eraStr = `S${x.year - 1925}`;
         return `<a href="reader.html?id=${encodeURIComponent(x.id)}&part=${encodeURIComponent(x.part_file || '')}"
           class="reader-nav-item${isActive ? ' active' : ''}"
           onclick="navigateTo('${x.id}','${x.part_file || ''}'); return false;">
@@ -401,7 +411,6 @@ function buildSidebar(indexEntry) {
       });
       return;
     }
-  }
 
   // ── 2. Fallback: TOC from headings within current article ──
   const container = document.getElementById('readerContent');
@@ -555,8 +564,18 @@ function getSiblings() {
 }
 
 window.navigateTo = function(id, partFile) {
-  const url = `reader.html?id=${encodeURIComponent(id)}&part=${encodeURIComponent(partFile)}`;
-  window.history.pushState({ id, partFile }, '', url);
+  const p = new URLSearchParams(window.location.search);
+  const cat = p.get('cat') || '';
+  const search = p.get('search') || p.get('s') || '';
+  
+  const newP = new URLSearchParams();
+  newP.set('id', id);
+  newP.set('part', partFile);
+  if (cat) newP.set('cat', cat);
+  if (search) newP.set('search', search);
+  
+  const url = `reader.html?${newP.toString()}`;
+  window.history.pushState({ id, partFile, cat, search }, '', url);
   window.scrollTo({ top: 0, behavior: 'smooth' });
   initReader();
 };

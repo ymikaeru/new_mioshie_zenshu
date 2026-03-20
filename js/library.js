@@ -68,14 +68,14 @@ const PUB_TO_INDEX_MAP = {
   'sasshi_kiseki':      ['Kyusei', '世界Kyusei教奇蹟集'],
   'sasshi_kyogi1':      ['Kyusei'],
   'sasshi_kyogi2':      ['Chijo Tengoku', 'Kyusei'],
-  'sasshi_myoniti0':    ['Asu no Ijutsu', 'Nova Arte Médica Japonesa'],
-  'sasshi_myoniti3':    ['Asu no Ijutsu'],
-  'sasshi_myoniti4':    ['Asu no Ijutsu'],
-  'sasshi_myoniti7':    ['Asu no Ijutsu'],
+  'sasshi_myoniti0':    ['Ashita no Ijutsu', 'Asu no Ijutsu・新日本医術', 'Asu no Ijutsu・Shin Nihon Ijutsu', 'Nova Arte Médica Japonesa'],
+  'sasshi_myoniti3':    ['Asu no Ijutsu 第一編', 'Asu no Ijutsu 第一篇', 'Asu no Ijutsu（初版）第一編', 'Asu no Ijutsu（再版）第一編', 'Asu no Ijutsu（初版）第二編', 'Asu no Ijutsu（再版）第二編', 'Asu no Ijutsu 第二編', 'Asu no Ijutsu 第二篇', 'Asu no Ijutsu 初版19頁'],
+  'sasshi_myoniti4':    ['Asu no Ijutsu 第二編', 'Asu no Ijutsu 第二篇', 'Asu no Ijutsu（初版）第二編', 'Asu no Ijutsu（再版）第二編'],
+  'sasshi_myoniti7':    ['Asu no Ijutsu 第三編'],
   'sasshi_nihon':       ['Registro de Aulas de Medicina Japonesa'],
   'sasshi_okadasen':    ['岡田先生療病術講義録'],
   'sasshi_oshieno':     ['教えのHikari'],
-  'sasshi_sinnihon':    ['Nova Arte Médica Japonesa', 'Asu no Ijutsu'],
+  'sasshi_sinnihon':    ['Nova Arte Médica Japonesa', 'Ashita no Ijutsu', 'Asu no Ijutsu・新日本医術'],
   'sasshi_sizen01':     ['Shizen Noho', 'Shizen Noho Kaisetsu'],
   'sasshi_sizen02':     ['Shizen Noho', 'Shizen Noho Kaisetsu'],
   'sasshi_sosyo01':     ['Tuberculose e Terapia Espiritual'],
@@ -110,6 +110,25 @@ const PUB_TO_INDEX_MAP = {
   'vol_92':             ['Kyusei'],
   'vol_93':             ['Kenko'],
   'vol_98':             ['Toho no Hikari'],
+};
+
+/**
+ * Per-edition publication overrides for hakkousi files that span multiple volumes.
+ * Key = hakkousi file name. Value = array indexed by edition position.
+ * Each entry is the list of 'publication' values in the search index for that specific edition.
+ */
+const HAKKOUSI_EDITION_PUB_MAP = {
+  // myoniti1.html has 4 editions spanning Vols. I, I+II, I+II (banned), and III
+  'myoniti1.html': [
+    // Edition 0: 初版 — Vol. I, 1st ed
+    ['Asu no Ijutsu（初版）第一編', 'Asu no Ijutsu 初版19頁'],
+    // Edition 1: 再版 第一・二篇 — Vols. I e II, 2nd ed
+    ['Asu no Ijutsu（再版）第一編', 'Asu no Ijutsu（再版）第二編'],
+    // Edition 2: 再々版 第一・二篇 — banned, not in index
+    [],
+    // Edition 3: 第三篇（初版）— Vol. III
+    ['Asu no Ijutsu 第三編'],
+  ],
 };
 
 /**
@@ -153,6 +172,8 @@ async function initLibrary() {
       fetch('data/hakkousi_rich.json'),
     ]);
     allPubs = await pubRes.json();
+    // Stamp each pub with its allPubs index so click handler works even with duplicate IDs
+    allPubs.forEach((p, i) => { p._idx = i; });
     const hakData = await hakRes.json();
     // Build map: file name (without path) → entry
     hakData.forEach(h => { hakkousiMap[h.file] = h; });
@@ -305,9 +326,9 @@ function renderPublications() {
   }
 
   // Attach click events
-  container.querySelectorAll('[data-pub-id]').forEach(el => {
+  container.querySelectorAll('[data-pub-idx]').forEach(el => {
     el.addEventListener('click', () => {
-      const pub = allPubs.find(p => p.id === el.dataset.pubId);
+      const pub = allPubs[parseInt(el.dataset.pubIdx)];
       if (pub) openModal(pub);
     });
   });
@@ -367,7 +388,7 @@ function renderCard(pub) {
   // Use romaji (title_ja) as primary title as per user request
   const displayTitle = pub.title_ja || pub.title_pt || '';
 
-  return `<div class="pub-card" data-pub-id="${escHtml(pub.id)}" role="button" tabindex="0" aria-label="${escHtml(displayTitle)}">
+  return `<div class="pub-card" data-pub-idx="${pub._idx}" role="button" tabindex="0" aria-label="${escHtml(displayTitle)}">
     <div class="pub-card__cover">${cover}</div>
     <div class="pub-card__info">
       <p class="pub-card__title">${escHtml(displayTitle)}</p>
@@ -390,7 +411,7 @@ function renderListItem(pub) {
   const displayTitle = pub.title_ja || pub.title_pt || '';
   const subTitle = pub.title_pt && pub.title_pt !== pub.title_ja ? pub.title_pt : '';
 
-  return `<div class="pub-list-item" data-pub-id="${escHtml(pub.id)}" role="button" tabindex="0" aria-label="${escHtml(displayTitle)}">
+  return `<div class="pub-list-item" data-pub-idx="${pub._idx}" role="button" tabindex="0" aria-label="${escHtml(displayTitle)}">
     <div class="pub-list-item__thumb">${thumb}</div>
     <div class="pub-list-item__body">
       <p class="pub-list-item__title">${escHtml(displayTitle)}</p>
@@ -606,7 +627,9 @@ function openModal(pub) {
 
 // ─── Editions table ───────────────────────────────────────────────
 function renderEditionsTable(hakData, pub) {
-  const cards = hakData.editions.map(ed => {
+  const perEditionMap = HAKKOUSI_EDITION_PUB_MAP[hakData.file] || null;
+
+  const cards = hakData.editions.map((ed, edIdx) => {
     // 1. Meta line: Date, Year, Format, Pages, Price
     const metaItems = [];
     if (ed.date_showa) metaItems.push(`<span class="ed-meta-date">${escHtml(ed.date_showa)}</span>`);
@@ -636,14 +659,16 @@ function renderEditionsTable(hakData, pub) {
       notesHtml += `<p class="ed-card__banned">⊘ Proibido de circular (Emissão cancelada)</p>`;
     }
 
-    // 4. Action Button
-    const _edPubNames = getPublicationSearchNames(pub);
+    // 4. Action Button — use per-edition override if available
+    const _edPubNames = (perEditionMap && perEditionMap[edIdx] !== undefined)
+      ? perEditionMap[edIdx]
+      : getPublicationSearchNames(pub);
     let readLink = '';
     if (_edPubNames.length >= 1) {
-      const firstPub = _edPubNames[0];
+      const pubParam = _edPubNames.join('|||');
       readLink = `
         <div class="ed-card__actions">
-          <a class="btn-primary btn-primary--sm" href="browse.html?pub=${encodeURIComponent(firstPub)}">
+          <a class="btn-primary btn-primary--sm" href="browse.html?pub=${encodeURIComponent(pubParam)}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
             Ler Ensinamentos
           </a>

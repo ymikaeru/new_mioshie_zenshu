@@ -8,7 +8,7 @@
   grid-template-columns: 240px 1fr;
   min-height: calc(100vh - var(--nav-height));
   max-width: 1500px;
-  margin: 0 auto;
+  margin: var(--nav-height) auto 0;
 }
 
 /* ─── Sidebar ─────────────────────────────────────────────────── */

@@ -206,10 +206,14 @@
     /* ─── Expanded teachings list ─────────────────────── */
     .tl-year-teachings {
       display: none;
-      padding: 8px 0 16px;
-      border-left: 1px dashed var(--border);
-      margin-left: 0;
-      padding-left: 16px;
+      padding: 12px 20px;
+      margin: 8px 0 24px 126px; /* Starts right of the line */
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      position: relative;
+      z-index: 2;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
     }
     .tl-year-row.open + .tl-year-teachings {
       display: block;
@@ -319,6 +323,7 @@
       .tl-year-label { width: 70px; padding-right: 20px; }
       .tl-year-body { padding-left: 20px; }
       .tl-year-dot { right: -4px; }
+      .tl-year-teachings { margin-left: 86px; }
     }
   </style>
 </head>
@@ -374,10 +379,7 @@
 <!-- Footer -->
 <footer class="footer" role="contentinfo">
   <div class="footer__inner">
-    <div class="footer__logo">
-      <div class="logo-circle logo-circle--sm" aria-hidden="true"><div class="logo-dot"></div></div>
-      <span>Mioshie Zenshu</span>
-    </div>
+    
     <p class="footer__copy">
       <span class="lang-pt">Mioshie Zenshu — Biblioteca Sagrada dos Ensinamentos de Meishu-Sama.</span>
       <span class="lang-ja" style="display:none">御教え全集 — 明主様御教え聖典図書館。</span>

@@ -2,10 +2,11 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "mioshie-zenshu-modern",
+      "name": "mioshie-zenshu",
       "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "8090", "--directory", "/Users/michael/Documents/Ensinamentos/Sites/BR/Mioshie_Zenshu_Modern"],
-      "port": 8090
+      "runtimeArgs": ["-m", "http.server", "--directory", "/Users/michael/Documents/Ensinamentos/Sites/BR/new_mioshie_zenshu"],
+      "port": 8091,
+      "autoPort": true
     }
   ]
 }
