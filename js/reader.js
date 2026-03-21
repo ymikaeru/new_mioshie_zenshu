@@ -128,15 +128,27 @@ async function initReader() {
   const container = document.getElementById('readerContent');
   if (!container) return;
 
+  // One-shot flag: browse.js signals "use browse_list regardless of URL mode"
+  const browseOverride = (() => {
+    try {
+      const v = sessionStorage.getItem('browse_override') === '1';
+      if (v) sessionStorage.removeItem('browse_override'); // consume once
+      return v;
+    } catch(e) { return false; }
+  })();
+
   // Determine sidebar mode from URL params
-  if (pub === 'shinchi') {
+  if (browseOverride && sessionStorage.getItem('browse_list')) {
+    // Came directly from browse planilha — always honour browse order
+    _sidebarMode = 'browse';
+  } else if (pub === 'shinchi') {
     _sidebarMode = 'shinchi';
   } else if (mode === 'book' || (pub && mode !== 'list')) {
     _sidebarMode = 'book';
   } else if (mode === 'list' || list) {
     _sidebarMode = 'list';
   } else {
-    // No explicit mode in URL — if browse.js saved a filtered list, use it
+    // No explicit mode in URL — check sessionStorage for browse list
     const hasBrowseList = (() => {
       try { return !!(sessionStorage.getItem('browse_list')); } catch(e) { return false; }
     })();

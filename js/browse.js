@@ -1283,32 +1283,35 @@ function updateTableHeaders() {
 }
 
 // ─── Navigate to reader (section mode) ────────────────────────
+// ─── Shared: save browse context before navigating ───────────
+function saveBrowseContext() {
+  if (_filtered.length > 0) {
+    try {
+      sessionStorage.setItem('browse_list', JSON.stringify(_filtered.map(x => x.id)));
+      sessionStorage.setItem('browse_override', '1'); // one-shot flag for reader
+    } catch(e) { /* storage full — skip */ }
+  }
+  sessionStorage.setItem('browse_return', window.location.href);
+}
+
 window.navigateSection = function(e, id, sectionKey) {
   e.preventDefault();
+  saveBrowseContext();
+  // Keep mode=list so reader can still load section data if needed
   const url = `${READER}?id=${encodeURIComponent(id)}&mode=list&list=${encodeURIComponent(sectionKey)}`;
-  sessionStorage.setItem('browse_return', window.location.href);
   window.location.href = url;
 };
 
 // ─── Navigate to reader ───────────────────────────────────────
 window.navigate = function(e, id, partFile) {
   e.preventDefault();
+  saveBrowseContext();
   let url;
-  // If we're in section data mode, pass list param
-  if (_usingSectionData && _activeSectionKey) {
-    url = `${READER}?id=${encodeURIComponent(id)}&mode=list&list=${encodeURIComponent(_activeSectionKey)}`;
-  } else if (partFile) {
+  if (partFile) {
     url = `${READER}?id=${encodeURIComponent(id)}&part=${encodeURIComponent(partFile)}`;
   } else {
     url = `${READER}?id=${encodeURIComponent(id)}`;
   }
-  // Save the current filtered list so the reader can preserve browse order
-  if (_filtered.length > 0) {
-    try {
-      sessionStorage.setItem('browse_list', JSON.stringify(_filtered.map(x => x.id)));
-    } catch(e) { /* storage full — skip */ }
-  }
-  sessionStorage.setItem('browse_return', window.location.href);
   window.location.href = url;
 };
 
