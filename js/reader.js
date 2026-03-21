@@ -392,6 +392,7 @@ async function loadSectionTables() {
 // Load publications metadata for cover images and details
 let _pubMeta = null;
 let _pubMetaLoading = false;
+let _hakkousiRich = null;
 async function loadPubMeta() {
   if (_pubMeta) return;
   if (_pubMetaLoading) {
@@ -406,6 +407,13 @@ async function loadPubMeta() {
     const arr = await res.json();
     _pubMeta = {};
     arr.forEach(p => { _pubMeta[p.id] = p; });
+    // Load hakkousi_rich for extra images
+    try {
+      const hr = await fetch('data/hakkousi_rich.json');
+      const hrArr = await hr.json();
+      _hakkousiRich = {};
+      hrArr.forEach(h => { _hakkousiRich[h.file] = h; });
+    } catch(e) { /* optional */ }
   } finally {
     _pubMetaLoading = false;
   }
@@ -652,6 +660,47 @@ function syncBookTopics() {
     '</div>';
 }
 
+// ─── Build cover gallery HTML from hakkousi_rich all_images ───
+function buildCoverGallery(hakkousiFile, mainCover) {
+  const entry = _hakkousiRich?.[hakkousiFile];
+  const imgs = entry?.all_images || (mainCover ? [mainCover] : []);
+  if (!imgs.length) return '';
+  return `<div class="sidebar-cover-gallery">` +
+    imgs.map((img, i) => {
+      const src = `assets/img/${img}`;
+      const isMain = i === 0;
+      return `<img src="${src}" class="sidebar-cover-thumb${isMain ? ' sidebar-cover-thumb--main' : ''}"
+        alt="Imagem ${i+1}" loading="lazy"
+        onclick="openCoverLightbox('${src}','Imagem ${i+1}')"
+        onerror="this.style.display='none'">`;
+    }).join('') + `</div>`;
+}
+
+// ─── Cover Lightbox ───────────────────────────────────────────
+window.openCoverLightbox = function(src, title) {
+  let lb = document.getElementById('cover-lightbox');
+  if (!lb) {
+    lb = document.createElement('div');
+    lb.id = 'cover-lightbox';
+    lb.className = 'cover-lightbox';
+    lb.innerHTML = `
+      <div class="cover-lightbox-backdrop"></div>
+      <div class="cover-lightbox-content">
+        <button class="cover-lightbox-close" aria-label="Fechar">✕</button>
+        <img class="cover-lightbox-img" src="" alt="">
+        <div class="cover-lightbox-caption"></div>
+      </div>`;
+    document.body.appendChild(lb);
+    lb.querySelector('.cover-lightbox-backdrop').onclick = () => lb.classList.remove('open');
+    lb.querySelector('.cover-lightbox-close').onclick   = () => lb.classList.remove('open');
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') lb.classList.remove('open'); });
+  }
+  lb.querySelector('.cover-lightbox-img').src = src;
+  lb.querySelector('.cover-lightbox-img').alt = title;
+  lb.querySelector('.cover-lightbox-caption').textContent = title;
+  lb.classList.add('open');
+};
+
 window.scrollToBookTopic = function(rawIdx) {
   let headings = [...document.querySelectorAll('.reader-content h2, .reader-content h3')];
   if (headings.length < 2) {
@@ -870,7 +919,8 @@ function buildBookSidebar(sidebar, layout, indexEntry, currentId, pub, modeToggl
   let titlePt = pubData.title_pt || pubName;
 
   if (pubData.cover_image) {
-    coverImg = `<img src="assets/img/${pubData.cover_image}" class="sidebar-book-cover" alt="${escHtml(titlePt)}" onerror="this.style.display='none'">`;
+    const src = `assets/img/${pubData.cover_image}`;
+    coverImg = `<img src="${src}" class="sidebar-book-cover sidebar-book-cover--clickable" alt="${escHtml(titlePt)}" onclick="openCoverLightbox('${src}','${escHtml(titlePt)}')" onerror="this.style.display='none'">`;
   }
 
   const siblings = _currentList;
@@ -897,6 +947,19 @@ function buildBookSidebar(sidebar, layout, indexEntry, currentId, pub, modeToggl
         </div>
       </div>
       ${modeToggle}
+      ${(() => {
+        const hakFile = pubData.hakkousi_file;
+        const gallery = buildCoverGallery(hakFile, pubData.cover_image);
+        const desc = pubData.notes_pt || pubData.series_info_pt || pubData.description || '';
+        if (!gallery && !desc) return '';
+        return `<details class="shinchi-book-about">
+          <summary class="shinchi-book-about-summary">Sobre esta obra</summary>
+          <div class="shinchi-book-about-body">
+            ${desc ? `<p class="shinchi-book-about-desc">${escHtml(desc)}</p>` : ''}
+            ${gallery}
+          </div>
+        </details>`;
+      })()}
       ${navHtml}
     </div>`;
 
@@ -1062,7 +1125,7 @@ function buildShinchiSidebar(sidebar, layout, indexEntry, currentId) {
   sidebar.innerHTML = `
     <div class="sidebar-section shinchi-sidebar">
       <div class="sidebar-book-header">
-        <img src="assets/img/gokowa1.jpg" class="sidebar-book-cover" alt="神智之光" onerror="this.style.display='none'">
+        <img src="assets/img/gokowa1.jpg" class="sidebar-book-cover sidebar-book-cover--clickable" alt="神智之光" onclick="openCoverLightbox('assets/img/gokowa1.jpg','神智之光')" onerror="this.style.display='none'">
         <div class="sidebar-book-info">
           <div class="sidebar-book-title">神智之光</div>
           <div class="sidebar-book-title-ja">Shinchi no Hikari</div>
@@ -1076,6 +1139,7 @@ function buildShinchiSidebar(sidebar, layout, indexEntry, currentId) {
           <div class="shinchi-book-meta-row"><span class="shinchi-book-meta-label">Publicação</span><span>Data desconhecida</span></div>
           <div class="shinchi-book-meta-row"><span class="shinchi-book-meta-label">Organização</span><span>Inoue Motokichi</span></div>
           <p class="shinchi-book-about-desc">Esta coletânea de perguntas e respostas foi organizada por Inoue Motokichi com autorização de Meishu-Sama e publicada pela Sekai Kyusei Kyo como "Coleção de Palestras (Supl.)". Contém aproximadamente 5.000 questões e respostas. Mistura respostas diretas de Meishu-Sama com partes transmitidas pelo Mestre Inoue. O material é denso e inclui conteúdos não destinados ao público geral — recomenda-se a leitura prévia do "Curso de Kannon" antes de prosseguir.</p>
+          ${buildCoverGallery('ohikari.html', 'gokowa1.jpg')}
         </div>
       </details>
       <div class="shinchi-sb-tree">${navHtml}</div>

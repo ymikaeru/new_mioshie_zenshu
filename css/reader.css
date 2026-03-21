@@ -835,6 +835,97 @@ mark.search-highlight {
   flex-shrink: 0;
   box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
+.sidebar-book-cover--clickable {
+  cursor: zoom-in;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.sidebar-book-cover--clickable:hover {
+  transform: scale(1.06);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+/* ─── Cover gallery (inside "Sobre esta obra") ─── */
+.sidebar-cover-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+.sidebar-cover-thumb {
+  width: 72px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: 4px;
+  cursor: zoom-in;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.sidebar-cover-thumb:hover {
+  transform: scale(1.06);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.28);
+}
+.sidebar-cover-thumb--main {
+  width: 96px;
+  height: 128px;
+}
+
+/* ─── Cover Lightbox ─────────────────────────────── */
+.cover-lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  align-items: center;
+  justify-content: center;
+}
+.cover-lightbox.open { display: flex; }
+.cover-lightbox-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.82);
+  backdrop-filter: blur(4px);
+}
+.cover-lightbox-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  max-width: 90vw;
+  max-height: 90vh;
+}
+.cover-lightbox-img {
+  max-width: 100%;
+  max-height: calc(90vh - 60px);
+  object-fit: contain;
+  border-radius: 6px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+}
+.cover-lightbox-caption {
+  color: rgba(255,255,255,0.8);
+  font-size: 13px;
+  font-family: var(--font-ui);
+}
+.cover-lightbox-close {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+.cover-lightbox-close:hover { background: rgba(255,255,255,0.3); }
 .sidebar-book-info {
   flex: 1;
   min-width: 0;
