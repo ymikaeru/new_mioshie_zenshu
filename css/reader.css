@@ -35,7 +35,7 @@
   top: 0;
   bottom: 0;
   left: 0;
-  width: var(--sidebar-width, 520px);
+  width: var(--sidebar-width, 50vw);
   padding: calc(var(--nav-height, 56px) + 8px) 0 16px;
   max-height: 100vh;
   overflow-y: auto;
@@ -54,7 +54,7 @@
 .sidebar-collapse-btn {
   position: fixed;
   top: calc(var(--nav-height, 56px) + 12px);
-  left: calc(var(--sidebar-width, 520px) - 14px);
+  left: calc(var(--sidebar-width, 50vw) - 14px);
   width: 28px;
   height: 28px;
   border: 1px solid var(--border, #ddd);
@@ -956,7 +956,7 @@ mark.search-highlight {
 
 /* ─── Responsive ─────────────────────────────────────────────── */
 @media (max-width: 1024px) {
-  :root { --sidebar-width: 340px; }
+  :root { --sidebar-width: 50vw; }
   .reader-main {
     padding: 32px 32px 80px;
   }
