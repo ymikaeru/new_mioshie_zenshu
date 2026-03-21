@@ -1,0 +1,623 @@
+/* =============================================================
+   Mioshie Zenshu Modern — yamatomizu.css  v4
+   Estética Shoin-Zukuri: o poema é o herói
+   ============================================================= */
+
+/* ─── Fonte de poesia ────────────────────────────────────────── */
+.page-yamatomizu {
+  --font-poem: 'Cormorant Garamond', 'Crimson Pro', serif;
+}
+
+/* ─── Root Layout ────────────────────────────────────────────── */
+.ym-layout {
+  display: grid;
+  grid-template-columns: 252px 1fr;
+  grid-template-rows: auto 1fr;
+  min-height: calc(100vh - var(--nav-height));
+  margin-top: var(--nav-height);
+}
+
+/* Commentary panel hidden (no longer used) */
+.ym-commentary { display: none; }
+
+/* ─── Toolbar ─────────────────────────────────────────────────── */
+.ym-toolbar {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-color);
+  position: sticky;
+  top: var(--nav-height);
+  z-index: 50;
+  flex-wrap: wrap;
+}
+
+.ym-toolbar__brand {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+  gap: 1px;
+}
+
+.ym-toolbar__title {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-main);
+  letter-spacing: 0.14em;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.ym-toolbar__subtitle {
+  font-family: var(--font-ui);
+  font-size: 9px;
+  font-weight: 400;
+  color: var(--text-muted);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.ym-toolbar__sep {
+  width: 1px;
+  height: 24px;
+  background: var(--border);
+  flex-shrink: 0;
+}
+
+.ym-toolbar__search {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 6px 10px;
+  flex: 1;
+  min-width: 140px;
+  max-width: 320px;
+  transition: border-color 0.15s;
+}
+.ym-toolbar__search:focus-within { border-color: var(--accent); }
+.ym-toolbar__search svg {
+  width: 12px; height: 12px;
+  stroke: var(--text-muted); fill: none;
+  stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+  flex-shrink: 0;
+}
+.ym-toolbar__search input {
+  border: none; background: none; outline: none;
+  font-family: var(--font-ui); font-size: 13px;
+  color: var(--text-main); width: 100%;
+}
+.ym-toolbar__search input::placeholder { color: var(--text-muted); }
+
+.ym-counter {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  letter-spacing: 0.04em;
+  margin-left: auto;
+}
+
+/* ─── Left Sidebar — Sections ────────────────────────────────── */
+.ym-sidebar {
+  border-right: 1px solid var(--border);
+  position: sticky;
+  top: calc(var(--nav-height) + 43px);
+  height: calc(100vh - var(--nav-height) - 43px);
+  overflow-y: auto;
+  background: var(--bg-color);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.ym-sidebar::-webkit-scrollbar { width: 3px; }
+.ym-sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.ym-sidebar__header {
+  padding: 18px 16px 8px;
+  font-family: var(--font-ui);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  opacity: 0.5;
+}
+
+.ym-section-item {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 8px;
+  row-gap: 2px;
+  padding: 9px 12px 9px 16px;
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: background 0.12s, border-color 0.12s;
+  text-decoration: none;
+}
+.ym-section-item:hover {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+}
+.ym-section-item.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+}
+
+/* JP — pequeno label dourado acima */
+.ym-section-item__jp {
+  grid-column: 1;
+  grid-row: 1;
+  font-family: 'Noto Serif JP', serif;
+  font-size: 10px;
+  color: var(--accent);
+  line-height: 1.2;
+  letter-spacing: 0.1em;
+  opacity: 0.8;
+}
+.ym-section-item.active .ym-section-item__jp { opacity: 1; }
+
+/* PT — nome principal navegável */
+.ym-section-item__pt {
+  grid-column: 1;
+  grid-row: 2;
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  color: var(--text-main);
+  line-height: 1.3;
+}
+.ym-section-item.active .ym-section-item__pt {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* Contagem — número simples, sem badge */
+.ym-section-item__count {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  align-self: center;
+  font-family: var(--font-ui);
+  font-size: 10px;
+  color: var(--text-muted);
+  opacity: 0.6;
+  flex-shrink: 0;
+  min-width: 14px;
+  text-align: right;
+}
+
+/* ─── Center — Poem Viewer ───────────────────────────────────── */
+.ym-center {
+  overflow-y: auto;
+  padding: 48px 64px 100px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.ym-section-header,
+.ym-anthology,
+.ym-preface {
+  max-width: 780px;
+  width: 100%;
+}
+
+/* Section header in center */
+.ym-section-header {
+  margin-bottom: 40px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--border);
+}
+
+.ym-section-header__titles {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.ym-section-header__jp {
+  font-family: 'Noto Serif JP', serif;
+  font-size: clamp(22px, 3vw, 34px);
+  color: var(--text-main);
+  line-height: 1.2;
+  letter-spacing: 0.1em;
+}
+
+.ym-section-header__pt {
+  font-family: var(--font-poem);
+  font-size: clamp(15px, 1.8vw, 19px);
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.ym-section-intro {
+  font-family: var(--font-poem);
+  font-size: 16px;
+  line-height: 1.85;
+  color: var(--text-muted);
+  font-style: italic;
+  max-width: 580px;
+}
+
+/* ─── Anthology View ─────────────────────────────────────────── */
+.ym-anthology {
+  display: flex;
+  flex-direction: column;
+}
+
+.ym-anth-card {
+  padding: 32px 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  position: relative;
+  transition: background 0.18s var(--ease), padding 0.18s var(--ease), margin 0.18s var(--ease);
+}
+.ym-anth-card:last-child {
+  border-bottom: none;
+}
+
+/* Barra esquerda que desliza no hover */
+.ym-anth-card::before {
+  content: '';
+  position: absolute;
+  left: -64px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--accent);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.22s var(--ease);
+  border-radius: 1px;
+}
+.ym-anth-card:hover::before,
+.ym-anth-card.expanded::before {
+  transform: scaleY(1);
+}
+.ym-anth-card:hover,
+.ym-anth-card.expanded {
+  background: var(--accent-soft);
+  margin: 0 -64px;
+  padding: 32px 64px;
+  border-radius: 4px;
+}
+
+.ym-anth-card__header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.ym-anth-card__num {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.ym-anth-card__title {
+  font-family: var(--font-poem);
+  font-size: 15px;
+  color: var(--text-main);
+  font-style: italic;
+}
+
+.ym-anth-card__cta {
+  margin-left: auto;
+  font-family: var(--font-ui);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  opacity: 0;
+  transition: opacity 0.18s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.ym-anth-card:hover .ym-anth-card__cta,
+.ym-anth-card.expanded .ym-anth-card__cta {
+  opacity: 1;
+}
+
+.ym-anth-card__body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: start;
+}
+
+.ym-anth-card__original {
+  font-family: 'Noto Serif JP', serif;
+  font-size: clamp(17px, 2.2vw, 22px);
+  line-height: 1.9;
+  color: var(--text-main);
+  letter-spacing: 0.08em;
+}
+
+.ym-anth-card__leitura {
+  font-family: var(--font-poem);
+  font-size: 12px;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-top: 10px;
+  line-height: 1.7;
+  letter-spacing: 0.02em;
+}
+
+.ym-anth-card__pt {
+  font-family: var(--font-poem);
+  font-size: clamp(15px, 1.8vw, 18px);
+  line-height: 1.95;
+  color: var(--text-main);
+  font-style: italic;
+  padding-top: 3px;
+}
+
+/* ─── Inline commentary (expanded card) ─────────────────────── */
+.ym-anth-card__detail {
+  margin-top: 36px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 28px 40px;
+  cursor: default;
+  animation: ymFadeIn 0.28s var(--ease) forwards;
+}
+
+.ym-anth-detail-card__label {
+  font-family: var(--font-ui);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+  opacity: 0.85;
+}
+
+.ym-anth-detail-card__body {
+  font-family: var(--font-poem);
+  font-size: 15.5px;
+  line-height: 1.85;
+  color: var(--text-main);
+}
+.ym-anth-detail-card__body p { margin: 0 0 0.6em; }
+.ym-anth-detail-card__body p:last-child { margin-bottom: 0; }
+
+/* ─── Highlight de card (autoscroll) ────────────────────────── */
+@keyframes ymCardFlash {
+  0%   { box-shadow: inset 2px 0 0 var(--accent); }
+  60%  { box-shadow: inset 2px 0 0 var(--accent); }
+  100% { box-shadow: none; }
+}
+.ym-anth-card.ym-highlighted {
+  animation: ymCardFlash 1.4s var(--ease) forwards;
+}
+
+/* ─── Empty / Loading States ─────────────────────────────────── */
+.ym-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 80px 20px;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.ym-empty__icon {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 52px;
+  margin-bottom: 16px;
+  opacity: 0.12;
+  color: var(--text-main);
+  line-height: 1;
+}
+
+.ym-empty__text {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  max-width: 260px;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+/* ─── Search results ─────────────────────────────────────────── */
+.ym-search-results {
+  padding: 8px 0;
+}
+
+.ym-search-result-item {
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.ym-search-result-item:hover {
+  background: var(--accent-soft);
+}
+.ym-search-result-item__num {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  color: var(--accent);
+  font-weight: 700;
+}
+.ym-search-result-item__title {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--text-main);
+}
+.ym-search-result-item__section {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+/* ─── Poem list within section (sidebar) ─────────────────────── */
+.ym-poem-list {
+  padding: 2px 0 10px;
+}
+
+.ym-poem-list-item {
+  padding: 4px 14px 4px 30px;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 11.5px;
+  color: var(--text-muted);
+  transition: color 0.12s, background 0.12s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-left: 2px solid transparent;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.ym-poem-list-item:hover {
+  color: var(--text-main);
+  background: var(--accent-soft);
+}
+.ym-poem-list-item.active {
+  color: var(--accent);
+  font-weight: 600;
+  border-left-color: var(--accent);
+  background: var(--accent-soft);
+}
+.ym-poem-list-item__num {
+  color: var(--accent);
+  font-weight: 700;
+  flex-shrink: 0;
+  font-size: 9px;
+  letter-spacing: 0.06em;
+}
+
+/* Section expand arrow */
+.ym-section-arrow {
+  grid-column: 3;
+  grid-row: 1 / 3;
+  align-self: center;
+  transition: transform 0.2s var(--ease);
+  color: var(--text-muted);
+  font-size: 8px;
+  opacity: 0.45;
+  flex-shrink: 0;
+}
+.ym-section-item.expanded .ym-section-arrow {
+  transform: rotate(90deg);
+}
+
+/* ─── Preface section ────────────────────────────────────────── */
+.ym-preface {
+  max-width: 640px;
+}
+
+.ym-preface__title {
+  font-family: 'Noto Serif JP', serif;
+  font-size: clamp(26px, 4vw, 44px);
+  color: var(--text-main);
+  text-align: center;
+  margin-bottom: 10px;
+  letter-spacing: 0.14em;
+  line-height: 1.3;
+}
+
+.ym-preface__subtitle {
+  font-family: var(--font-poem);
+  font-size: 17px;
+  color: var(--text-muted);
+  text-align: center;
+  font-style: italic;
+  margin-bottom: 48px;
+}
+
+.ym-preface__body {
+  font-family: var(--font-poem);
+  font-size: 17px;
+  line-height: 1.95;
+  color: var(--text-main);
+}
+
+/* ─── Fade animation ─────────────────────────────────────────── */
+@keyframes ymFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.ym-fade { animation: ymFadeIn 0.32s var(--ease) forwards; }
+
+/* ─── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 1100px) {
+  .ym-center {
+    padding: 36px 48px 80px;
+  }
+  .ym-anth-card:hover,
+  .ym-anth-card.expanded {
+    margin: 0 -48px;
+    padding: 32px 48px;
+  }
+  .ym-anth-card::before { left: -48px; }
+}
+
+@media (max-width: 860px) {
+  .ym-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto 1fr;
+  }
+
+  .ym-toolbar { grid-column: 1; }
+
+  .ym-sidebar {
+    position: relative;
+    top: 0;
+    height: auto;
+    max-height: 220px;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .ym-center {
+    padding: 28px 24px 60px;
+  }
+
+  .ym-anth-card:hover,
+  .ym-anth-card.expanded {
+    margin: 0 -24px;
+    padding: 32px 24px;
+  }
+  .ym-anth-card::before { left: -24px; }
+
+  .ym-anth-card__body {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .ym-anth-card__detail {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .ym-toolbar {
+    gap: 8px;
+    padding: 8px 12px;
+  }
+  .ym-toolbar__search {
+    max-width: none;
+    flex: 1;
+  }
+  .ym-center {
+    padding: 20px 16px 60px;
+  }
+}

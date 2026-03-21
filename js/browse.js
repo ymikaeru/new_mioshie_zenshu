@@ -7,18 +7,72 @@
 const IDX_URL = 'data/search/advanced_search_index.json';
 const READER  = 'reader.html';
 
+// ─── 神智之光 Thematic Categories (総目次) ────────────────────
+const SHINCHI_CATEGORIES = {
+  1:  { ja: '神解明篇', pt: 'Elucidação de Deus' },
+  2:  { ja: '主神篇', pt: 'O Deus Supremo' },
+  3:  { ja: '万神篇', pt: 'As Múltiplas Divindades' },
+  4:  { ja: '明主様篇', pt: 'Meishu-Sama' },
+  5:  { ja: '霊界篇', pt: 'O Mundo Espiritual' },
+  6:  { ja: '建設破壊篇', pt: 'Construção e Destruição' },
+  7:  { ja: '宗教概論篇', pt: 'Panorama Religioso' },
+  8:  { ja: '宗教芸術篇', pt: 'Religião e Arte' },
+  9:  { ja: '人間本体篇', pt: 'Essência do Ser Humano' },
+  10: { ja: '想念言霊篇', pt: 'Pensamento e Poder da Palavra' },
+  11: { ja: '民族、国土、迷信篇', pt: 'Povos, Nações e Superstições' },
+  12: { ja: '信仰篇（特輯）', pt: 'A Fé (Edição Especial)' },
+  13: { ja: '信仰篇（救業、布教）', pt: 'A Fé (Obra Divina e Difusão)' },
+  14: { ja: '信仰篇（入信、信仰上の悩み）', pt: 'A Fé (Ingresso e Sofrimentos)' },
+  15: { ja: '浄霊篇（上）', pt: 'Johrei (Vol. 1)' },
+  16: { ja: '浄霊篇（下）', pt: 'Johrei (Vol. 2)' },
+  17: { ja: '医術篇（一）', pt: 'Arte da Cura (1): Cérebro e Olhos' },
+  18: { ja: '医術篇（二）', pt: 'Arte da Cura (2): Tronco Superior' },
+  19: { ja: '医術篇（三）', pt: 'Arte da Cura (3): Tronco Central' },
+  20: { ja: '医術篇（四）', pt: 'Arte da Cura (4): Tronco Inferior' },
+  21: { ja: '医術篇（五）', pt: 'Arte da Cura (5): Membros e Pele' },
+  22: { ja: '医術篇（六）', pt: 'Arte da Cura (6): Sintomas Diversos' },
+  23: { ja: '医術篇（七）', pt: 'Arte da Cura (7): Lesões' },
+  24: { ja: '医術篇（八）', pt: 'Arte da Cura (8): Terapias' },
+  25: { ja: '医術篇（九）', pt: 'Arte da Cura (9): Purificação e Saúde' },
+  26: { ja: '医術篇（十）', pt: 'Arte da Cura (10): Gestação' },
+  27: { ja: '霊学篇（一）', pt: 'Ciência Espiritual: Doenças (1)' },
+  28: { ja: '霊学篇（二）', pt: 'Doenças Espirituais (2)' },
+  29: { ja: '霊学篇（三）', pt: 'Doenças Espirituais (3)' },
+  30: { ja: '霊学篇（四）', pt: 'Doenças Espirituais (4)' },
+  31: { ja: '霊学篇（五）', pt: 'Fenômenos Espirituais (1)' },
+  32: { ja: '霊学篇（六）', pt: 'Fenômenos Espirituais (2)' },
+  33: { ja: '霊学篇（七）', pt: 'Elucidação dos Espíritos (1)' },
+  34: { ja: '霊学篇（八）', pt: 'Elucidação dos Espíritos (2)' },
+  35: { ja: '霊学篇（九）', pt: 'Elucidação dos Espíritos (3)' },
+  36: { ja: '農法篇', pt: 'Agricultura Natural' },
+  37: { ja: '奇蹟奇象篇', pt: 'Milagres e Fenômenos' },
+  38: { ja: '祭事篇（一）', pt: 'Rituais Sagrados (1)' },
+  39: { ja: '祭事篇（二）', pt: 'Rituais Sagrados (2)' },
+  40: { ja: '祭事篇（三）', pt: 'Rituais Sagrados (3)' },
+  41: { ja: '霊祀篇（一）', pt: 'Culto aos Antepassados (1)' },
+  42: { ja: '霊祀篇（二）', pt: 'Culto aos Antepassados (2)' },
+  43: { ja: '霊祀篇（三）', pt: 'Culto aos Antepassados (3)' },
+  44: { ja: '霊祀篇（四）', pt: 'Culto aos Antepassados (4)' },
+  45: { ja: '人事篇（一）', pt: 'Relações Humanas (1)' },
+  46: { ja: '人事篇（二）', pt: 'Relações Humanas (2)' },
+  47: { ja: '社会人事篇', pt: 'Sociedade e Relações Humanas' },
+  48: { ja: '政治、経済、社会篇', pt: 'Política e Economia' },
+  49: { ja: '学問篇', pt: 'Conhecimento' },
+  50: { ja: '天文、地文篇', pt: 'Astronomia e Geografia' },
+};
+
 // ─── Compilation headers with cover images ──────────────────
 const COMPILATION_INFO = {
-  revelacao:    { title: '御垂示録', subtitle: 'Gosuijiroku — Registros Especiais', img: 'assets/img/gosuiji.JPG', desc: 'Coletânea de Escritos do Mestre Okada Jikanshi — Registro de Ensinamentos por Edição (Números 1 a 30)' },
-  miosie:       { title: '御教え集', subtitle: 'Mioshieshu — Coletânea de Ensinamentos', img: 'assets/img/mioshie.JPG', desc: 'Coletânea de Artigos do Mestre Okada Jikan — Coletânea de Ensinamentos por Publicação (Números 1 a 33)' },
-  viagem:       { title: '御光話録', subtitle: 'Ohikari Kowa Roku', img: 'assets/img/ohikari.JPG', desc: 'Coletânea de Ensaios do Mestre Okada Jikanshi — Registro dos Diálogos com Meishu-Sama (Volumes 1 a 19 e Suplemento)' },
-  hikarinochie: { title: '神智之光', subtitle: 'Hikari no Chie — A Luz da Sabedoria Divina', img: 'assets/img/gokowa1.jpg', desc: 'Coletânea de Sermões Complementares — 50 seções temáticas' },
-  jorei:        { title: '浄霊法講座', subtitle: 'Johrei Ho Koza — Curso sobre o Método do Johrei', img: 'assets/img/joreiho.jpg', desc: 'Curso sobre o Método do Johrei (Volumes I a VIII)' },
+  revelacao:    { title: '御垂示録', subtitle: 'Gosuijiroku — Registros Especiais', img: 'assets/img/gosuiji.JPG', desc: 'Coletânea de Escritos do Mestre Okada Jikanshi — Registro de Ensinamentos por Edição (Números 1 a 30)', redirect: 'reader.html?pub=Gosuiiji録&mode=book' },
+  miosie:       { title: '御教え集', subtitle: 'Mioshieshu — Coletânea de Ensinamentos', img: 'assets/img/mioshie.JPG', desc: 'Coletânea de Artigos do Mestre Okada Jikan — Coletânea de Ensinamentos por Publicação (Números 1 a 33)', redirect: 'reader.html?pub=Mioshie-shu&mode=book' },
+  viagem:       { title: '御光話録', subtitle: 'Ohikari Kowa Roku', img: 'assets/img/ohikari.JPG', desc: 'Coletânea de Ensaios do Mestre Okada Jikanshi — Registro dos Diálogos com Meishu-Sama (Volumes 1 a 19 e Suplemento)', redirect: 'reader.html?pub=御Hikari話録&mode=book' },
+  hikarinochie: { title: '神智之光', subtitle: 'Shinchi no Hikari — 講話集（補）', img: 'assets/img/gokowa1.jpg', desc: '講話集（補）— Compilação temática de Perguntas e Respostas (質問応答) organizada por categorias. Editor: 井上茂登吉', redirect: 'reader.html?pub=shinchi' },
+  jorei:        { title: '浄霊法講座', subtitle: 'Johrei Ho Koza — Curso sobre o Método do Johrei', img: 'assets/img/joreiho.jpg', desc: 'Curso sobre o Método do Johrei (Volumes I a VIII)', redirect: 'reader.html?pub=浄霊法講座&mode=book' },
   dendo:        { title: '伝道の引き', subtitle: 'Dendo no Shiori — Guia para a Difusão', img: null, desc: 'Guia para a Difusão I e II — Manual prático para a propagação da fé' },
   english:      { title: 'ENGLISH', subtitle: 'Traduções em Inglês', img: null, desc: 'Ensinamentos traduzidos para o idioma inglês' },
   sanko:        { title: '参考資料', subtitle: 'Material de Referência', img: null, desc: 'Materiais de referência e documentos complementares' },
   sasshi:       { title: '明主様関連寄稿', subtitle: 'Contribuições sobre Meishu-sama', img: null, desc: 'Artigos e contribuições relacionadas a Meishu-sama' },
-  hakkousi:     { title: 'その他の寄稿', subtitle: 'Outras Contribuições', img: null, desc: 'Contribuições diversas, testemunhos e diários espirituais' },
+  hakkousi:     { title: 'その他の寄稿', subtitle: 'Outras Contribuições — Artigos de colaboradores diversos', img: null, desc: '180 artigos de contribuidores como Kaian-sei (槐安生), Iwasaki Sakae (岩崎栄), Inoue Motokichi (井上茂登吉) e outros' },
   kanren:       { title: '関連出版物', subtitle: 'Publicações Relacionadas', img: null, desc: 'Publicações relacionadas aos ensinamentos de Meishu-sama' },
 };
 
@@ -62,7 +116,9 @@ const CONTENT_TYPES = [
   { id: 'miosie',       label: '御教え集',         match: x => urlPrefix(x) === 'miosie',                         css: 'type-other'    },
 
   // kanren — subdivided
-  { id: 'hikarinochie', label: '神智之光',         match: x => (x.url||'').startsWith('kanren/hikari'),           css: 'type-viagem'   },
+  // hikarinochie = 神智之光 — same content as qa/situmon, but as compilation
+  // match returns false so items classify as 'qa' individually; hikarinochie only works via TYPE_TO_SECTIONS
+  { id: 'hikarinochie', label: '神智之光',         match: () => false,                                            css: 'type-viagem'   },
   { id: 'chijotengoku', label: '地上天国',         match: x => (x.url||'').startsWith('kanren/true'),             css: 'type-viagem'   },
   { id: 'dendo',        label: '伝道の引き',       match: x => (x.url||'').includes('/dendo'),                    css: 'type-other'    },
   { id: 'kanren',       label: '関連出版物',       match: x => urlPrefix(x) === 'kanren',                        css: 'type-other'    },
@@ -97,6 +153,94 @@ function urlPrefix(x) { return (x.url||'').split('/')[0] || ''; }
 function folder1(x)   { const p=(x.url||'').split('/'); return p[0]==='search1' ? (p[1]||'') : ''; }
 function folder2(x)   { const p=(x.url||'').split('/'); return p[0]==='search2' ? (p[1]||'') : ''; }
 
+// ─── Sonota (その他の寄稿) special listing ──────────────────────
+let _sonotaEntries = null; // loaded on demand
+
+async function loadSonota() {
+  if (_sonotaEntries) return _sonotaEntries;
+  const res = await fetch('data/sonota_listing.json');
+  const data = await res.json();
+  _sonotaEntries = data.entries.map((e, i) => ({
+    id:           e.id || null,
+    title:        e.title_ja || '',
+    title_pt:     e.title_pt || '',
+    publication:  e.publication_ja || '',
+    issue_page:   e.date_showa || '',
+    author:       e.author || '',
+    url:          e.url || '',
+    part_file:    e.part_file || '',
+    _type:        'hakkousi',
+    _sonota:      true,
+    _sortIndex:   i,
+  }));
+  return _sonotaEntries;
+}
+
+// ─── Section Tables (legacy order) ────────────────────────────
+let _sectionTables = null;
+let _sectionLoading = false;
+
+async function loadSectionTables() {
+  if (_sectionTables) return _sectionTables;
+  if (_sectionLoading) {
+    // wait for in-flight load
+    while (_sectionLoading) await new Promise(r => setTimeout(r, 50));
+    return _sectionTables;
+  }
+  _sectionLoading = true;
+  try {
+    const res = await fetch('data/section_tables.json');
+    _sectionTables = await res.json();
+  } catch (e) {
+    console.warn('Failed to load section_tables.json:', e);
+    _sectionTables = {};
+  }
+  _sectionLoading = false;
+  return _sectionTables;
+}
+
+async function loadShinchiIndex() {
+  if (_shinchiIndex) return _shinchiIndex;
+  try {
+    const res = await fetch('data/shinchi_index.json');
+    _shinchiIndex = await res.json();
+  } catch (e) {
+    console.warn('Failed to load shinchi_index.json:', e);
+    _shinchiIndex = {};
+  }
+  return _shinchiIndex;
+}
+
+// ─── Type → Section Tables mapping ───────────────────────────
+// Maps sidebar type IDs to section_tables keys (for legacy order)
+const TYPE_TO_SECTIONS = {
+  palestra: ['palestras'],
+  qa:       ['situmon'],
+  dialogo:  ['taidan'],
+  ensaio:   ['ensaios_syoki','ensaios_s1718','ensaios_s2223','ensaios_s24','ensaios_s25','ensaios_s26','ensaios_s27','ensaios_s28','ensaios_s29'],
+  sanko:    ['sanko'],
+  okage:    ['okage'],
+  kanren:       ['kanren'],
+  viagem:       ['kiko', 'kiko2'],
+  hikarinochie: ['situmon'],  // 神智之光 = 質問応答 organized as book
+};
+
+// ─── Era → Ensaio section mapping ────────────────────────────
+const ERA_TO_ENSAIO_SECTION = {
+  inicial: 'ensaios_syoki',
+  s1718:   'ensaios_s1718',
+  s2223:   'ensaios_s2223',
+  s24:     'ensaios_s24',
+  s25:     'ensaios_s25',
+  s26:     'ensaios_s26',
+  s27:     'ensaios_s27',
+  s28:     'ensaios_s28',
+  s2930:   'ensaios_s29',
+};
+
+// ─── Compilation types that open in book mode ─────────────────
+const COMPILATION_BOOK_TYPES = new Set(['revelacao', 'miosie', 'hikarinochie', 'dendo', 'english']);
+
 // ─── State ────────────────────────────────────────────────────
 let _idx      = null;
 let _filtered = [];
@@ -107,13 +251,18 @@ let _sortAsc  = true;
 let _typeCounts   = {};
 let _eraCounts    = {};
 let _letterCounts = {};
+let _usingSectionData = false;  // true when showing section_tables data
+let _activeSectionKey = '';     // which section_tables key is active
+let _shinchiIndex = null;       // 神智之光 thematic index data
+let _usingShinchiMode = false;  // true when showing shinchi thematic view
 
 const _filters = { type: '', era: '', letter: '', search: '', pub: '' };
 
 // ─── Init ─────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
   showLoading();
-  await loadIndex();
+  await Promise.all([loadIndex(), loadSectionTables(), loadShinchiIndex()]);
+  computeSectionCounts();
   readUrlParams();
   buildSidebar();
   applyFilters();
@@ -121,6 +270,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     applyLanguage(localStorage.getItem('site_lang') || 'pt', false);
   }
 });
+
+// ─── Section counts from section_tables ──────────────────────
+function computeSectionCounts() {
+  if (!_sectionTables) return;
+  for (const [type, sections] of Object.entries(TYPE_TO_SECTIONS)) {
+    let total = 0;
+    for (const secKey of sections) {
+      if (_sectionTables[secKey]) total += _sectionTables[secKey].total || 0;
+    }
+    if (total > 0) _typeCounts[type] = total;
+  }
+}
 
 async function loadIndex() {
   const res = await fetch(IDX_URL);
@@ -144,6 +305,21 @@ async function loadIndex() {
     // Classify type (first match wins)
     for (const ct of CONTENT_TYPES) {
       if (ct.match(x)) { x._type = ct.id; break; }
+    }
+    // ─── Title normalization ───────────────────────────────────
+    // gosuiji (revelacao): always "Gosuijiroku N" from URL
+    if (x._type === 'revelacao') {
+      const m = (x.url||'').match(/sui(\d+)/i);
+      if (m) x.title = `Gosuijiroku ${parseInt(m[1], 10)}`;
+    // miosie whole-issue pages: "Mioshieshu N" from URL
+    } else if (/miosie\/miosie\d+/i.test(x.url||'')) {
+      const m = (x.url||'').match(/miosie(\d+)/i);
+      if (m) x.title = `Mioshieshu ${parseInt(m[1], 10)}`;
+    // Others: strip "Coletânea/Coleção de X —" header artifact
+    } else {
+      const raw = x.title || '';
+      const dm = raw.match(/^(?:D[ao]\s+)?(?:Coletânea|Coleção|Compilação|Do\s+Acervo)\s+de\s+[^—–\n]+\s*[—–]+\s*(.+)$/is);
+      if (dm && dm[1].trim().length > 3) x.title = dm[1].trim();
     }
     // Showa era
     const y = x.year;
@@ -209,27 +385,30 @@ function buildSidebar() {
 
 function populateCounts() {
   const set = (id, n) => { const el = document.getElementById(id); if (el) el.textContent = n || 0; };
-  // ① 御論文
-  set('countRonbun',      _typeCounts['ensaio']       || 0);
-  set('countEnsaio',      _typeCounts['ensaio']       || 0);
+  // Use section_tables counts when available (more accurate — matches legacy site)
+  const sc = (type) => _typeCounts[type] || 0;
+
+  // ① 御論文 — sum of all ensaio sections
+  set('countRonbun',      sc('ensaio'));
+  set('countEnsaio',      sc('ensaio'));
   // ② 御教え
-  set('countPalestra',    _typeCounts['palestra']     || 0);
-  set('countQa',          _typeCounts['qa']           || 0);
-  set('countDialogo',     _typeCounts['dialogo']      || 0);
+  set('countPalestra',    sc('palestra'));
+  set('countQa',          sc('qa'));
+  set('countDialogo',     sc('dialogo'));
   // ③ 編纂・翻訳
-  set('countRevelacao',   _typeCounts['revelacao']    || 0);
-  set('countMiosie',      _typeCounts['miosie']       || 0);
-  set('countViagem',      _typeCounts['viagem']       || 0);
-  set('countHikari',      _typeCounts['hikarinochie'] || 0);
-  set('countJorei',       _typeCounts['jorei']        || 0);
-  set('countDendo',       _typeCounts['dendo']        || 0);
-  set('countEnglish',     _typeCounts['english']      || 0);
+  set('countRevelacao',   sc('revelacao'));
+  set('countMiosie',      sc('miosie'));
+  set('countViagem',      sc('viagem'));
+  set('countHikari',      sc('hikarinochie'));
+  set('countJorei',       sc('jorei'));
+  set('countDendo',       sc('dendo'));
+  set('countEnglish',     sc('english'));
   // ④ 参考資料
-  set('countSanko',       _typeCounts['sanko']        || 0);
-  set('countSasshi',      _typeCounts['sasshi']       || 0);
-  set('countHakkousi',    _typeCounts['hakkousi']     || 0);
-  set('countKanren',      _typeCounts['kanren']       || 0);
-  set('countOkage',       _typeCounts['okage']        || 0);
+  set('countSanko',       sc('sanko'));
+  set('countSasshi',      sc('sasshi'));
+  set('countHakkousi',    180);  // curated listing from sonota_listing.json
+  set('countKanren',      sc('kanren'));
+  set('countOkage',       sc('okage'));
 }
 
 function buildEraGrid() {
@@ -271,7 +450,21 @@ function bindSidebarSearch() {
 
 // ─── Filters ──────────────────────────────────────────────────
 window.setFilter = function(key, val) {
+  // Redirect to dedicated page if compilation has one
+  if (key === 'type' && val && COMPILATION_INFO[val]?.redirect) {
+    window.location.href = COMPILATION_INFO[val].redirect;
+    return;
+  }
+  // Toggle filter (click again to deactivate)
   _filters[key] = _filters[key] === val ? '' : val;
+  // Reset sort to default when switching between section/index modes
+  if (key === 'type') {
+    const willUseSection = _filters[key] && TYPE_TO_SECTIONS[_filters[key]];
+    if (willUseSection) {
+      _sortCol = 'era'; // 'era' = original order for section data
+      _sortAsc = true;
+    }
+  }
   _page = 0;
   refreshSidebarActive();
   applyFilters();
@@ -308,8 +501,119 @@ function refreshSidebarActive() {
   });
 }
 
-function applyFilters() {
+async function applyFilters() {
   const terms = _filters.search.toLowerCase().split(/\s+/).filter(t => t.length > 1);
+
+  // Special case: その他の寄稿 uses curated listing
+  if (_filters.type === 'hakkousi') {
+    _usingSectionData = false;
+    _usingShinchiMode = false;
+    _activeSectionKey = '';
+    const sonota = await loadSonota();
+    _filtered = sonota.filter(x => {
+      if (terms.length) {
+        const hay = [x.title, x.title_pt, x.publication, x.author].join(' ').toLowerCase();
+        if (!terms.every(t => hay.includes(t))) return false;
+      }
+      return true;
+    });
+    // Keep original order by default
+    _filtered.sort((a, b) => a._sortIndex - b._sortIndex);
+    renderFilterBadges();
+    renderTable();
+    renderPagination();
+    return;
+  }
+
+  // ─── 神智之光 thematic index mode ──────────────────────────────
+  if (_filters.type === 'hikarinochie' && _shinchiIndex) {
+    _usingSectionData = false;
+    _usingShinchiMode = true;
+    _filtered = [];  // not used in shinchi mode
+    renderFilterBadges();
+    renderShinchiIndex(terms);
+    renderPagination();
+    pushState();
+    return;
+  }
+
+  // ─── Section Tables mode ─────────────────────────────────────
+  // When a type filter maps to section_tables, use legacy data for faithful order
+  const sectionKeys = _filters.type ? TYPE_TO_SECTIONS[_filters.type] : null;
+
+  if (sectionKeys && _sectionTables) {
+    _usingSectionData = true;
+    _usingShinchiMode = false;
+    // Restore thead if hidden by shinchi mode
+    const theadSec = document.querySelector('.browse-table thead');
+    if (theadSec) theadSec.style.display = '';
+
+    // For ensaio + specific era, narrow to one section
+    let activeSections = sectionKeys;
+    if (_filters.type === 'ensaio' && _filters.era && ERA_TO_ENSAIO_SECTION[_filters.era]) {
+      activeSections = [ERA_TO_ENSAIO_SECTION[_filters.era]];
+    }
+    _activeSectionKey = activeSections.length === 1 ? activeSections[0] : _filters.type;
+
+    // Gather rows from relevant sections
+    let rows = [];
+    for (const secKey of activeSections) {
+      const sec = _sectionTables[secKey];
+      if (!sec) continue;
+      for (const row of sec.rows) {
+        rows.push({ ...row, _sectionKey: secKey, _sectionTitle: sec.title_pt || secKey });
+      }
+    }
+
+    // Filter by search terms
+    if (terms.length) {
+      rows = rows.filter(row => {
+        const hay = [row.title, row.source, row.date, row.notes, row.reference || row.collection || row.citation || ''].join(' ').toLowerCase();
+        return terms.every(t => hay.includes(t));
+      });
+    }
+
+    // Sort: default is original order (_sortCol === 'era' or 'original')
+    if (_sortCol === 'title') {
+      rows.sort((a, b) => {
+        const va = (a.title||'').toLowerCase(), vb = (b.title||'').toLowerCase();
+        return _sortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+      });
+    } else if (_sortCol === 'pub') {
+      rows.sort((a, b) => {
+        const va = (a.source||'').toLowerCase(), vb = (b.source||'').toLowerCase();
+        if (!va && vb) return _sortAsc ? 1 : -1;
+        if (va && !vb) return _sortAsc ? -1 : 1;
+        const cmp = va.localeCompare(vb);
+        return _sortAsc ? cmp : -cmp;
+      });
+    } else if (_filters.type === 'hikarinochie') {
+      // Sort by thematic category number for 神智之光
+      rows.sort((a, b) => {
+        const ref_a = a.reference || a.collection || a.citation || '';
+        const ref_b = b.reference || b.collection || b.citation || '';
+        const ma = ref_a.match(/^(\d+)/), mb = ref_b.match(/^(\d+)/);
+        const na = ma ? parseInt(ma[1]) : 999, nb = mb ? parseInt(mb[1]) : 999;
+        return na - nb;
+      });
+    }
+    // else: keep original legacy order (default)
+
+    _filtered = rows;
+    renderFilterBadges();
+    renderTable();
+    renderPagination();
+    pushState();
+    return;
+  }
+
+  // ─── Standard search index mode ──────────────────────────────
+  _usingSectionData = false;
+  _usingShinchiMode = false;
+  _activeSectionKey = '';
+  // Restore thead if hidden by shinchi mode
+  const thead2 = document.querySelector('.browse-table thead');
+  if (thead2) thead2.style.display = '';
 
   _filtered = _idx.filter(x => {
     if (_filters.type   && x._type   !== _filters.type)      return false;
@@ -330,7 +634,6 @@ function applyFilters() {
   _filtered.sort((a, b) => {
     let va, vb;
     if (_sortCol === 'page') {
-      // Sort by page number (P.1, P.2, … P.114)
       va = parseInt((a.issue_page||'').replace(/\D/g,'')) || 9999;
       vb = parseInt((b.issue_page||'').replace(/\D/g,'')) || 9999;
       if (va === vb) { va = (a.title||'').toLowerCase(); vb = (b.title||'').toLowerCase(); }
@@ -338,6 +641,13 @@ function applyFilters() {
     } else if (_sortCol === 'title') {
       va = (a.title||'').toLowerCase();
       vb = (b.title||'').toLowerCase();
+    } else if (_sortCol === 'pub') {
+      const pa = (a.publication||'').toLowerCase();
+      const pb = (b.publication||'').toLowerCase();
+      if (!pa && pb) return _sortAsc ? 1 : -1;
+      if (pa && !pb) return _sortAsc ? -1 : 1;
+      va = pa; vb = pb;
+      if (pa === pb) { va = (a.title||'').toLowerCase(); vb = (b.title||'').toLowerCase(); }
     } else {
       va = a.year || 9999;
       vb = b.year || 9999;
@@ -406,7 +716,7 @@ function renderTable() {
   const slice = _filtered.slice(start, start + _perPage);
   const terms = _filters.search.toLowerCase().split(/\s+/).filter(t => t.length > 1);
 
-  // Publication header (shown when filtering by pub or compilation type)
+  // Publication header (shown when filtering by pub, compilation, or section)
   const pubHeader = document.getElementById('browsePublicationHeader');
   if (pubHeader) {
     const compInfo = _filters.type ? COMPILATION_INFO[_filters.type] : null;
@@ -414,6 +724,32 @@ function renderTable() {
       const pubHeaderLabel = _filters.pub.includes('|||') ? pubDisplay(_filters.pub.split('|||')[0]) : pubDisplay(_filters.pub);
       pubHeader.innerHTML = `<span class="browse-pub-back" onclick="clearFilter('pub')" title="Voltar para todos">‹</span> ${esc(pubHeaderLabel)}`;
       pubHeader.style.display = '';
+    } else if (_usingSectionData && _sectionTables) {
+      // Show section header with Japanese title
+      const secKeys = _filters.type === 'ensaio' && _filters.era && ERA_TO_ENSAIO_SECTION[_filters.era]
+        ? [ERA_TO_ENSAIO_SECTION[_filters.era]]
+        : (TYPE_TO_SECTIONS[_filters.type] || []);
+      const firstSec = secKeys.length ? _sectionTables[secKeys[0]] : null;
+      if (firstSec) {
+        const compInfoSec = COMPILATION_INFO[_filters.type];
+        // Use compilation info titles when available (e.g. hikarinochie shows 神智之光, not 質問応答)
+        const titleJa = compInfoSec?.title || firstSec.title_ja || '';
+        const titlePt = compInfoSec?.subtitle || firstSec.title_pt || _filters.type;
+        const imgHtml = compInfoSec?.img ? `<img class="comp-header-img" src="${compInfoSec.img}" alt="${esc(titleJa)}">` : '';
+        const descHtml = compInfoSec?.desc ? `<div class="comp-header-desc">${esc(compInfoSec.desc)}</div>` : '';
+        pubHeader.innerHTML = `
+          <div class="comp-header">
+            ${imgHtml}
+            <div class="comp-header-text">
+              <div class="comp-header-title">${esc(titleJa)}</div>
+              <div class="comp-header-subtitle">${esc(titlePt)}</div>
+              ${descHtml}
+            </div>
+          </div>`;
+        pubHeader.style.display = '';
+      } else {
+        pubHeader.style.display = 'none';
+      }
     } else if (compInfo) {
       const imgHtml = compInfo.img ? `<img class="comp-header-img" src="${compInfo.img}" alt="${esc(compInfo.title)}">` : '';
       pubHeader.innerHTML = `
@@ -437,6 +773,9 @@ function renderTable() {
       : `<strong>${total.toLocaleString()}</strong> resultado${total !== 1 ? 's' : ''} &mdash; mostrando ${start+1}&ndash;${Math.min(start+_perPage, total)}`;
   }
 
+  // Update table headers based on data mode
+  updateTableHeaders();
+
   if (total === 0) {
     el.innerHTML = `<tr><td colspan="7">
       <div class="browse-empty">
@@ -448,11 +787,111 @@ function renderTable() {
     return;
   }
 
+  // ─── Section Tables rendering (legacy order) ─────────────────
+  if (_usingSectionData) {
+    const isShinchi = _filters.type === 'hikarinochie';
+    let lastCatNum = -1;
+
+    el.innerHTML = slice.map((row, i) => {
+      const num = start + i + 1;
+      const hasLink = !!row.id;
+      const sectionKey = row._sectionKey || _activeSectionKey;
+
+      // Build reader URL with mode=list&list=sectionKey
+      const href = hasLink
+        ? `${READER}?id=${encodeURIComponent(row.id)}&mode=list&list=${encodeURIComponent(sectionKey)}`
+        : '#';
+
+      const titleHl = hlText(row.title || '', terms);
+      const source  = row.source ? esc(row.source) : (row.magazine ? esc(row.magazine) : '');
+      const date    = row.date ? esc(row.date) : '';
+      const notes   = row.notes || '';
+      // 5th column varies: reference, collection, citation, or contributor
+      const extra   = row.reference || row.collection || row.citation || row.contributor || '';
+
+      // Category group header for 神智之光 thematic view
+      let catHeader = '';
+      if (isShinchi) {
+        const catMatch = (extra || '').match(/^(\d+)/);
+        const catNum = catMatch ? parseInt(catMatch[1]) : 0;
+        if (catNum !== lastCatNum && catNum > 0) {
+          lastCatNum = catNum;
+          const cat = SHINCHI_CATEGORIES[catNum];
+          if (cat) {
+            catHeader = `<tr class="shinchi-cat-header">
+              <td colspan="7">
+                <span class="shinchi-cat-num">${catNum}</span>
+                <span class="shinchi-cat-ja">${esc(cat.ja)}</span>
+                <span class="shinchi-cat-pt">${esc(cat.pt)}</span>
+              </td>
+            </tr>`;
+          }
+        }
+      }
+
+      return `${catHeader}<tr class="${hasLink ? '' : 'no-link'}">
+        <td class="col-num">${num}</td>
+        <td class="col-title">
+          <div class="td-title">${hasLink
+            ? `<a href="${href}" onclick="navigateSection(event,${JSON.stringify(row.id)},${JSON.stringify(sectionKey)})">${titleHl}</a>`
+            : `<span class="td-title-nolink">${titleHl}</span>`}
+          </div>
+        </td>
+        <td class="col-pub td-pub">${hlText(source, terms)}</td>
+        <td class="col-issue td-pub">${date}</td>
+        <td class="col-era"><span class="td-era">${date ? date.split('.')[0] || '' : ''}</span></td>
+        <td class="col-notes td-pub">${esc(extra)}${notes ? (extra ? ' — ' : '') + esc(notes) : ''}</td>
+        <td class="col-read">
+          ${hasLink ? `<a href="${href}" class="td-read-btn" onclick="navigateSection(event,${JSON.stringify(row.id)},${JSON.stringify(sectionKey)})" title="Ler">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>` : ''}
+        </td>
+      </tr>`;
+    }).join('');
+    return;
+  }
+
+  // Sonota entries use a different rendering
+  const isSonota = slice.length > 0 && slice[0]._sonota;
+
   el.innerHTML = slice.map((x, i) => {
     const num  = start + i + 1;
+
+    if (x._sonota) {
+      const href = x.id && x.part_file
+        ? `${READER}?id=${encodeURIComponent(x.id)}&part=${encodeURIComponent(x.part_file)}`
+        : '#';
+      const titleJa = hlText(x.title || '', terms);
+      const titlePt = x.title_pt ? `<div class="td-title-pt">${hlText(x.title_pt, terms)}</div>` : '';
+      const pub = x.publication ? esc(x.publication) : '';
+      const date = x.issue_page ? esc(x.issue_page) : '';
+      const author = x.author ? esc(x.author) : '';
+      const hasLink = x.id && x.part_file;
+
+      return `<tr>
+        <td class="col-num">${num}</td>
+        <td class="col-title">
+          <div class="td-title">${hasLink
+            ? `<a href="${href}" onclick="navigate(event,${JSON.stringify(x.id)},${JSON.stringify(x.part_file||'')})">${titleJa}</a>`
+            : `<span class="td-title-nolink">${titleJa}</span>`}
+          </div>
+          ${titlePt}
+        </td>
+        <td class="col-pub td-pub">${pub}</td>
+        <td class="col-issue td-pub">${date}</td>
+        <td class="col-era"><span class="td-era">${author}</span></td>
+        <td class="col-notes td-pub"></td>
+        <td class="col-read">
+          ${hasLink ? `<a href="${href}" class="td-read-btn" onclick="navigate(event,${JSON.stringify(x.id)},${JSON.stringify(x.part_file||'')})" title="Ler">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>` : ''}
+        </td>
+      </tr>`;
+    }
+
     const ct   = CONTENT_TYPES.find(t => t.id === x._type) || CONTENT_TYPES[CONTENT_TYPES.length-1];
     const href = x.part_file
-      ? `${READER}?id=${encodeURIComponent(x.id)}&part=${encodeURIComponent(x.part_file)}`
+      ? `${READER}?id=${encodeURIComponent(x.id)}&part=${encodeURIComponent(x.part_file)}&mode=list&list=${encodeURIComponent(x._type || '')}`
       : `${READER}?cat=${encodeURIComponent(x.category||'')}`;
     let eraLabel = '&mdash;';
     if (x.date_iso) {
@@ -496,6 +935,244 @@ function renderTable() {
       </td>
     </tr>`;
   }).join('');
+}
+
+// ─── 神智之光 Thematic Index Renderer ─────────────────────────
+let _shinchiOpenCat = null;  // which category is expanded (null = show 総目次)
+
+function renderShinchiIndex(terms) {
+  const el    = document.getElementById('browseTableBody');
+  const meta  = document.getElementById('browseMeta');
+  const pubHeader = document.getElementById('browsePublicationHeader');
+
+  // Show header
+  if (pubHeader) {
+    const comp = COMPILATION_INFO['hikarinochie'];
+    const imgHtml = comp?.img ? `<img class="comp-header-img" src="${comp.img}" alt="${esc(comp.title)}">` : '';
+    pubHeader.innerHTML = `
+      <div class="comp-header">
+        ${imgHtml}
+        <div class="comp-header-text">
+          <div class="comp-header-title">${esc(comp?.title || '神智之光')}</div>
+          <div class="comp-header-subtitle">${esc(comp?.subtitle || '')}</div>
+          <div class="comp-header-desc">${esc(comp?.desc || '')}</div>
+        </div>
+      </div>`;
+    pubHeader.style.display = '';
+  }
+
+  // Hide normal table headers
+  const thead = document.querySelector('.browse-table thead');
+  if (thead) thead.style.display = 'none';
+
+  // If searching, show flat results across all categories
+  if (terms.length) {
+    renderShinchiSearch(el, meta, terms);
+    return;
+  }
+
+  // If a category is expanded, show detail view
+  if (_shinchiOpenCat !== null && _shinchiIndex[_shinchiOpenCat]) {
+    renderShinchiDetail(el, meta, _shinchiOpenCat);
+    return;
+  }
+
+  // ─── 総目次 (General Table of Contents) ───────────────────────
+  const catNums = Object.keys(_shinchiIndex).sort((a, b) => parseInt(a) - parseInt(b));
+
+  let html = `<tr class="shinchi-toc-title"><td colspan="7">
+    <div class="shinchi-toc-header">総　目　次</div>
+    <div class="shinchi-toc-sub-row">
+      <span>篇ごとの項目一覧へ</span>
+      <span>分野別直接本文へ</span>
+    </div>
+  </td></tr>`;
+
+  for (const catNum of catNums) {
+    const cat = _shinchiIndex[catNum];
+    html += `<tr class="shinchi-toc-row" onclick="openShinchiCat('${catNum}')">
+      <td class="shinchi-toc-num">${catNum}</td>
+      <td class="shinchi-toc-name">
+        <a href="#" onclick="event.preventDefault();openShinchiCat('${catNum}')">${esc(cat.cat_title_ja)}</a>
+      </td>
+      <td class="shinchi-toc-keywords" colspan="5">${
+        cat.sub_categories.map((sub, i) => {
+          const label = sub.label_ja || sub.title_pt;
+          return `<a href="#" class="shinchi-kw-link" onclick="event.preventDefault();event.stopPropagation();openShinchiCat('${catNum}','${i}')">${esc(label)}</a>`;
+        }).join('、')
+      }</td>
+    </tr>`;
+  }
+
+  if (meta) {
+    meta.innerHTML = `総目次 — <strong>50</strong> 篇、約 <strong>5,000</strong> 問答`;
+  }
+  el.innerHTML = html;
+}
+
+// Open a specific category detail, optionally scroll to sub-category index
+window.openShinchiCat = function(catNum, subIdx) {
+  _shinchiOpenCat = catNum;
+  const terms = _filters.search.toLowerCase().split(/\s+/).filter(t => t.length > 1);
+  renderShinchiIndex(terms);
+  if (subIdx !== undefined && subIdx !== null) {
+    // Scroll to the specific sub-category label
+    const labels = document.querySelectorAll('.shinchi-detail-label');
+    const target = labels[parseInt(subIdx)];
+    if (target) {
+      target.scrollIntoView({ behavior: 'instant', block: 'center' });
+      target.classList.add('shinchi-label-highlight');
+      setTimeout(() => target.classList.remove('shinchi-label-highlight'), 2000);
+      return;
+    }
+  }
+  document.querySelector('.browse-table')?.scrollIntoView({ behavior: 'instant', block: 'start' });
+};
+
+// Back to 総目次
+window.backToShinchiToc = function() {
+  _shinchiOpenCat = null;
+  const terms = _filters.search.toLowerCase().split(/\s+/).filter(t => t.length > 1);
+  renderShinchiIndex(terms);
+  document.querySelector('.browse-table')?.scrollIntoView({ behavior: 'instant', block: 'start' });
+};
+
+// ─── Detail view for a single category ──────────────────────
+function renderShinchiDetail(el, meta, catNum) {
+  const cat = _shinchiIndex[catNum];
+  if (!cat) return;
+
+  const catInt = parseInt(catNum);
+  const catInfo = SHINCHI_CATEGORIES[catInt];
+  const prevCat = catInt > 1 ? String(catInt - 1) : null;
+  const nextCat = catInt < 50 ? String(catInt + 1) : null;
+
+  let html = '';
+
+  // Navigation bar
+  html += `<tr class="shinchi-detail-nav"><td colspan="7">
+    <a href="#" onclick="event.preventDefault();backToShinchiToc()" class="shinchi-back">← 総目次</a>
+    <span class="shinchi-nav-arrows">
+      ${prevCat ? `<a href="#" onclick="event.preventDefault();openShinchiCat('${prevCat}')" title="${_shinchiIndex[prevCat]?.cat_title_ja || ''}">‹ 前</a>` : '<span class="shinchi-nav-disabled">‹ 前</span>'}
+      <span class="shinchi-nav-sep">|</span>
+      ${nextCat ? `<a href="#" onclick="event.preventDefault();openShinchiCat('${nextCat}')" title="${_shinchiIndex[nextCat]?.cat_title_ja || ''}">次 ›</a>` : '<span class="shinchi-nav-disabled">次 ›</span>'}
+    </span>
+  </td></tr>`;
+
+  // Category title
+  html += `<tr class="shinchi-detail-title"><td colspan="7">
+    <div class="shinchi-detail-title-text">
+      <strong>神智之光　　Ｎｏ.${catNum}</strong>
+    </div>
+    <div class="shinchi-detail-section">
+      <strong>${esc(cat.cat_title_ja)}</strong>　${
+        cat.sub_categories.map((sub, i) => {
+          const label = sub.label_ja || sub.title_pt;
+          return `<a href="#shinchi-sub-${catNum}-${i}" class="shinchi-kw-link" onclick="event.preventDefault();document.getElementById('shinchi-sub-${catNum}-${i}')?.scrollIntoView({behavior:'smooth',block:'center'})">${esc(label)}</a>`;
+        }).join('、')
+      }
+    </div>
+  </td></tr>`;
+
+  // Table header
+  html += `<tr class="shinchi-detail-thead">
+    <td class="shinchi-detail-th-label"></td>
+    <td class="shinchi-detail-th-topic">お伺い事項</td>
+    <td class="shinchi-detail-th-date" colspan="5">備考</td>
+  </tr>`;
+
+  // Sub-categories with topics
+  cat.sub_categories.forEach((sub, subIdx) => {
+    const hasLink = !!sub.id;
+    const href = hasLink
+      ? `${READER}?id=${encodeURIComponent(sub.id)}&mode=list&list=situmon`
+      : '#';
+
+    let isFirst = true;
+    for (const topic of sub.topics) {
+      html += `<tr class="shinchi-detail-row${isFirst ? ' shinchi-detail-row-first' : ''}">`;
+
+      if (isFirst) {
+        // Sub-category label (short JP keyword as green link) in first column
+        const label = sub.label_ja || sub.title_pt;
+        html += `<td class="shinchi-detail-label" id="shinchi-sub-${catNum}-${subIdx}" rowspan="${sub.topics.length}">
+          ${hasLink
+            ? `<a href="${href}" class="shinchi-label-link">${esc(label)}</a>`
+            : `<span class="shinchi-label-nolink">${esc(label)}</span>`}
+        </td>`;
+        isFirst = false;
+      }
+
+      html += `<td class="shinchi-detail-topic">${esc(topic.topic_ja)}</td>
+        <td class="shinchi-detail-date" colspan="5">${esc(topic.date)}</td>
+      </tr>`;
+    }
+  });
+
+  // Bottom navigation
+  html += `<tr class="shinchi-detail-nav"><td colspan="7">
+    <a href="#" onclick="event.preventDefault();backToShinchiToc()" class="shinchi-back">← 総目次</a>
+    <span class="shinchi-nav-arrows">
+      ${prevCat ? `<a href="#" onclick="event.preventDefault();openShinchiCat('${prevCat}')">‹ 前</a>` : ''}
+      <span class="shinchi-nav-sep">|</span>
+      ${nextCat ? `<a href="#" onclick="event.preventDefault();openShinchiCat('${nextCat}')">次 ›</a>` : ''}
+    </span>
+  </td></tr>`;
+
+  const totalTopics = cat.sub_categories.reduce((sum, s) => sum + s.topics.length, 0);
+  if (meta) {
+    meta.innerHTML = `No.${catNum} <strong>${esc(cat.cat_title_ja)}</strong> — ${totalTopics} tópicos`;
+  }
+  el.innerHTML = html;
+}
+
+// ─── Search across all shinchi categories ───────────────────
+function renderShinchiSearch(el, meta, terms) {
+  const catNums = Object.keys(_shinchiIndex).sort((a, b) => parseInt(a) - parseInt(b));
+  let html = '';
+  let totalMatches = 0;
+
+  for (const catNum of catNums) {
+    const cat = _shinchiIndex[catNum];
+    let catHasMatch = false;
+
+    for (const sub of cat.sub_categories) {
+      const matchingTopics = sub.topics.filter(t => {
+        const hay = [t.topic_ja, sub.title_pt, cat.cat_title_ja, cat.cat_keywords].join(' ').toLowerCase();
+        return terms.every(term => hay.includes(term));
+      });
+      if (matchingTopics.length === 0) continue;
+
+      if (!catHasMatch) {
+        html += `<tr class="shinchi-cat-header" onclick="openShinchiCat('${catNum}')" style="cursor:pointer">
+          <td colspan="7">
+            <span class="shinchi-cat-num">${catNum}</span>
+            <span class="shinchi-cat-ja">${esc(cat.cat_title_ja)}</span>
+          </td>
+        </tr>`;
+        catHasMatch = true;
+      }
+
+      const hasLink = !!sub.id;
+      const href = hasLink ? `${READER}?id=${encodeURIComponent(sub.id)}&mode=list&list=situmon` : '#';
+
+      for (const topic of matchingTopics) {
+        totalMatches++;
+        html += `<tr class="shinchi-detail-row">
+          <td class="shinchi-detail-label">
+            ${hasLink ? `<a href="${href}" class="shinchi-label-link">${hlText(sub.title_pt, terms)}</a>` : esc(sub.title_pt)}
+          </td>
+          <td class="shinchi-detail-topic">${hlText(topic.topic_ja, terms)}</td>
+          <td class="shinchi-detail-date" colspan="5">${esc(topic.date)}</td>
+        </tr>`;
+      }
+    }
+  }
+
+  if (meta) {
+    meta.innerHTML = `<strong>${totalMatches}</strong> resultado${totalMatches !== 1 ? 's' : ''} encontrado${totalMatches !== 1 ? 's' : ''}`;
+  }
+  el.innerHTML = html || `<tr><td colspan="7"><div class="browse-empty"><h3>Nenhum resultado</h3></div></td></tr>`;
 }
 
 // ─── Pagination ───────────────────────────────────────────────
@@ -542,12 +1219,65 @@ window.setPerPage = function(n) {
   pushState();
 };
 
+// ─── Update table headers based on data mode ─────────────────
+function updateTableHeaders() {
+  const thead = document.querySelector('.browse-table thead tr');
+  if (!thead) return;
+
+  if (_usingSectionData) {
+    // Legacy columns: # | Título | Fonte | Data | Era | Referência | Ler
+    thead.innerHTML = `
+      <th class="col-num">#</th>
+      <th class="col-title sortable" data-col="title" onclick="setSort('title')">Título</th>
+      <th class="col-pub sortable" data-col="pub" onclick="setSort('pub')">Fonte</th>
+      <th class="col-issue">Data</th>
+      <th class="col-era">Era</th>
+      <th class="col-notes">Referência</th>
+      <th class="col-read">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="15" height="15"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      </th>`;
+    // Re-apply sort indicator
+    thead.querySelectorAll('.sortable').forEach(th => {
+      if (th.dataset.col === _sortCol) th.classList.add(_sortAsc ? 'sort-asc' : 'sort-desc');
+    });
+  } else {
+    // Standard columns: # | Título | Publicação | Edição | Era | Notas | Ler
+    thead.innerHTML = `
+      <th class="col-num">#</th>
+      <th class="col-title sortable" data-col="title" onclick="setSort('title')">Título</th>
+      <th class="col-pub sortable" data-col="pub" onclick="setSort('pub')">Publicação</th>
+      <th class="col-issue sortable" data-col="page" onclick="setSort('page')">Edição</th>
+      <th class="col-era sortable" data-col="era" onclick="setSort('era')">Era</th>
+      <th class="col-notes">Notas</th>
+      <th class="col-read">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="15" height="15"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      </th>`;
+    thead.querySelectorAll('.sortable').forEach(th => {
+      if (th.dataset.col === _sortCol) th.classList.add(_sortAsc ? 'sort-asc' : 'sort-desc');
+    });
+  }
+}
+
+// ─── Navigate to reader (section mode) ────────────────────────
+window.navigateSection = function(e, id, sectionKey) {
+  e.preventDefault();
+  const url = `${READER}?id=${encodeURIComponent(id)}&mode=list&list=${encodeURIComponent(sectionKey)}`;
+  sessionStorage.setItem('browse_return', window.location.href);
+  window.location.href = url;
+};
+
 // ─── Navigate to reader ───────────────────────────────────────
 window.navigate = function(e, id, partFile) {
   e.preventDefault();
-  const url = partFile
-    ? `${READER}?id=${encodeURIComponent(id)}&part=${encodeURIComponent(partFile)}`
-    : `${READER}?id=${encodeURIComponent(id)}`;
+  let url;
+  // If we're in section data mode, pass list param
+  if (_usingSectionData && _activeSectionKey) {
+    url = `${READER}?id=${encodeURIComponent(id)}&mode=list&list=${encodeURIComponent(_activeSectionKey)}`;
+  } else if (partFile) {
+    url = `${READER}?id=${encodeURIComponent(id)}&part=${encodeURIComponent(partFile)}`;
+  } else {
+    url = `${READER}?id=${encodeURIComponent(id)}`;
+  }
   sessionStorage.setItem('browse_return', window.location.href);
   window.location.href = url;
 };
@@ -571,6 +1301,16 @@ function esc(s) {
   return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
+// Debug access
+window._browseDebug = () => ({
+  sectionTables: _sectionTables ? Object.keys(_sectionTables) : null,
+  usingSectionData: _usingSectionData,
+  activeSectionKey: _activeSectionKey,
+  filterType: _filters.type,
+  typeCounts: { ..._typeCounts },
+  filteredLen: _filtered.length,
+});
+
 function showLoading() {
   const el = document.getElementById('browseTableBody');
   if (el) el.innerHTML = `<tr><td colspan="7"><div class="browse-loading">
@@ -579,8 +1319,22 @@ function showLoading() {
   </div></td></tr>`;
 }
 
+// ─── Sync toolbar height so sticky thead is never obscured ───
+function syncToolbarHeight() {
+  const toolbar = document.querySelector('.browse-toolbar');
+  if (!toolbar) return;
+  document.documentElement.style.setProperty(
+    '--toolbar-height', toolbar.getBoundingClientRect().height + 'px'
+  );
+}
+
 // ─── Main search + per-page binding ──────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+  syncToolbarHeight();
+  const ro = new ResizeObserver(syncToolbarHeight);
+  const toolbar = document.querySelector('.browse-toolbar');
+  if (toolbar) ro.observe(toolbar);
+
   const input = document.getElementById('browseSearchInput');
   if (input) {
     let timer;

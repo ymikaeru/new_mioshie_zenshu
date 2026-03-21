@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <script>if(sessionStorage.getItem('mioshie_auth')!=='true')document.documentElement.style.display='none';</script>
+  <script>/* auth temporarily disabled for dev */</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mioshie Zenshu — Biblioteca Sagrada</title>
@@ -14,7 +14,7 @@
 
   <!-- Styles -->
   <link rel="stylesheet" href="css/styles.css">
-  <link rel="stylesheet" href="css/browse.css">
+  <link rel="stylesheet" href="css/browse.css?v=6">
 
   <!-- PWA -->
   <link rel="manifest" href="manifest.json">
@@ -126,8 +126,8 @@
           <span>御光話録 <small>Ohikari Kowa Roku</small></span>
           <span class="sidebar-nav-item__count" id="countViagem">—</span>
         </div>
-        <div class="sidebar-nav-item" data-type="hikarinochie" onclick="setFilter('type','hikarinochie')">
-          <span>神智之光 <small>Hikari no Chie</small></span>
+        <div class="sidebar-nav-item" data-type="hikarinochie" onclick="window.location.href='reader.html?pub=shinchi'">
+          <span>神智之光 <small>Shinchi no Hikari</small></span>
           <span class="sidebar-nav-item__count" id="countHikari">—</span>
         </div>
         <div class="sidebar-nav-item" data-type="jorei" onclick="setFilter('type','jorei')">
@@ -220,8 +220,8 @@
           <tr>
             <th class="col-num">#</th>
             <th class="col-title sortable" data-col="title" onclick="setSort('title')">Título</th>
-            <th class="col-pub">Publicação</th>
-            <th class="col-issue">Edição</th>
+            <th class="col-pub sortable" data-col="pub" onclick="setSort('pub')">Publicação</th>
+            <th class="col-issue sortable" data-col="page" onclick="setSort('page')">Edição</th>
             <th class="col-era sortable sort-asc" data-col="era" onclick="setSort('era')">Era</th>
             <th class="col-notes">Notas</th>
             <th class="col-read">
@@ -261,7 +261,7 @@
 
 <!-- Scripts -->
 <script src="js/app.js?v=3" defer></script>
-<script src="js/browse.js?v=5" defer></script>
+<script src="js/browse.js?v=13" defer></script>
 
 <script>
 window.toggleSection = function(id) {

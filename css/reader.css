@@ -22,23 +22,85 @@
 /* ─── Reader Layout ──────────────────────────────────────────── */
 .reader-layout {
   display: grid;
-  grid-template-columns: 280px 1fr;
+  grid-template-columns: 1fr;
   min-height: calc(100vh - var(--nav-height));
   max-width: 1400px;
   margin: var(--nav-height) auto 0;
   gap: 0;
+  position: relative;
 }
 
 .reader-sidebar {
-  position: sticky;
-  top: var(--nav-height);
-  height: calc(100vh - var(--nav-height));
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: var(--sidebar-width, 520px);
+  padding: calc(var(--nav-height, 56px) + 8px) 0 16px;
+  max-height: 100vh;
   overflow-y: auto;
+  overflow-x: hidden;
   border-right: 1px solid var(--border);
-  padding: 24px 0;
   background: var(--bg-color);
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
+  z-index: 20;
+  transform: translateX(0);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 2px 0 12px rgba(0,0,0,0.08);
+}
+
+/* ─── Sidebar collapse toggle ─────────────────────────────── */
+.sidebar-collapse-btn {
+  position: fixed;
+  top: calc(var(--nav-height, 56px) + 12px);
+  left: calc(var(--sidebar-width, 520px) - 14px);
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border, #ddd);
+  border-radius: 50%;
+  background: var(--bg-color, #fff);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 25;
+  transition: left 0.3s ease, opacity 0.2s;
+  color: var(--text-muted, #888);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+}
+.sidebar-collapse-btn:hover {
+  color: var(--accent, #B8860B);
+  border-color: var(--accent, #B8860B);
+}
+.sidebar-collapse-btn svg {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.3s;
+}
+
+/* Collapsed: sidebar slides off-screen */
+.reader-layout.sidebar-collapsed .reader-sidebar {
+  transform: translateX(-100%);
+  box-shadow: none;
+}
+.reader-layout.sidebar-collapsed .sidebar-collapse-btn {
+  left: 8px;
+}
+.reader-layout.sidebar-collapsed .sidebar-collapse-btn svg {
+  transform: rotate(180deg);
+}
+
+/* Backdrop when sidebar is open (optional, for focus) */
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.2);
+  z-index: 15;
+}
+.reader-layout:not(.sidebar-collapsed) .sidebar-backdrop {
+  display: block;
 }
 
 .reader-sidebar::-webkit-scrollbar { width: 4px; }
@@ -47,6 +109,8 @@
 .reader-main {
   padding: 40px 48px 80px;
   min-width: 0;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 /* ─── Sidebar Contents ───────────────────────────────────────── */
@@ -638,26 +702,290 @@ mark.search-highlight {
   font-size: 15px;
 }
 
+/* ─── Book Badge (shown in list/planilha mode) ────────────────── */
+.book-badge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  margin-bottom: 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  cursor: pointer;
+  transition: all 0.2s var(--ease);
+}
+.book-badge:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.book-badge-cover {
+  width: 36px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 4px;
+  flex-shrink: 0;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+}
+.book-badge-icon {
+  width: 36px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent-soft);
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.book-badge-icon svg {
+  stroke: var(--accent);
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.book-badge-info {
+  flex: 1;
+  min-width: 0;
+}
+.book-badge-label {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  color: var(--text-muted);
+  display: block;
+}
+.book-badge-title {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  color: var(--text-main);
+  display: block;
+  line-height: 1.3;
+}
+.book-badge-title-ja {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 11px;
+  color: var(--text-muted);
+  display: block;
+}
+.book-badge-link {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ─── Sidebar Mode Toggle ────────────────────────────────────── */
+.sidebar-mode-toggle {
+  display: flex;
+  gap: 4px;
+  padding: 8px;
+  margin: 8px 0 12px;
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+}
+.mode-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 8px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s var(--ease);
+}
+.mode-btn:hover {
+  background: var(--accent-soft);
+  color: var(--text-main);
+}
+.mode-btn.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+.mode-btn svg {
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+
+/* ─── Sidebar Book Header ────────────────────────────────────── */
+.sidebar-book-header {
+  display: flex;
+  gap: 12px;
+  padding: 8px;
+  margin-bottom: 8px;
+}
+.sidebar-book-cover {
+  width: 48px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 4px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+.sidebar-book-info {
+  flex: 1;
+  min-width: 0;
+}
+.sidebar-book-title {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main);
+  line-height: 1.3;
+  margin-bottom: 2px;
+}
+.sidebar-book-title-ja {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+/* ─── Sidebar List Header ────────────────────────────────────── */
+.sidebar-list-header {
+  padding: 0 8px 4px;
+}
+.sidebar-label-ja {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 10px;
+  color: var(--text-muted);
+  padding: 0 8px 4px;
+  opacity: 0.7;
+}
+
+/* ─── Sidebar Grouped Navigation ─────────────────────────────── */
+.sidebar-group {
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 4px;
+}
+.sidebar-group:last-child {
+  border-bottom: none;
+}
+.sidebar-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.15s var(--ease);
+  list-style: none;
+}
+.sidebar-group-header::-webkit-details-marker { display: none; }
+.sidebar-group-header::marker { display: none; content: ''; }
+.sidebar-group-header:hover {
+  color: var(--accent);
+}
+.sidebar-group-header svg {
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.2s var(--ease);
+}
+.sidebar-group[open] .sidebar-group-header svg {
+  transform: rotate(180deg);
+}
+
+/* ─── Book mode: topics under active article ─────────────────── */
+.book-item-topics {
+  border-left: 3px solid var(--accent, #B8860B);
+  margin-left: 32px;
+  background: var(--accent-bg, rgba(184,134,11,0.04));
+  padding: 2px 0 4px;
+}
+.book-sb-topics { margin: 0; }
+.book-sb-topic {
+  font-size: 0.74rem;
+  color: var(--text-muted, #666);
+  padding: 5px 10px 5px 10px;
+  line-height: 1.4;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.book-sb-topic:hover {
+  background: var(--accent-bg, rgba(184,134,11,0.1));
+  color: var(--accent, #B8860B);
+}
+
+/* ─── Book mode: volume groups (号) ─────────────────────────── */
+.book-vol-group {
+  border-bottom: 1px solid var(--border, #e0d8c8);
+}
+.book-vol-group > summary { list-style: none; }
+.book-vol-group > summary::-webkit-details-marker { display: none; }
+.book-vol-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 12px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary, #444);
+  background: var(--surface, #faf8f3);
+  transition: background 0.15s;
+}
+.book-vol-header:hover { background: var(--accent-bg, rgba(184,134,11,0.07)); }
+.book-vol-count {
+  font-size: 0.72rem;
+  color: var(--text-muted, #999);
+  font-weight: 400;
+}
+.book-vol-group[open] .book-vol-header {
+  color: var(--accent, #B8860B);
+  background: var(--accent-bg, rgba(184,134,11,0.08));
+}
+
 /* ─── Responsive ─────────────────────────────────────────────── */
 @media (max-width: 1024px) {
-  .reader-layout {
-    grid-template-columns: 240px 1fr;
-  }
+  :root { --sidebar-width: 340px; }
   .reader-main {
     padding: 32px 32px 80px;
   }
 }
 
 @media (max-width: 768px) {
-  .reader-layout {
-    grid-template-columns: 1fr;
-  }
   .reader-sidebar {
-    position: static;
-    height: auto;
-    max-height: 240px;
-    border-right: none;
-    border-bottom: 1px solid var(--border);
+    width: 85vw;
+  }
+  .sidebar-collapse-btn {
+    left: calc(85vw - 14px);
+  }
+  .reader-layout.sidebar-collapsed .sidebar-collapse-btn {
+    left: 8px;
+  }
+  .sidebar-book-header {
+    padding: 4px 8px;
+  }
+  .sidebar-book-cover {
+    width: 36px;
+    height: 48px;
+  }
+  .book-badge {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+  .book-badge-cover {
+    width: 28px;
+    height: 38px;
   }
   .reader-main {
     padding: 24px 20px 60px;
@@ -697,4 +1025,204 @@ mark.search-highlight {
   .action-btn {
     justify-content: center;
   }
+}
+
+/* ─── 神智之光 Shinchi Sidebar (Accordion Tree) ────────────── */
+.shinchi-sidebar {
+  padding: 0 !important;
+}
+.shinchi-sidebar .sidebar-book-header {
+  padding: 16px;
+  border-bottom: 1px solid var(--border, #e0d8c8);
+}
+.shinchi-sb-tree {
+  padding: 4px 0;
+}
+
+/* Book "about" disclosure */
+.shinchi-book-about {
+  border-bottom: 1px solid var(--border, #e0d8c8);
+}
+.shinchi-book-about-summary {
+  list-style: none;
+  padding: 8px 16px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted, #888);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.shinchi-book-about-summary::-webkit-details-marker { display: none; }
+.shinchi-book-about-summary::after {
+  content: '›';
+  margin-left: auto;
+  transition: transform 0.2s;
+  font-size: 1rem;
+}
+.shinchi-book-about[open] .shinchi-book-about-summary::after {
+  transform: rotate(90deg);
+}
+.shinchi-book-about-body {
+  padding: 0 16px 12px;
+}
+.shinchi-book-meta-row {
+  display: flex;
+  gap: 8px;
+  font-size: 0.78rem;
+  color: var(--text-muted, #777);
+  padding: 2px 0;
+}
+.shinchi-book-meta-label {
+  font-weight: 600;
+  color: var(--text-secondary, #555);
+  min-width: 90px;
+  flex-shrink: 0;
+}
+.shinchi-book-about-desc {
+  margin: 8px 0 0;
+  font-size: 0.76rem;
+  color: var(--text-muted, #777);
+  line-height: 1.6;
+  border-top: 1px solid var(--border, #e0d8c8);
+  padding-top: 8px;
+}
+
+/* Category (título) */
+.shinchi-sb-cat {
+  border-bottom: 1px solid var(--border, #e0d8c8);
+}
+.shinchi-sb-cat > summary {
+  list-style: none;
+}
+.shinchi-sb-cat > summary::-webkit-details-marker {
+  display: none;
+}
+.shinchi-sb-cat-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-main, #333);
+  transition: background 0.15s;
+}
+.shinchi-sb-cat-header:hover {
+  background: var(--surface-hover, rgba(0,0,0,0.04));
+}
+.shinchi-sb-cat-header.active {
+  background: var(--surface, #f5f2ea);
+}
+.shinchi-sb-cat-num {
+  min-width: 22px;
+  text-align: right;
+  color: var(--text-muted, #888);
+  font-size: 0.75rem;
+  font-weight: 400;
+}
+.shinchi-sb-cat-title {
+  flex: 1;
+}
+.shinchi-sb-cat-body {
+  padding: 0 0 4px 0;
+}
+
+/* Sub-category (subtítulo) */
+.shinchi-sb-sub {
+  margin: 0;
+}
+.shinchi-sb-sub > summary {
+  list-style: none;
+}
+.shinchi-sb-sub > summary::-webkit-details-marker {
+  display: none;
+}
+.shinchi-sb-sub-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 12px 5px 42px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  color: #008080;
+  font-weight: 500;
+  transition: background 0.15s;
+}
+.shinchi-sb-sub-header:hover {
+  background: var(--surface-hover, rgba(0,0,0,0.04));
+}
+.shinchi-sb-sub-header.active {
+  background: var(--accent-bg, rgba(184, 134, 11, 0.12));
+  color: var(--accent, #B8860B);
+  font-weight: 600;
+  border-left: 3px solid var(--accent, #B8860B);
+  padding-left: 39px;
+}
+.shinchi-sb-nolink {
+  color: var(--text-muted, #888);
+  cursor: default;
+}
+.shinchi-sb-sub-label {
+  flex: 1;
+}
+.shinchi-sb-sub-count {
+  font-size: 0.7rem;
+  color: var(--text-muted, #999);
+  min-width: 20px;
+  text-align: right;
+}
+
+/* Topics */
+.shinchi-sb-topics {
+  padding: 2px 0 6px 0;
+  border-left: 3px solid var(--accent, #B8860B);
+  margin-left: 39px;
+  background: var(--accent-bg, rgba(184, 134, 11, 0.05));
+}
+.shinchi-sb-topic {
+  font-size: 0.75rem;
+  color: var(--text-muted, #666);
+  padding: 5px 10px 5px 10px;
+  line-height: 1.4;
+  border-bottom: 1px solid var(--border-light, rgba(0,0,0,0.05));
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 6px;
+  transition: background 0.15s, color 0.15s;
+}
+.shinchi-sb-topic:last-child {
+  border-bottom: none;
+}
+.shinchi-sb-topic:hover {
+  background: rgba(0,0,0,0.05);
+  color: var(--text-main, #333);
+}
+.shinchi-sb-topic.active {
+  background: rgba(184, 134, 11, 0.15);
+  color: var(--accent, #B8860B);
+  font-weight: 500;
+}
+.shinchi-sb-topic-text {
+  flex: 1;
+  min-width: 0;
+}
+.shinchi-sb-date {
+  flex-shrink: 0;
+  font-size: 0.68rem;
+  color: var(--text-muted, #999);
+  white-space: nowrap;
+}
+
+/* Highlight heading when scrolled to via topic click */
+.topic-highlight {
+  background: rgba(184, 134, 11, 0.12);
+  border-radius: 4px;
+  transition: background 1.5s ease;
 }

@@ -42,6 +42,9 @@ const PUB_TO_INDEX_MAP = {
   'sanka1':             ['Sanka-shu'],
   'sanka2':             ['Sanka-shu'],
 
+  // ─── Poesia (coleções com prefácios/ensaios no browse) ───
+  'waraino':            ['笑の泉'],
+
   // ─── Sasshi (livretos e ensaios) ───
   'sasshi_america1':    ['アメリカを救う'],
   'sasshi_bunmei':      ['Bunmei no Sozo'],
@@ -147,6 +150,14 @@ let currentView = 'grid'; // 'grid' | 'list'
 let activeEra   = 'all';  // era key or 'all'
 let activeCat   = 'all';  // category key or 'all'
 
+// ─── Poetry collections: link to poems.html instead of browse.html ─
+const POEMS_BOOK_MAP = {
+  'waraino': 'waraino.html',
+  'akemaro': 'akemaro.html',
+  'sanka1':  'sanka1.html',
+  'sanka2':  'sanka2.html',
+};
+
 // ─── Era display order ────────────────────────────────────────────
 const ERA_ORDER = [
   'all',
@@ -177,8 +188,10 @@ async function initLibrary() {
     const hakData = await hakRes.json();
     // Build map: file name (without path) → entry
     hakData.forEach(h => { hakkousiMap[h.file] = h; });
-    buildEraNav();
-    buildCatNav();
+    // Pre-compute grouped view of all pubs for sidebar counts
+    const allGrouped = groupPublications(allPubs);
+    buildEraNav(allGrouped);
+    buildCatNav(allGrouped);
     renderPublications();
   } catch (err) {
     document.getElementById('libLoading').innerHTML =
@@ -188,20 +201,20 @@ async function initLibrary() {
 }
 
 // ─── Sidebar: Era navigation ──────────────────────────────────────
-function buildEraNav() {
+function buildEraNav(groupedPubs) {
   const nav = document.getElementById('eraNav');
   if (!nav) return;
 
-  // Count per era (excluding 'all')
+  // Count per era using the grouped (deduplicated) publications
   const counts = {};
-  allPubs.forEach(p => {
+  groupedPubs.forEach(p => {
     counts[p.era] = (counts[p.era] || 0) + 1;
   });
 
   const btns = [];
 
   // "Todas" (all)
-  btns.push(makeNavBtn('era', 'all', 'Todas as Publicações', allPubs.length));
+  btns.push(makeNavBtn('era', 'all', 'Todas as Publicações', groupedPubs.length));
 
   ERA_ORDER.forEach(era => {
     if (era === 'all') return;
@@ -219,12 +232,12 @@ function buildEraNav() {
 }
 
 // ─── Sidebar: Category navigation ────────────────────────────────
-function buildCatNav() {
+function buildCatNav(groupedPubs) {
   const nav = document.getElementById('catNav');
   if (!nav) return;
 
   const counts = {};
-  allPubs.forEach(p => {
+  groupedPubs.forEach(p => {
     counts[p.category] = (counts[p.category] || 0) + 1;
   });
 
@@ -233,7 +246,7 @@ function buildCatNav() {
     .sort((a, b) => b[1] - a[1]);
 
   const btns = [];
-  btns.push(makeNavBtn('cat', 'all', 'Todas', allPubs.length));
+  btns.push(makeNavBtn('cat', 'all', 'Todas', groupedPubs.length));
   cats.forEach(([cat, count]) => {
     btns.push(makeNavBtn('cat', cat, cat, count));
   });
@@ -307,11 +320,14 @@ function renderPublications() {
     pubs = pubs.filter(p => p.category === activeCat);
   }
 
+  // Group editions of the same work into one card
+  const displayPubs = groupPublications(pubs);
+
   // Update era header
-  updateEraHeader(pubs);
+  updateEraHeader(displayPubs, pubs.length);
 
   // Render
-  if (pubs.length === 0) {
+  if (displayPubs.length === 0) {
     container.className = 'pub-grid';
     container.innerHTML = '<div class="lib-empty">Nenhuma publicação encontrada.</div>';
     return;
@@ -319,10 +335,10 @@ function renderPublications() {
 
   if (currentView === 'list') {
     container.className = 'pub-list';
-    container.innerHTML = pubs.map(p => renderListItem(p)).join('');
+    container.innerHTML = displayPubs.map(p => renderListItem(p)).join('');
   } else {
     container.className = 'pub-grid';
-    container.innerHTML = renderGridItems(pubs);
+    container.innerHTML = renderGridItems(displayPubs);
   }
 
   // Attach click events
@@ -335,14 +351,15 @@ function renderPublications() {
 }
 
 // ─── Era header ───────────────────────────────────────────────────
-function updateEraHeader(pubs) {
+function updateEraHeader(displayPubs, rawCount) {
   const titleEl    = document.getElementById('eraTitle');
   const subtitleEl = document.getElementById('eraSubtitle');
   const statsEl    = document.getElementById('eraStats');
   if (!titleEl) return;
 
-  const withCovers = pubs.filter(p => p.cover_image).length;
-  const cats       = [...new Set(pubs.map(p => p.category))].length;
+  const withCovers = displayPubs.filter(p => p.cover_image).length;
+  const cats       = [...new Set(displayPubs.map(p => p.category))].length;
+  const obras      = displayPubs.length;
 
   let title, subtitle;
   if (activeEra !== 'all') {
@@ -359,8 +376,11 @@ function updateEraHeader(pubs) {
   titleEl.querySelector('.lang-pt').textContent = title;
   subtitleEl.querySelector('.lang-pt').textContent = subtitle;
 
+  const edStr = rawCount > obras
+    ? ` <span class="era-stat-sub">(${rawCount} edições)</span>` : '';
+
   statsEl.innerHTML = `
-    <span><strong>${pubs.length}</strong> publicações</span>
+    <span><strong>${obras}</strong> obras${edStr}</span>
     <span><strong>${withCovers}</strong> com capa</span>
     <span><strong>${cats}</strong> categorias</span>
   `;
@@ -382,14 +402,29 @@ function renderGridItems(pubs) {
 
 function renderCard(pub) {
   const cover   = coverHtml(pub, 'card');
-  const dateStr = pub.date_showa ? `<div class="pub-card__date">${escHtml(pub.date_showa)}</div>` : '';
-  const catStr  = pub.category   ? `<div class="pub-card__cat">${escHtml(pub.category)}</div>`   : '';
+
+  // Date: for groups show year range if different, else normal date_showa
+  let dateStr = '';
+  if (pub._group_count > 1 && pub._year_start) {
+    const range = pub._year_end && pub._year_end !== pub._year_start
+      ? `${pub._year_start} – ${pub._year_end}`
+      : String(pub._year_start);
+    dateStr = `<div class="pub-card__date">${escHtml(range)}</div>`;
+  } else if (pub.date_showa) {
+    dateStr = `<div class="pub-card__date">${escHtml(pub.date_showa)}</div>`;
+  }
+
+  const catStr  = pub.category ? `<div class="pub-card__cat">${escHtml(pub.category)}</div>` : '';
+
+  // Edition badge for grouped works
+  const edBadge = pub._group_count > 1
+    ? `<div class="pub-card__ed-badge">${pub._group_count} ed.</div>` : '';
 
   // Use romaji (title_ja) as primary title as per user request
   const displayTitle = pub.title_ja || pub.title_pt || '';
 
   return `<div class="pub-card" data-pub-idx="${pub._idx}" role="button" tabindex="0" aria-label="${escHtml(displayTitle)}">
-    <div class="pub-card__cover">${cover}</div>
+    <div class="pub-card__cover">${cover}${edBadge}</div>
     <div class="pub-card__info">
       <p class="pub-card__title">${escHtml(displayTitle)}</p>
       ${dateStr}
@@ -404,9 +439,18 @@ function renderListItem(pub) {
     ? `<img src="assets/img/${escHtml(pub.cover_image)}" alt="" loading="lazy">`
     : `<div class="pub-list-item__thumb-placeholder">${bookIcon()}</div>`;
 
-  const dateStr = pub.date_showa ? `<span class="showa">${escHtml(pub.date_showa)}</span>` : '';
-  const yearStr = pub.year       ? `<span>${pub.year}</span>` : '';
-  const catStr  = pub.category   ? `<span>${escHtml(pub.category)}</span>` : '';
+  let dateStr = '';
+  if (pub._group_count > 1 && pub._year_start) {
+    const range = pub._year_end && pub._year_end !== pub._year_start
+      ? `${pub._year_start}–${pub._year_end}` : String(pub._year_start);
+    dateStr = `<span class="showa">${escHtml(range)}</span>`;
+  } else if (pub.date_showa) {
+    dateStr = `<span class="showa">${escHtml(pub.date_showa)}</span>`;
+  }
+  const yearStr  = (!pub._group_count || pub._group_count === 1) && pub.year ? `<span>${pub.year}</span>` : '';
+  const catStr   = pub.category ? `<span>${escHtml(pub.category)}</span>` : '';
+  const edStr    = pub._group_count > 1
+    ? `<span class="pub-list-item__ed-count">${pub._group_count} edições</span>` : '';
 
   const displayTitle = pub.title_ja || pub.title_pt || '';
   const subTitle = pub.title_pt && pub.title_pt !== pub.title_ja ? pub.title_pt : '';
@@ -416,12 +460,50 @@ function renderListItem(pub) {
     <div class="pub-list-item__body">
       <p class="pub-list-item__title">${escHtml(displayTitle)}</p>
       <p class="pub-list-item__ja">${escHtml(subTitle)}</p>
-      <div class="pub-list-item__meta">${dateStr}${yearStr}${catStr}</div>
+      <div class="pub-list-item__meta">${dateStr}${yearStr}${catStr}${edStr}</div>
     </div>
     <div class="pub-list-item__arrow">
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
     </div>
   </div>`;
+}
+
+// ─── Group publications sharing the same hakkousi_file ───────────
+function groupPublications(pubs) {
+  const byHakkousi = {}; // hakkousi_file → [pubs]
+  const ungrouped  = [];
+
+  for (const pub of pubs) {
+    if (pub.hakkousi_file) {
+      if (!byHakkousi[pub.hakkousi_file]) byHakkousi[pub.hakkousi_file] = [];
+      byHakkousi[pub.hakkousi_file].push(pub);
+    } else {
+      ungrouped.push({ ...pub, _group_count: 1 });
+    }
+  }
+
+  const grouped = [];
+  for (const members of Object.values(byHakkousi)) {
+    const sorted = [...members].sort((a, b) => (a.year || 9999) - (b.year || 9999));
+    // Representative: prefer oldest with a cover image, else just oldest
+    const rep  = sorted.find(p => p.cover_image) || sorted[0];
+    const years = sorted.map(p => p.year).filter(Boolean);
+
+    grouped.push({
+      ...rep,
+      _group_count: members.length,
+      _year_start:  years[0]                    || null,
+      _year_end:    years[years.length - 1]     || null,
+    });
+  }
+
+  // Merge and sort chronologically
+  return [...grouped, ...ungrouped]
+    .sort((a, b) => {
+      const ya = a._year_start || a.year || 9999;
+      const yb = b._year_start || b.year || 9999;
+      return ya - yb;
+    });
 }
 
 // ─── Group by era (respects ERA_ORDER) ────────────────────────────
@@ -518,18 +600,36 @@ function openModal(pub) {
           </div>`).join('')}
       </div>` : '';
 
-  // Reader action — link to browse.html filtered by publication
+  // Reader action — link to browse.html or poems.html depending on content type
+  const poemsBook = POEMS_BOOK_MAP[pub.id] || null;
+
+  const bookSvg = `<svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`;
+
   const _pubNames = getPublicationSearchNames(pub);
   let actionBtn = '';
-  if (_pubNames.length === 1) {
-    actionBtn = `<a class="btn-primary" href="browse.html?pub=${encodeURIComponent(_pubNames[0])}">
-      <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-      <span class="lang-pt">Ler Ensinamentos</span>
+
+  if (poemsBook) {
+    // Poetry collections link to poems.html filtered by book
+    actionBtn = `<a class="btn-primary" href="poems.html?book=${encodeURIComponent(poemsBook)}">
+      ${bookSvg}
+      <span class="lang-pt">Ver Poemas</span>
+    </a>`;
+    // Also show "Abrir no Leitor" if there are teachings for this pub
+    if (_pubNames.length >= 1) {
+      actionBtn += `<a class="btn-primary btn-primary--outline" href="reader.html?pub=${encodeURIComponent(_pubNames[0])}">
+        ${bookSvg}
+        <span class="lang-pt">Abrir no Leitor</span>
+      </a>`;
+    }
+  } else if (_pubNames.length === 1) {
+    actionBtn = `<a class="btn-primary" href="reader.html?pub=${encodeURIComponent(_pubNames[0])}">
+      ${bookSvg}
+      <span class="lang-pt">Abrir no Leitor</span>
     </a>`;
   } else if (_pubNames.length > 1) {
     actionBtn = _pubNames.map(name =>
-      `<a class="btn-primary btn-primary--sm" href="browse.html?pub=${encodeURIComponent(name)}">
-        <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      `<a class="btn-primary btn-primary--sm" href="reader.html?pub=${encodeURIComponent(name)}">
+        ${bookSvg}
         ${escHtml(name)}
       </a>`
     ).join('');
@@ -561,12 +661,13 @@ function openModal(pub) {
   const notesHtml = pub.notes_pt && pub.notes_pt !== pub.description
     ? `<p class="pub-modal__desc">${escHtml(pub.notes_pt)}</p>` : '';
 
-  // All Images Carousel
+  // All Images Carousel — only show when there are 2+ images (1 image = already shown as cover)
   let carouselHtml = '';
-  if (hakData && hakData.all_images && hakData.all_images.length > 0) {
-    const slides = hakData.all_images.map(img => 
+  if (hakData && hakData.all_images && hakData.all_images.length > 1) {
+    const slides = hakData.all_images.map(img =>
       `<div class="pub-carousel__slide" onclick="openLightbox('assets/img/${escHtml(img)}')" style="cursor:pointer">
-         <img src="assets/img/${escHtml(img)}" alt="Foto da Edição" loading="lazy">
+         <img src="assets/img/${escHtml(img)}" alt="Foto da Edição" loading="lazy"
+              onerror="const c=this.closest('.pub-modal__carousel'); this.closest('.pub-carousel__slide').remove(); if(c && c.querySelectorAll('.pub-carousel__slide').length < 2) c.remove();">
        </div>`
     ).join('');
     
@@ -582,11 +683,13 @@ function openModal(pub) {
     `;
   }
 
-  // Edition/image counts badge
+  // Edition/image counts badge (with correct singular/plural)
+  const edLabel  = pub.edition_count === 1 ? 'edição'  : 'edições';
+  const imgLabel = pub.image_count   === 1 ? 'imagem'  : 'imagens';
   const countsBadge = (pub.edition_count || pub.image_count)
     ? `<div class="pub-modal__counts">
-        ${pub.edition_count ? `<span>📖 ${pub.edition_count} edições</span>` : ''}
-        ${pub.image_count ? `<span>🖼 ${pub.image_count} imagens</span>` : ''}
+        ${pub.edition_count ? `<span>📖 ${pub.edition_count} ${edLabel}</span>` : ''}
+        ${pub.image_count   ? `<span>🖼 ${pub.image_count} ${imgLabel}</span>`  : ''}
        </div>` : '';
 
   panel.innerHTML = `
@@ -629,7 +732,12 @@ function openModal(pub) {
 function renderEditionsTable(hakData, pub) {
   const perEditionMap = HAKKOUSI_EDITION_PUB_MAP[hakData.file] || null;
 
-  const cards = hakData.editions.map((ed, edIdx) => {
+  // Sort editions by year ascending (oldest first), preserving original index for perEditionMap
+  const sortedEditions = hakData.editions
+    .map((ed, origIdx) => ({ ed, origIdx }))
+    .sort((a, b) => (a.ed.year || 9999) - (b.ed.year || 9999));
+
+  const cards = sortedEditions.map(({ ed, origIdx: edIdx }) => {
     // 1. Meta line: Date, Year, Format, Pages, Price
     const metaItems = [];
     if (ed.date_showa) metaItems.push(`<span class="ed-meta-date">${escHtml(ed.date_showa)}</span>`);
@@ -663,15 +771,23 @@ function renderEditionsTable(hakData, pub) {
     const _edPubNames = (perEditionMap && perEditionMap[edIdx] !== undefined)
       ? perEditionMap[edIdx]
       : getPublicationSearchNames(pub);
+    const _poemsBook = POEMS_BOOK_MAP[pub.id] || null;
     let readLink = '';
-    if (_edPubNames.length >= 1) {
-      const pubParam = _edPubNames.join('|||');
+    if (_poemsBook) {
       readLink = `
         <div class="ed-card__actions">
-          <a class="btn-primary btn-primary--sm" href="browse.html?pub=${encodeURIComponent(pubParam)}">
+          <a class="btn-primary btn-primary--sm" href="poems.html?book=${encodeURIComponent(_poemsBook)}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-            Ler Ensinamentos
+            Ver Poemas
           </a>
+        </div>`;
+    } else if (_edPubNames.length >= 1) {
+      readLink = `
+        <div class="ed-card__actions">
+          ${_edPubNames.map(name => `<a class="btn-primary btn-primary--sm" href="reader.html?pub=${encodeURIComponent(name)}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            ${escHtml(name)}
+          </a>`).join('')}
         </div>`;
     }
 

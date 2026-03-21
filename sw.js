@@ -4,7 +4,7 @@
              network-first for JSON data
    ======================================================= */
 
-const CACHE_NAME = 'mioshie-v2';
+const CACHE_NAME = 'mioshie-v3';
 const STATIC_ASSETS = [
   '/',
   '/index.html',

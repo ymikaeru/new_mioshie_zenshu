@@ -71,9 +71,9 @@
       </div>
     </div>
 
-    <!-- Category filter -->
+    <!-- Category / Theme filter -->
     <div class="sidebar-section">
-      <div class="sidebar-label lang-pt">Categoria</div>
+      <div class="sidebar-label sidebar-label-cat lang-pt">Categoria</div>
       <div class="sidebar-label lang-ja" style="display:none">カテゴリ</div>
       <div id="categoryFilters" class="filter-list">
         <!-- Populated by poems.js -->
@@ -82,9 +82,18 @@
 
     <!-- Mood filter -->
     <div class="sidebar-section" style="margin-top:8px">
-      <div class="sidebar-label lang-pt">Humor</div>
+      <div class="sidebar-label sidebar-label-mood lang-pt">Humor</div>
       <div class="sidebar-label lang-ja" style="display:none">雰囲気</div>
       <div id="moodFilters" class="filter-list">
+        <!-- Populated by poems.js -->
+      </div>
+    </div>
+
+    <!-- Collections filter (shown in normal mode) -->
+    <div class="sidebar-section" id="collectionSection" style="margin-top:8px">
+      <div class="sidebar-label lang-pt">Coleções</div>
+      <div class="sidebar-label lang-ja" style="display:none">コレクション</div>
+      <div id="collectionFilters" class="filter-list">
         <!-- Populated by poems.js -->
       </div>
     </div>
@@ -100,6 +109,15 @@
 
   <!-- Main content -->
   <main class="poems-main" id="main-content" role="main">
+
+    <!-- Back to library (shown when ?book= param is present) -->
+    <a id="poemsBackToLibrary" href="library.html" class="poems-back-to-library" style="display:none">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Voltar à Biblioteca
+    </a>
+
+    <!-- Book collection banner (shown when ?book= param is present) -->
+    <div id="poemsBookBanner" class="poems-book-banner" style="display:none"></div>
 
     <!-- Poem detail view (hidden initially) -->
     <div id="poemDetail" class="poem-detail" style="display:none">
