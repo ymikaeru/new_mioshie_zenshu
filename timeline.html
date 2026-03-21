@@ -208,6 +208,15 @@
       transition: background 1.5s ease;
     }
 
+    /* ─── Article highlight (from browse planilha era link) ── */
+    .tl-item-highlight {
+      background: color-mix(in srgb, var(--accent, #B8860B) 18%, transparent);
+      border-radius: 6px;
+      outline: 2px solid color-mix(in srgb, var(--accent, #B8860B) 60%, transparent);
+      outline-offset: 2px;
+      transition: background 2s ease, outline-color 2s ease;
+    }
+
     /* ─── Expanded teachings list ─────────────────────── */
     .tl-year-teachings {
       display: none;
@@ -562,18 +571,43 @@ function renderTimeline() {
   style.textContent = '.tl-teaching-item.more-hidden { display: none; }';
   document.head.appendChild(style);
 
-  // Scroll to year if hash present (e.g. #year-1949 from browse era link)
+  // Scroll to year + highlight specific article if hash present
+  // Format: #year-1949  or  #year-1949__articleId
   const hash = window.location.hash;
   if (hash && hash.startsWith('#year-')) {
+    const [yearPart, encodedId] = hash.slice(1).split('__');
+    const articleId = encodedId ? decodeURIComponent(encodedId) : null;
+
     requestAnimationFrame(() => {
-      const target = document.querySelector(hash);
-      if (target) {
-        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        // Auto-open the year row
-        if (!target.classList.contains('open')) toggleYear(target);
-        target.classList.add('tl-highlight');
-        setTimeout(() => target.classList.remove('tl-highlight'), 2000);
+      const yearRow = document.getElementById(yearPart);
+      if (!yearRow) return;
+
+      // Open the year row
+      if (!yearRow.classList.contains('open')) toggleYear(yearRow);
+
+      // Add data-id to each teaching item (inject during render or find by href)
+      if (articleId) {
+        // Find the teaching link whose href contains the article id
+        const teachings = yearRow.parentElement.querySelector('.tl-year-teachings');
+        const link = teachings?.querySelector(`a[href*="${encodeURIComponent(articleId)}"]`);
+        if (link) {
+          const item = link.closest('.tl-teaching-item');
+          if (item) {
+            // Remove more-hidden so it's visible
+            item.classList.remove('more-hidden');
+            item.classList.add('tl-item-highlight');
+            setTimeout(() => item.classList.remove('tl-item-highlight'), 3000);
+            // Scroll to the item after a short delay (year opens first)
+            setTimeout(() => item.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150);
+            return;
+          }
+        }
       }
+
+      // Fallback: just scroll to year row
+      yearRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      yearRow.classList.add('tl-highlight');
+      setTimeout(() => yearRow.classList.remove('tl-highlight'), 2000);
     });
   }
 }

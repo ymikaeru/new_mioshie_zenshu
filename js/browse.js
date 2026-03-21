@@ -948,7 +948,7 @@ function renderTable() {
       <td class="col-pub td-pub">${pub}</td>
       <td class="col-issue td-pub">${issue}</td>
       <td class="col-era">${x.year
-        ? `<a class="td-era td-era-link" href="timeline.html#year-${x.year}" title="Ver na Timeline">${eraLabel}</a>`
+        ? `<a class="td-era td-era-link" href="timeline.html#year-${x.year}__${encodeURIComponent(x.id)}" title="Ver na Timeline">${eraLabel}</a>`
         : `<span class="td-era">${eraLabel}</span>`
       }</td>
       <td class="col-notes td-pub">${tagSnippet(x)}</td>
