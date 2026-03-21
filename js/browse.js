@@ -63,11 +63,11 @@ const SHINCHI_CATEGORIES = {
 
 // ─── Compilation headers with cover images ──────────────────
 const COMPILATION_INFO = {
-  revelacao:    { title: '御垂示録', subtitle: 'Gosuijiroku — Registros Especiais', img: 'assets/img/gosuiji.JPG', desc: 'Coletânea de Escritos do Mestre Okada Jikanshi — Registro de Ensinamentos por Edição (Números 1 a 30)' },
-  miosie:       { title: '御教え集', subtitle: 'Mioshieshu — Coletânea de Ensinamentos', img: 'assets/img/mioshie.JPG', desc: 'Coletânea de Artigos do Mestre Okada Jikan — Coletânea de Ensinamentos por Publicação (Números 1 a 33)' },
-  viagem:       { title: '御光話録', subtitle: 'Ohikari Kowa Roku', img: 'assets/img/ohikari.JPG', desc: 'Coletânea de Ensaios do Mestre Okada Jikanshi — Registro dos Diálogos com Meishu-Sama (Volumes 1 a 19 e Suplemento)' },
-  hikarinochie: { title: '神智之光', subtitle: 'Shinchi no Hikari — 講話集（補）', img: 'assets/img/gokowa1.jpg', desc: '講話集（補）— Compilação temática de Perguntas e Respostas (質問応答) organizada por categorias. Editor: 井上茂登吉' },
-  jorei:        { title: '浄霊法講座', subtitle: 'Johrei Ho Koza — Curso sobre o Método do Johrei', img: 'assets/img/joreiho.jpg', desc: 'Curso sobre o Método do Johrei (Volumes I a VIII)', redirect: 'johrei.html' },
+  revelacao:    { title: '御垂示録', subtitle: 'Gosuijiroku — Registros Especiais', img: 'assets/img/gosuiji.JPG', desc: 'Coletânea de Escritos do Mestre Okada Jikanshi — Registro de Ensinamentos por Edição (Números 1 a 30)', redirect: 'reader.html?pub=Gosuiiji録&mode=book' },
+  miosie:       { title: '御教え集', subtitle: 'Mioshieshu — Coletânea de Ensinamentos', img: 'assets/img/mioshie.JPG', desc: 'Coletânea de Artigos do Mestre Okada Jikan — Coletânea de Ensinamentos por Publicação (Números 1 a 33)', redirect: 'reader.html?pub=Mioshie-shu&mode=book' },
+  viagem:       { title: '御光話録', subtitle: 'Ohikari Kowa Roku', img: 'assets/img/ohikari.JPG', desc: 'Coletânea de Ensaios do Mestre Okada Jikanshi — Registro dos Diálogos com Meishu-Sama (Volumes 1 a 19 e Suplemento)', redirect: 'reader.html?pub=御Hikari話録&mode=book' },
+  hikarinochie: { title: '神智之光', subtitle: 'Shinchi no Hikari — 講話集（補）', img: 'assets/img/gokowa1.jpg', desc: '講話集（補）— Compilação temática de Perguntas e Respostas (質問応答) organizada por categorias. Editor: 井上茂登吉', redirect: 'reader.html?pub=shinchi' },
+  jorei:        { title: '浄霊法講座', subtitle: 'Johrei Ho Koza — Curso sobre o Método do Johrei', img: 'assets/img/joreiho.jpg', desc: 'Curso sobre o Método do Johrei (Volumes I a VIII)', redirect: 'reader.html?pub=浄霊法講座&mode=book' },
   dendo:        { title: '伝道の引き', subtitle: 'Dendo no Shiori — Guia para a Difusão', img: null, desc: 'Guia para a Difusão I e II — Manual prático para a propagação da fé' },
   english:      { title: 'ENGLISH', subtitle: 'Traduções em Inglês', img: null, desc: 'Ensinamentos traduzidos para o idioma inglês' },
   sanko:        { title: '参考資料', subtitle: 'Material de Referência', img: null, desc: 'Materiais de referência e documentos complementares' },

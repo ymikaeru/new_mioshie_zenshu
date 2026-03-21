@@ -70,11 +70,14 @@ function injectCollapseBtn() {
   };
   layout.appendChild(backdrop);
 
-  // Start collapsed by default for cleaner reading
-  const saved = localStorage.getItem('reader_sidebar_collapsed');
-  if (saved === null || saved === '1') {
-    layout.classList.add('sidebar-collapsed');
-  }
+  // Always start open so user sees the index, then auto-close after 3 s
+  layout.classList.remove('sidebar-collapsed');
+  setTimeout(() => {
+    if (!layout.classList.contains('sidebar-collapsed')) {
+      layout.classList.add('sidebar-collapsed');
+      localStorage.setItem('reader_sidebar_collapsed', '1');
+    }
+  }, 3000);
 }
 
 // ─── Init ─────────────────────────────────────────────────────
@@ -581,6 +584,11 @@ function renderTeaching(item, indexEntry, searchQuery) {
       if (_activeTopic >= 0) scrollToTopic(_activeTopic);
     });
   }
+
+  // Book mode: populate topics for the active article in the sidebar
+  if (_sidebarMode === 'book') {
+    requestAnimationFrame(() => syncBookTopics());
+  }
 }
 
 // Extract PT headings from rendered content and update shinchi sidebar topic labels
@@ -588,13 +596,23 @@ function syncShinchiTopics() {
   const topicEls = document.querySelectorAll('.shinchi-sb-topic-text');
   if (!topicEls.length) return;
 
-  const h2s = document.querySelectorAll('.reader-content h2');
-  const headings = h2s.length >= topicEls.length
-    ? h2s
-    : document.querySelectorAll('.reader-content h2, .reader-content h3');
+  // Build candidate heading list: h2/h3 first, then numbered <p><strong> as fallback
+  let headings = [...document.querySelectorAll('.reader-content h2, .reader-content h3')];
+
+  if (headings.length < topicEls.length) {
+    // Articles render sections as <p><strong>001 Title…</strong></p>
+    const numbered = [...document.querySelectorAll('.reader-content p > strong')]
+      .filter(el => /^\d{3}\s/.test(el.textContent.trim()));
+    if (numbered.length >= topicEls.length) {
+      headings = numbered;
+    }
+  }
+
+  // If there is one extra heading at the start (article title), skip it
+  const offset = headings.length > topicEls.length ? 1 : 0;
 
   topicEls.forEach((el, i) => {
-    const h = headings[i];
+    const h = headings[i + offset];
     if (h) {
       const pt = h.textContent.trim();
       if (pt && pt !== el.dataset.ja) {
@@ -604,6 +622,49 @@ function syncShinchiTopics() {
     }
   });
 }
+
+// ─── Book mode: populate topics for active article in sidebar ──
+function syncBookTopics() {
+  const container = document.getElementById('book-item-topics');
+  if (!container) return;
+
+  // Reuse same heading extraction as syncShinchiTopics
+  let headings = [...document.querySelectorAll('.reader-content h2, .reader-content h3')];
+  if (headings.length < 2) {
+    const numbered = [...document.querySelectorAll('.reader-content p > strong')]
+      .filter(el => /^\d{3}\s/.test(el.textContent.trim()));
+    if (numbered.length >= 1) headings = numbered;
+  }
+
+  // Skip article title heading if there's one extra
+  const offset = headings.length > 1 && !(/^\d{3}\s/.test(headings[0]?.textContent?.trim())) ? 1 : 0;
+  const topics = headings.slice(offset);
+
+  if (!topics.length) { container.innerHTML = ''; return; }
+
+  container.innerHTML = '<div class="book-sb-topics">' +
+    topics.map((h, i) =>
+      `<div class="book-sb-topic" onclick="scrollToBookTopic(${i + offset})">
+        <span class="book-sb-topic-text">${escHtml(h.textContent.trim().substring(0, 90))}</span>
+      </div>`
+    ).join('') +
+    '</div>';
+}
+
+window.scrollToBookTopic = function(rawIdx) {
+  let headings = [...document.querySelectorAll('.reader-content h2, .reader-content h3')];
+  if (headings.length < 2) {
+    const numbered = [...document.querySelectorAll('.reader-content p > strong')]
+      .filter(el => /^\d{3}\s/.test(el.textContent.trim()));
+    if (numbered.length >= 1) headings = numbered;
+  }
+  const target = headings[rawIdx];
+  if (target) {
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    target.classList.add('topic-highlight');
+    setTimeout(() => target.classList.remove('topic-highlight'), 2000);
+  }
+};
 
 // ─── Book badge (shown in list/planilha mode) ─────────────────
 function buildBookBadge(indexEntry, item) {
@@ -811,13 +872,14 @@ function buildBookSidebar(sidebar, layout, indexEntry, currentId, pub, modeToggl
     coverImg = `<img src="assets/img/${pubData.cover_image}" class="sidebar-book-cover" alt="${escHtml(titlePt)}" onerror="this.style.display='none'">`;
   }
 
-  // Group items by issue ranges for large publications
   const siblings = _currentList;
   const GROUP_SIZE = 50;
-  const needsGrouping = siblings.length > GROUP_SIZE;
 
   let navHtml = '';
-  if (needsGrouping) {
+  if (detectVolumeGrouping(siblings)) {
+    // Group by 号 volume number (e.g. 御教え集, 御垂示録, 御光話録, 浄霊法講座…)
+    navHtml = buildVolumedNav(siblings, currentId);
+  } else if (siblings.length > GROUP_SIZE) {
     navHtml = buildGroupedNav(siblings, currentId, GROUP_SIZE);
   } else {
     navHtml = `<div class="reader-nav-list">${buildNavItems(siblings, currentId)}</div>`;
@@ -842,6 +904,81 @@ function buildBookSidebar(sidebar, layout, indexEntry, currentId, pub, modeToggl
 }
 
 // ── Shinchi (神智之光) accordion sidebar ──
+// Portuguese translations for shinchi category titles (by cat_num)
+const SHINCHI_CAT_PT = {
+  1:  'Elucidação sobre Deus',
+  2:  'Deus Supremo (Miroku Ōmikami)',
+  3:  'As Miríades de Deuses',
+  4:  'Meishu-Sama',
+  5:  'O Mundo Espiritual',
+  6:  'Construção e Destruição',
+  7:  'Visão Geral da Religião',
+  8:  'Religião e Arte',
+  9:  'A Essência do Ser Humano',
+  10: 'Pensamentos e Kotodama',
+  11: 'Povos, Pátria e Superstições',
+  12: 'Fé — Edição Especial',
+  13: 'Fé — Obra da Kyusei e Difusão',
+  14: 'Fé — Ingresso e Dificuldades',
+  15: 'Johrei (Vol. 1)',
+  16: 'Johrei (Vol. 2)',
+  17: 'Arte da Medicina (I)',
+  18: 'Arte da Medicina (II)',
+  19: 'Arte da Medicina (III)',
+  20: 'Arte da Medicina (IV)',
+  21: 'Arte da Medicina (V)',
+  22: 'Arte da Medicina (VI)',
+  23: 'Arte da Medicina (VII)',
+  24: 'Arte da Medicina (VIII)',
+  25: 'Arte da Medicina (IX)',
+  26: 'Arte da Medicina (X)',
+  27: 'Estudos Espirituais (I)',
+  28: 'Estudos Espirituais (II)',
+  29: 'Estudos Espirituais (III)',
+  30: 'Estudos Espirituais (IV)',
+  31: 'Estudos Espirituais (V)',
+  32: 'Estudos Espirituais (VI)',
+  33: 'Estudos Espirituais (VII)',
+  34: 'Estudos Espirituais (VIII)',
+  35: 'Estudos Espirituais (IX)',
+  36: 'Agricultura Natural',
+  37: 'Milagres e Fenômenos Singulares',
+  38: 'Rituais e Cerimônias (I)',
+  39: 'Rituais e Cerimônias (II)',
+  40: 'Rituais e Cerimônias (III)',
+  41: 'Culto aos Espíritos (I)',
+  42: 'Culto aos Espíritos (II)',
+  43: 'Culto aos Espíritos (III)',
+  44: 'Culto aos Espíritos (IV)',
+  45: 'Assuntos Humanos (I)',
+  46: 'Assuntos Humanos (II)',
+  47: 'Sociedade e Relações Humanas',
+  48: 'Política, Economia e Sociedade',
+  49: 'Estudo e Conhecimento',
+  50: 'Astronomia e Geografia',
+};
+
+// Derive a compact Portuguese label from sub.title_pt
+function shortSubLabel(sub) {
+  const pt = (sub.title_pt || '').trim();
+  if (!pt) return sub.label_ja || '';
+  // Strip common collection-name prefixes up to a separator
+  let s = pt
+    .replace(/^(Coletânea|Coleção|Compilação|Compêndio)\s+de\s+(Teses|Artigos|Ensaios|Dissertações|Tratados|Escritos)\s+do\s+(Reverendo|Mestre)\s+[^–—:|]+[–—:|]\s*/i, '')
+    .replace(/^(Coletânea|Coleção)\s+de\s+[^–—:|]+[–—:|]\s*/i, '')
+    .trim();
+  // Split on remaining separators and pick the last meaningful segment
+  const parts = s.split(/\s*[–—:|]\s*/);
+  const last = parts[parts.length - 1].trim();
+  if (last.length > 8) s = last;
+  // Strip leading numbering like "001 " or "1 "
+  s = s.replace(/^\d+\s+/, '').trim();
+  // Remove trailing parenthetical for compactness
+  s = s.replace(/\s*[\(（].*/, '').trim();
+  // Truncate
+  return s.length > 40 ? s.slice(0, 38) + '…' : (s || sub.label_ja || '');
+}
+
 function buildShinchiSidebar(sidebar, layout, indexEntry, currentId) {
   if (!_shinchiIndex) {
     sidebar.innerHTML = '<div class="sidebar-section"><p>Carregando…</p></div>';
@@ -872,7 +1009,7 @@ function buildShinchiSidebar(sidebar, layout, indexEntry, currentId) {
     cat.sub_categories.forEach((sub, si) => {
       const isSubActive = isCatActive && si === activeSub;
       const hasContent = !!sub.id;
-      const label = sub.label_ja || sub.title_pt;
+      const label = shortSubLabel(sub);
       const topicCount = sub.topics?.length || 0;
 
       // Topics list (shown inside sub-category) — clickable, with auto-scroll
@@ -919,7 +1056,7 @@ function buildShinchiSidebar(sidebar, layout, indexEntry, currentId) {
       <details class="shinchi-sb-cat" ${isCatActive ? 'open' : ''}>
         <summary class="shinchi-sb-cat-header${isCatActive ? ' active' : ''}">
           <span class="shinchi-sb-cat-num">${cn}</span>
-          <span class="shinchi-sb-cat-title">${escHtml(cat.cat_title_ja)}</span>
+          <span class="shinchi-sb-cat-title">${escHtml(SHINCHI_CAT_PT[parseInt(cn)] || cat.cat_title_ja)}</span>
         </summary>
         <div class="shinchi-sb-cat-body">${subsHtml}</div>
       </details>`;
@@ -935,6 +1072,15 @@ function buildShinchiSidebar(sidebar, layout, indexEntry, currentId) {
           <div class="sidebar-count">50 篇 · 348 seções</div>
         </div>
       </div>
+      <details class="shinchi-book-about">
+        <summary class="shinchi-book-about-summary">Sobre esta obra</summary>
+        <div class="shinchi-book-about-body">
+          <div class="shinchi-book-meta-row"><span class="shinchi-book-meta-label">Subtítulo</span><span>Coleção de Palestras (Supl.)</span></div>
+          <div class="shinchi-book-meta-row"><span class="shinchi-book-meta-label">Publicação</span><span>Data desconhecida</span></div>
+          <div class="shinchi-book-meta-row"><span class="shinchi-book-meta-label">Organização</span><span>Inoue Motokichi</span></div>
+          <p class="shinchi-book-about-desc">Esta coletânea de perguntas e respostas foi organizada por Inoue Motokichi com autorização de Meishu-Sama e publicada pela Sekai Kyusei Kyo como "Coleção de Palestras (Supl.)". Contém aproximadamente 5.000 questões e respostas. Mistura respostas diretas de Meishu-Sama com partes transmitidas pelo Mestre Inoue. O material é denso e inclui conteúdos não destinados ao público geral — recomenda-se a leitura prévia do "Curso de Kannon" antes de prosseguir.</p>
+        </div>
+      </details>
       <div class="shinchi-sb-tree">${navHtml}</div>
     </div>`;
 
@@ -945,6 +1091,43 @@ function buildShinchiSidebar(sidebar, layout, indexEntry, currentId) {
     const active = sidebar.querySelector('.shinchi-sb-sub-header.active');
     if (active) active.scrollIntoView({ block: 'center', behavior: 'instant' });
   });
+}
+
+// ─── Volume grouping helpers ───────────────────────────────────
+function getVolumeNum(issuePageStr) {
+  // Extract the first 号 number: "3号, 28号, P.5" → 3; normalize full-width digits
+  const s = String(issuePageStr || '').replace(/[０-９]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFF10 + 48));
+  const m = s.match(/^(\d+)号/);
+  return m ? parseInt(m[1]) : null;
+}
+
+function detectVolumeGrouping(items) {
+  // Use volume grouping if ≥40% of items have a valid 号 number
+  const withVol = items.filter(x => getVolumeNum(x.issue_page) !== null);
+  return withVol.length >= Math.max(2, items.length * 0.4);
+}
+
+function buildVolumedNav(items, currentId) {
+  const volMap = new Map(); // num → { num, label, items[] }
+  for (const item of items) {
+    const num = getVolumeNum(item.issue_page);
+    const key = num ?? 'none';
+    if (!volMap.has(key)) volMap.set(key, { num: num ?? 9999, label: num != null ? `${num}号` : 'Sem volume', items: [] });
+    volMap.get(key).items.push(item);
+  }
+  return [...volMap.values()]
+    .sort((a, b) => a.num - b.num)
+    .map(grp => {
+      const hasActive = grp.items.some(x => x.id === currentId);
+      return `
+        <details class="book-vol-group" ${hasActive ? 'open' : ''}>
+          <summary class="book-vol-header">
+            <span class="book-vol-label">${grp.label}</span>
+            <span class="book-vol-count">${grp.items.length}</span>
+          </summary>
+          <div class="reader-nav-list">${buildNavItems(grp.items, currentId)}</div>
+        </details>`;
+    }).join('');
 }
 
 function buildGroupedNav(siblings, currentId, groupSize) {
@@ -988,13 +1171,16 @@ function buildNavItems(items, currentId, offset = 0) {
       } catch(e) {}
     }
     if (!eraStr && x.year) eraStr = `S${x.year - 1925}`;
-    return `<a href="reader.html?id=${encodeURIComponent(x.id)}&part=${encodeURIComponent(x.part_file || '')}"
+    const link = `<a href="reader.html?id=${encodeURIComponent(x.id)}&part=${encodeURIComponent(x.part_file || '')}"
       class="reader-nav-item${isActive ? ' active' : ''}"
       onclick="navigateTo('${x.id}','${x.part_file || ''}'); return false;">
       <span class="reader-nav-num">${offset + i + 1}</span>
       <span class="reader-nav-title">${escHtml((x.title || '').substring(0, 60))}</span>
       ${eraStr ? `<span class="reader-nav-era">${eraStr}</span>` : ''}
     </a>`;
+    // Active article gets a topics container populated by syncBookTopics()
+    const topics = isActive ? '<div class="book-item-topics" id="book-item-topics"></div>' : '';
+    return link + topics;
   }).join('');
 }
 
