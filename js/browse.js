@@ -93,6 +93,22 @@ const PUB_ROMAJI = {
 };
 function pubDisplay(name) { return PUB_ROMAJI[name] || name; }
 
+// Map publication names → book-mode reader URLs
+const PUB_BOOK_URL = {
+  'Mioshie-shu':    'reader.html?pub=Mioshie-shu&mode=book',
+  'Gosuiiji録':     'reader.html?pub=Gosuiiji録&mode=book',
+  '御Hikari話録':   'reader.html?pub=御Hikari話録&mode=book',
+  '御Hikari話録（補）': 'reader.html?pub=御Hikari話録&mode=book',
+  '浄霊法講座':     'reader.html?pub=浄霊法講座&mode=book',
+  'Gokowa':         'reader.html?pub=shinchi',
+};
+function pubBookUrl(pubName) {
+  if (!pubName) return null;
+  if (PUB_BOOK_URL[pubName]) return PUB_BOOK_URL[pubName];
+  // Generic book mode — reader will try and fallback gracefully
+  return `reader.html?pub=${encodeURIComponent(pubName)}&mode=book`;
+}
+
 // ─── Content type classification ──────────────────────────────
 // Priority order matters — first match wins
 const CONTENT_TYPES = [
@@ -911,7 +927,12 @@ function renderTable() {
       eraLabel = `S${x.year - 1925}`;
     }
     const titleHl     = hlText(x.title || '', terms);
-    const pub         = x.publication ? hlText(pubDisplay(String(x.publication)).substring(0,60), terms) : '';
+    const pubName     = x.publication ? String(x.publication) : '';
+    const pubUrl      = pubBookUrl(pubName);
+    const pubLabel    = pubName ? hlText(pubDisplay(pubName).substring(0, 60), terms) : '';
+    const pub         = pubName
+      ? `<a class="td-pub-link" href="${pubUrl}" title="Abrir em modo livro">${pubLabel}</a>`
+      : '';
     const issue       = x.issue_page  ? esc(String(x.issue_page).substring(0,20)) : '';
     const relCount    = x.related ? x.related.length : 0;
     const unpubBadge  = x.unpublished ? `<span class="td-unpublished">inedito</span>` : '';
@@ -926,7 +947,10 @@ function renderTable() {
       </td>
       <td class="col-pub td-pub">${pub}</td>
       <td class="col-issue td-pub">${issue}</td>
-      <td class="col-era"><span class="td-era">${eraLabel}</span></td>
+      <td class="col-era">${x.year
+        ? `<a class="td-era td-era-link" href="timeline.html#year-${x.year}" title="Ver na Timeline">${eraLabel}</a>`
+        : `<span class="td-era">${eraLabel}</span>`
+      }</td>
       <td class="col-notes td-pub">${tagSnippet(x)}</td>
       <td class="col-read">
         <a href="${href}" class="td-read-btn" onclick="navigate(event,${JSON.stringify(x.id)},${JSON.stringify(x.part_file||'')})" title="Ler">

@@ -202,6 +202,11 @@
       flex-shrink: 0;
     }
     .tl-year-row.open .tl-toggle-icon { transform: rotate(90deg); }
+    .tl-year-row.tl-highlight {
+      background: color-mix(in srgb, var(--accent, #B8860B) 12%, transparent);
+      border-radius: 8px;
+      transition: background 1.5s ease;
+    }
 
     /* ─── Expanded teachings list ─────────────────────── */
     .tl-year-teachings {
@@ -513,7 +518,7 @@ function renderTimeline() {
 
     html += `
       <div class="tl-era-group" data-era-group="${era}">
-        <div class="tl-year-row" onclick="toggleYear(this)">
+        <div class="tl-year-row" id="year-${year}" onclick="toggleYear(this)">
           <div class="tl-year-label">
             <div class="tl-year-showa">S${showa}</div>
             <div class="tl-year-greg">${year}</div>
@@ -556,6 +561,21 @@ function renderTimeline() {
   const style = document.createElement('style');
   style.textContent = '.tl-teaching-item.more-hidden { display: none; }';
   document.head.appendChild(style);
+
+  // Scroll to year if hash present (e.g. #year-1949 from browse era link)
+  const hash = window.location.hash;
+  if (hash && hash.startsWith('#year-')) {
+    requestAnimationFrame(() => {
+      const target = document.querySelector(hash);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Auto-open the year row
+        if (!target.classList.contains('open')) toggleYear(target);
+        target.classList.add('tl-highlight');
+        setTimeout(() => target.classList.remove('tl-highlight'), 2000);
+      }
+    });
+  }
 }
 </script>
 
