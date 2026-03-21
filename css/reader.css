@@ -791,22 +791,14 @@ mark.search-highlight {
 }
 
 /* ─── Sidebar Mode Toggle ────────────────────────────────────── */
-.sidebar-mode-toggle {
-  display: flex;
-  gap: 4px;
-  padding: 8px;
-  margin: 8px 0 12px;
-  background: var(--surface);
-  border-radius: var(--radius-sm);
-}
-.mode-btn {
-  flex: 1;
+/* ─── Back-to-browse button (book mode → planilha) ───────────── */
+.sidebar-back-btn {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
   gap: 4px;
-  padding: 6px 8px;
-  border: none;
+  margin: 4px 8px 8px;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
   border-radius: 6px;
   background: transparent;
   font-family: var(--font-ui);
@@ -816,21 +808,14 @@ mark.search-highlight {
   cursor: pointer;
   transition: all 0.15s var(--ease);
 }
-.mode-btn:hover {
-  background: var(--accent-soft);
-  color: var(--text-main);
-}
-.mode-btn.active {
+.sidebar-back-btn:hover {
   background: var(--accent-soft);
   color: var(--accent);
-  font-weight: 600;
+  border-color: var(--accent);
 }
-.mode-btn svg {
+.sidebar-back-btn svg {
   stroke: currentColor;
   fill: none;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
   flex-shrink: 0;
 }
 

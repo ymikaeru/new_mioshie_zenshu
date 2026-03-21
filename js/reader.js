@@ -839,9 +839,6 @@ function buildSidebar(indexEntry) {
   const currentId = indexEntry?.id || _currentItem?.id || '';
   const { pub, list } = getParams();
 
-  // ── Build mode toggle ──
-  const modeToggle = buildModeToggle(pub, list);
-
   // ── Shinchi (神智之光) mode sidebar ──
   if (_sidebarMode === 'shinchi') {
     buildShinchiSidebar(sidebar, layout, indexEntry, currentId);
@@ -850,19 +847,19 @@ function buildSidebar(indexEntry) {
 
   // ── Book mode sidebar ──
   if (_sidebarMode === 'book') {
-    buildBookSidebar(sidebar, layout, indexEntry, currentId, pub, modeToggle);
+    buildBookSidebar(sidebar, layout, indexEntry, currentId, pub);
     return;
   }
 
   // ── List/planilha mode sidebar ──
   if (_sidebarMode === 'list' && list) {
-    buildListSidebar(sidebar, layout, indexEntry, currentId, list, modeToggle);
+    buildListSidebar(sidebar, layout, indexEntry, currentId, list);
     return;
   }
 
-  // ── Fallback: category-based sidebar (existing behavior) ──
+  // ── Browse/category sidebar ──
   if (_searchIdx && _currentList && _currentList.length > 1) {
-    buildCategorySidebar(sidebar, layout, indexEntry, currentId, modeToggle);
+    buildCategorySidebar(sidebar, layout, indexEntry, currentId);
     return;
   }
 
@@ -880,40 +877,33 @@ function buildSidebar(indexEntry) {
   sidebar.innerHTML = '';
 }
 
-function buildModeToggle(pub, list) {
-  const isBook = _sidebarMode === 'book';
-  const isList = _sidebarMode === 'list';
+// Returns a "← Seleção" back button (shown in book mode when coming from browse)
+function buildBackToBrowseBtn() {
+  const hasBrowseList = (() => {
+    try { return !!(sessionStorage.getItem('browse_list')); } catch(e) { return false; }
+  })();
+  if (!hasBrowseList) return '';
   return `
-    <div class="sidebar-mode-toggle">
-      <button class="mode-btn${isBook ? ' active' : ''}" onclick="switchSidebarMode('book')" title="Índice do livro original">
-        <svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-        Livro
-      </button>
-      <button class="mode-btn${isList || (!isBook && !isList) ? ' active' : ''}" onclick="switchSidebarMode('list')" title="Índice por seção/assunto">
-        <svg viewBox="0 0 24 24" width="14" height="14"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-        Planilha
-      </button>
-    </div>`;
+    <button class="sidebar-back-btn" onclick="backToBrowse()" title="Voltar à seleção da planilha">
+      <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      Voltar à seleção
+    </button>`;
 }
 
-window.switchSidebarMode = function(newMode) {
-  _sidebarMode = newMode;
-  localStorage.setItem('reader_sidebar_mode', newMode);
-  // User explicitly chose a mode — clear browse planilha list so it doesn't override
-  try { sessionStorage.removeItem('browse_list'); } catch(e) {}
-
-  // Update URL
+// Called when user clicks "← Voltar à seleção" in book-mode sidebar
+window.backToBrowse = function() {
+  _sidebarMode = 'browse';
+  // Remove mode=book from URL so browse_list is detected on next initReader
   const p = new URLSearchParams(window.location.search);
-  p.set('mode', newMode);
+  p.delete('mode');
+  p.delete('pub');
   window.history.replaceState({}, '', `reader.html?${p.toString()}`);
 
-  // Rebuild with current item
   if (_currentItem) {
     const indexEntry = _searchIdx?.find(x => x.id === _currentItem.id);
     const { pub, list } = getParams();
     buildCurrentList(indexEntry, _currentItem, pub, list).then(() => {
       buildSidebar(indexEntry);
-      // Re-render to update badge and nav buttons
       const { search } = getParams();
       renderTeaching(_currentItem, indexEntry, search);
     });
@@ -921,13 +911,13 @@ window.switchSidebarMode = function(newMode) {
 };
 
 // ── Book mode sidebar ──
-function buildBookSidebar(sidebar, layout, indexEntry, currentId, pub, modeToggle) {
+function buildBookSidebar(sidebar, layout, indexEntry, currentId, pub) {
   const pubName = pub || _pubIndex?.id_to_publication?.[currentId] || indexEntry?.publication || _currentItem?.publication || '';
   const pubData = _pubIndex?.publications?.[pubName];
 
   if (!pubData || !_currentList.length) {
     // Fallback to category if no publication data
-    buildCategorySidebar(sidebar, layout, indexEntry, currentId, modeToggle);
+    buildCategorySidebar(sidebar, layout, indexEntry, currentId);
     return;
   }
 
@@ -979,7 +969,7 @@ function buildBookSidebar(sidebar, layout, indexEntry, currentId, pub, modeToggl
             <div class="sidebar-count">${pubData.total} artigos</div>
           </div>
         </div>
-        ${modeToggle}
+        ${buildBackToBrowseBtn()}
         ${aboutHtml}
       </div>
       <div class="sidebar-book-nav">${navHtml}</div>
@@ -1270,13 +1260,13 @@ function buildNavItems(items, currentId, offset = 0) {
 }
 
 // ── List/planilha mode sidebar ──
-function buildListSidebar(sidebar, layout, indexEntry, currentId, listKey, modeToggle) {
+function buildListSidebar(sidebar, layout, indexEntry, currentId, listKey) {
   const section = _sectionTables?.[listKey];
   const label = section?.title_pt || listKey;
   const labelJa = section?.title_ja || '';
 
   if (!_currentList.length) {
-    buildCategorySidebar(sidebar, layout, indexEntry, currentId, modeToggle);
+    buildCategorySidebar(sidebar, layout, indexEntry, currentId);
     return;
   }
 
@@ -1290,7 +1280,6 @@ function buildListSidebar(sidebar, layout, indexEntry, currentId, listKey, modeT
           ${labelJa ? `<div class="sidebar-label-ja">${escHtml(labelJa)}</div>` : ''}
           <div class="sidebar-count">${_currentList.length} artigos</div>
         </div>
-        ${modeToggle}
       </div>
       <div class="reader-nav-list">${navItems}</div>
     </div>`;
@@ -1299,8 +1288,8 @@ function buildListSidebar(sidebar, layout, indexEntry, currentId, listKey, modeT
   scrollToActive(sidebar);
 }
 
-// ── Category-based sidebar (original behavior) ──
-function buildCategorySidebar(sidebar, layout, indexEntry, currentId, modeToggle) {
+// ── Category/browse sidebar ──
+function buildCategorySidebar(sidebar, layout, indexEntry, currentId) {
   const siblings = _currentList;
   const typeLabel = indexEntry?.category || _currentItem?.category || 'Ensinamentos';
 
@@ -1311,7 +1300,6 @@ function buildCategorySidebar(sidebar, layout, indexEntry, currentId, modeToggle
       <div class="sidebar-sticky-header">
         <div class="sidebar-label">${escHtml(typeLabel)}</div>
         <div class="sidebar-count">${siblings.length} artigos</div>
-        ${modeToggle || ''}
       </div>
       <div class="reader-nav-list">${navItems}</div>
     </div>`;
