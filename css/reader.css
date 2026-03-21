@@ -36,14 +36,14 @@
   bottom: 0;
   left: 0;
   width: var(--sidebar-width, 520px);
-  padding: calc(var(--nav-height, 56px) + 8px) 0 16px;
+  padding-top: calc(var(--nav-height, 56px) + 8px);
+  padding-bottom: 0;
   max-height: 100vh;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   border-right: 1px solid var(--border);
   background: var(--bg-color);
-  scrollbar-width: thin;
-  scrollbar-color: var(--border) transparent;
   z-index: 20;
   transform: translateX(0);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -114,7 +114,14 @@
 }
 
 /* ─── Sidebar Contents ───────────────────────────────────────── */
-.sidebar-section { padding: 0 16px; }
+.sidebar-section {
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
 
 .sidebar-label {
   font-family: var(--font-ui);
@@ -156,6 +163,13 @@
 .reader-nav-list {
   display: flex;
   flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+  padding-bottom: 16px;
 }
 .reader-nav-list .reader-nav-item {
   display: flex;
@@ -827,6 +841,21 @@ mark.search-highlight {
   padding: 8px;
   margin-bottom: 8px;
 }
+/* Scrollable nav area for book-mode sidebar */
+.sidebar-book-nav {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+  padding-bottom: 16px;
+}
+/* Inside sidebar-book-nav, reader-nav-list should not try to flex-grow */
+.sidebar-book-nav .reader-nav-list {
+  flex: none;
+  overflow: visible;
+}
 .sidebar-book-cover {
   width: 48px;
   height: 64px;
@@ -942,6 +971,15 @@ mark.search-highlight {
   font-family: 'Noto Serif JP', serif;
   font-size: 11px;
   color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+/* ─── Sidebar Sticky Header ──────────────────────────────────── */
+.sidebar-sticky-header {
+  flex-shrink: 0;
+  background: var(--bg-color);
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border);
   margin-bottom: 4px;
 }
 
@@ -1127,7 +1165,13 @@ mark.search-highlight {
   border-bottom: 1px solid var(--border, #e0d8c8);
 }
 .shinchi-sb-tree {
-  padding: 4px 0;
+  padding: 4px 0 16px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
 }
 
 /* Book "about" disclosure */

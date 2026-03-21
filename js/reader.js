@@ -948,31 +948,35 @@ function buildBookSidebar(sidebar, layout, indexEntry, currentId, pub, modeToggl
     navHtml = `<div class="reader-nav-list">${buildNavItems(siblings, currentId)}</div>`;
   }
 
+  const aboutHtml = (() => {
+    const hakFile = pubData.hakkousi_file;
+    const gallery = buildCoverGallery(hakFile, pubData.cover_image);
+    const desc = pubData.notes_pt || pubData.series_info_pt || pubData.description || '';
+    if (!gallery && !desc) return '';
+    return `<details class="shinchi-book-about">
+      <summary class="shinchi-book-about-summary">Sobre esta obra</summary>
+      <div class="shinchi-book-about-body">
+        ${desc ? `<p class="shinchi-book-about-desc">${escHtml(desc)}</p>` : ''}
+        ${gallery}
+      </div>
+    </details>`;
+  })();
+
   sidebar.innerHTML = `
     <div class="sidebar-section">
-      <div class="sidebar-book-header">
-        ${coverImg}
-        <div class="sidebar-book-info">
-          <div class="sidebar-book-title">${escHtml(titlePt)}</div>
-          ${titleJa !== titlePt ? `<div class="sidebar-book-title-ja">${escHtml(titleJa)}</div>` : ''}
-          <div class="sidebar-count">${pubData.total} artigos</div>
-        </div>
-      </div>
-      ${modeToggle}
-      ${(() => {
-        const hakFile = pubData.hakkousi_file;
-        const gallery = buildCoverGallery(hakFile, pubData.cover_image);
-        const desc = pubData.notes_pt || pubData.series_info_pt || pubData.description || '';
-        if (!gallery && !desc) return '';
-        return `<details class="shinchi-book-about">
-          <summary class="shinchi-book-about-summary">Sobre esta obra</summary>
-          <div class="shinchi-book-about-body">
-            ${desc ? `<p class="shinchi-book-about-desc">${escHtml(desc)}</p>` : ''}
-            ${gallery}
+      <div class="sidebar-sticky-header">
+        <div class="sidebar-book-header">
+          ${coverImg}
+          <div class="sidebar-book-info">
+            <div class="sidebar-book-title">${escHtml(titlePt)}</div>
+            ${titleJa !== titlePt ? `<div class="sidebar-book-title-ja">${escHtml(titleJa)}</div>` : ''}
+            <div class="sidebar-count">${pubData.total} artigos</div>
           </div>
-        </details>`;
-      })()}
-      ${navHtml}
+        </div>
+        ${modeToggle}
+        ${aboutHtml}
+      </div>
+      <div class="sidebar-book-nav">${navHtml}</div>
     </div>`;
 
   if (layout) layout.classList.remove('reader-layout--no-sidebar');
@@ -1136,24 +1140,26 @@ function buildShinchiSidebar(sidebar, layout, indexEntry, currentId) {
 
   sidebar.innerHTML = `
     <div class="sidebar-section shinchi-sidebar">
-      <div class="sidebar-book-header">
-        <img src="assets/img/gokowa1.jpg" class="sidebar-book-cover sidebar-book-cover--clickable" alt="神智之光" onclick="openCoverLightbox('assets/img/gokowa1.jpg','神智之光')" onerror="this.style.display='none'">
-        <div class="sidebar-book-info">
-          <div class="sidebar-book-title">神智之光</div>
-          <div class="sidebar-book-title-ja">Shinchi no Hikari</div>
-          <div class="sidebar-count">50 篇 · 348 seções</div>
+      <div class="sidebar-sticky-header">
+        <div class="sidebar-book-header">
+          <img src="assets/img/gokowa1.jpg" class="sidebar-book-cover sidebar-book-cover--clickable" alt="神智之光" onclick="openCoverLightbox('assets/img/gokowa1.jpg','神智之光')" onerror="this.style.display='none'">
+          <div class="sidebar-book-info">
+            <div class="sidebar-book-title">神智之光</div>
+            <div class="sidebar-book-title-ja">Shinchi no Hikari</div>
+            <div class="sidebar-count">50 篇 · 348 seções</div>
+          </div>
         </div>
+        <details class="shinchi-book-about">
+          <summary class="shinchi-book-about-summary">Sobre esta obra</summary>
+          <div class="shinchi-book-about-body">
+            <div class="shinchi-book-meta-row"><span class="shinchi-book-meta-label">Subtítulo</span><span>Coleção de Palestras (Supl.)</span></div>
+            <div class="shinchi-book-meta-row"><span class="shinchi-book-meta-label">Publicação</span><span>Data desconhecida</span></div>
+            <div class="shinchi-book-meta-row"><span class="shinchi-book-meta-label">Organização</span><span>Inoue Motokichi</span></div>
+            <p class="shinchi-book-about-desc">Esta coletânea de perguntas e respostas foi organizada por Inoue Motokichi com autorização de Meishu-Sama e publicada pela Sekai Kyusei Kyo como "Coleção de Palestras (Supl.)". Contém aproximadamente 5.000 questões e respostas. Mistura respostas diretas de Meishu-Sama com partes transmitidas pelo Mestre Inoue. O material é denso e inclui conteúdos não destinados ao público geral — recomenda-se a leitura prévia do "Curso de Kannon" antes de prosseguir.</p>
+            ${buildCoverGallery('ohikari.html', 'gokowa1.jpg')}
+          </div>
+        </details>
       </div>
-      <details class="shinchi-book-about">
-        <summary class="shinchi-book-about-summary">Sobre esta obra</summary>
-        <div class="shinchi-book-about-body">
-          <div class="shinchi-book-meta-row"><span class="shinchi-book-meta-label">Subtítulo</span><span>Coleção de Palestras (Supl.)</span></div>
-          <div class="shinchi-book-meta-row"><span class="shinchi-book-meta-label">Publicação</span><span>Data desconhecida</span></div>
-          <div class="shinchi-book-meta-row"><span class="shinchi-book-meta-label">Organização</span><span>Inoue Motokichi</span></div>
-          <p class="shinchi-book-about-desc">Esta coletânea de perguntas e respostas foi organizada por Inoue Motokichi com autorização de Meishu-Sama e publicada pela Sekai Kyusei Kyo como "Coleção de Palestras (Supl.)". Contém aproximadamente 5.000 questões e respostas. Mistura respostas diretas de Meishu-Sama com partes transmitidas pelo Mestre Inoue. O material é denso e inclui conteúdos não destinados ao público geral — recomenda-se a leitura prévia do "Curso de Kannon" antes de prosseguir.</p>
-          ${buildCoverGallery('ohikari.html', 'gokowa1.jpg')}
-        </div>
-      </details>
       <div class="shinchi-sb-tree">${navHtml}</div>
     </div>`;
 
@@ -1272,12 +1278,14 @@ function buildListSidebar(sidebar, layout, indexEntry, currentId, listKey, modeT
 
   sidebar.innerHTML = `
     <div class="sidebar-section">
-      <div class="sidebar-list-header">
-        <div class="sidebar-label">${escHtml(label)}</div>
-        ${labelJa ? `<div class="sidebar-label-ja">${escHtml(labelJa)}</div>` : ''}
-        <div class="sidebar-count">${_currentList.length} artigos</div>
+      <div class="sidebar-sticky-header">
+        <div class="sidebar-list-header">
+          <div class="sidebar-label">${escHtml(label)}</div>
+          ${labelJa ? `<div class="sidebar-label-ja">${escHtml(labelJa)}</div>` : ''}
+          <div class="sidebar-count">${_currentList.length} artigos</div>
+        </div>
+        ${modeToggle}
       </div>
-      ${modeToggle}
       <div class="reader-nav-list">${navItems}</div>
     </div>`;
 
@@ -1294,9 +1302,11 @@ function buildCategorySidebar(sidebar, layout, indexEntry, currentId, modeToggle
 
   sidebar.innerHTML = `
     <div class="sidebar-section">
-      <div class="sidebar-label">${escHtml(typeLabel)}</div>
-      <div class="sidebar-count">${siblings.length} artigos</div>
-      ${modeToggle || ''}
+      <div class="sidebar-sticky-header">
+        <div class="sidebar-label">${escHtml(typeLabel)}</div>
+        <div class="sidebar-count">${siblings.length} artigos</div>
+        ${modeToggle || ''}
+      </div>
       <div class="reader-nav-list">${navItems}</div>
     </div>`;
 
