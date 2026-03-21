@@ -71,14 +71,9 @@ function injectCollapseBtn() {
   };
   layout.appendChild(backdrop);
 
-  // Always start open so user sees the index, then auto-close after 3 s
+  // Always start open — user closes when they want
   layout.classList.remove('sidebar-collapsed');
-  setTimeout(() => {
-    if (!layout.classList.contains('sidebar-collapsed')) {
-      layout.classList.add('sidebar-collapsed');
-      localStorage.setItem('reader_sidebar_collapsed', '1');
-    }
-  }, 3000);
+  localStorage.removeItem('reader_sidebar_collapsed');
 }
 
 // ─── Init ─────────────────────────────────────────────────────
