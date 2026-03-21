@@ -30,9 +30,57 @@ let   _idxLoading = false;
 let   _currentItem = null;
 let   _currentList = []; // adjacent items for prev/next
 
+// ─── Publication & Section data ──────────────────────────────
+let   _pubIndex   = null; // publication_index.json
+let   _sectionTables = null; // section_tables.json
+let   _pubLoading = false;
+let   _secLoading = false;
+let   _sidebarMode = 'book'; // 'book', 'list', or 'shinchi'
+let   _shinchiIndex = null;  // shinchi_index.json
+let   _shinchiLoading = false;
+let   _activeTopic = -1;     // active topic index within current sub-category
+
+// ─── Sidebar collapse ────────────────────────────────────────
+window.toggleSidebarCollapse = function() {
+  const layout = document.getElementById('readerLayout');
+  if (!layout) return;
+  const collapsed = layout.classList.toggle('sidebar-collapsed');
+  localStorage.setItem('reader_sidebar_collapsed', collapsed ? '1' : '');
+};
+
+function injectCollapseBtn() {
+  const layout = document.getElementById('readerLayout');
+  if (!layout || layout.querySelector('.sidebar-collapse-btn')) return;
+
+  // Toggle button
+  const btn = document.createElement('button');
+  btn.className = 'sidebar-collapse-btn';
+  btn.title = 'Recolher/Expandir índice';
+  btn.setAttribute('aria-label', 'Recolher índice');
+  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>';
+  btn.onclick = toggleSidebarCollapse;
+  layout.appendChild(btn);
+
+  // Backdrop (click to close)
+  const backdrop = document.createElement('div');
+  backdrop.className = 'sidebar-backdrop';
+  backdrop.onclick = () => {
+    layout.classList.add('sidebar-collapsed');
+    localStorage.setItem('reader_sidebar_collapsed', '1');
+  };
+  layout.appendChild(backdrop);
+
+  // Start collapsed by default for cleaner reading
+  const saved = localStorage.getItem('reader_sidebar_collapsed');
+  if (saved === null || saved === '1') {
+    layout.classList.add('sidebar-collapsed');
+  }
+}
+
 // ─── Init ─────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   applyStoredReaderPrefs?.();
+  injectCollapseBtn();
   initReader();
   window.addEventListener('popstate', initReader);
 
@@ -69,14 +117,112 @@ function getParams() {
     part:     p.get('part') || '',
     search:   p.get('search') || p.get('s') || '',
     category: p.get('cat') || '',
+    mode:     p.get('mode') || '',   // 'book' or 'list'
+    pub:      p.get('pub')  || '',   // publication name for book mode
+    list:     p.get('list') || '',   // section key for list mode
   };
 }
 
 // ─── Main init ────────────────────────────────────────────────
 async function initReader() {
-  const { id, part, search, category } = getParams();
+  const { id, part, search, category, mode, pub, list } = getParams();
   const container = document.getElementById('readerContent');
   if (!container) return;
+
+  // Determine sidebar mode from URL params
+  if (pub === 'shinchi') {
+    _sidebarMode = 'shinchi';
+  } else if (mode === 'book' || (pub && mode !== 'list')) {
+    _sidebarMode = 'book';
+  } else if (mode === 'list' || list) {
+    _sidebarMode = 'list';
+  } else {
+    _sidebarMode = localStorage.getItem('reader_sidebar_mode') || 'book';
+  }
+
+  // No ID but shinchi: open first sub-category
+  if (!id && pub === 'shinchi') {
+    showLoading();
+    try {
+      await Promise.all([loadShinchiIndex(), loadSearchIndex()]);
+      const firstSub = _shinchiIndex?.['1']?.sub_categories?.[0];
+      if (firstSub?.id) {
+        const entry = _searchIdx?.find(x => x.id === firstSub.id);
+        if (entry) {
+          const newP = new URLSearchParams();
+          newP.set('id', firstSub.id);
+          newP.set('part', entry.part_file || '');
+          newP.set('pub', 'shinchi');
+          window.history.replaceState({}, '', `reader.html?${newP.toString()}`);
+          return initReader();
+        }
+      }
+      showError('神智之光 não encontrado.');
+    } catch (err) {
+      console.error('[reader]', err);
+      showError('Erro ao carregar 神智之光.');
+    }
+    return;
+  }
+
+  // No ID but has pub: open first article of that publication
+  if (!id && pub) {
+    showLoading();
+    try {
+      await loadPubIndex();
+      const pubData = _pubIndex?.publications?.[pub];
+      if (pubData && pubData.teaching_ids?.length) {
+        const firstId = pubData.teaching_ids[0];
+        // Load search index to find part_file
+        await loadSearchIndex();
+        const entry = _searchIdx?.find(x => x.id === firstId);
+        if (entry) {
+          const newP = new URLSearchParams();
+          newP.set('id', firstId);
+          newP.set('part', entry.part_file || '');
+          newP.set('mode', 'book');
+          newP.set('pub', pub);
+          window.history.replaceState({}, '', `reader.html?${newP.toString()}`);
+          return initReader(); // Restart with the found ID
+        }
+      }
+      showError('Publicação não encontrada.');
+    } catch (err) {
+      console.error('[reader]', err);
+      showError('Erro ao carregar publicação.');
+    }
+    return;
+  }
+
+  // No ID but has list: open first article of that section
+  if (!id && list) {
+    showLoading();
+    try {
+      await loadSectionTables();
+      const sec = _sectionTables?.[list];
+      if (sec && sec.rows?.length) {
+        const firstRow = sec.rows.find(r => r.id);
+        if (firstRow) {
+          await loadSearchIndex();
+          const entry = _searchIdx?.find(x => x.id === firstRow.id);
+          if (entry) {
+            const newP = new URLSearchParams();
+            newP.set('id', firstRow.id);
+            newP.set('part', entry.part_file || '');
+            newP.set('mode', 'list');
+            newP.set('list', list);
+            window.history.replaceState({}, '', `reader.html?${newP.toString()}`);
+            return initReader();
+          }
+        }
+      }
+      showError('Seção não encontrada.');
+    } catch (err) {
+      console.error('[reader]', err);
+      showError('Erro ao carregar seção.');
+    }
+    return;
+  }
 
   // No ID: show browse/landing state
   if (!id) {
@@ -110,11 +256,8 @@ async function initReader() {
 
     _currentItem = item;
 
-    // 4. Build neighbour list from same category in search index
-    if (_searchIdx) {
-      const cat = indexEntry?.category || item.category || '';
-      _currentList = _searchIdx.filter(x => x.category === cat);
-    }
+    // 4. Build neighbour list based on mode
+    await buildCurrentList(indexEntry, item, pub, list);
 
     // 5. Render
     renderTeaching(item, indexEntry, search);
@@ -124,6 +267,64 @@ async function initReader() {
   } catch (err) {
     console.error('[reader]', err);
     showError('Erro ao carregar ensinamento. Tente novamente.');
+  }
+}
+
+// Build the navigation list based on current mode
+async function buildCurrentList(indexEntry, item, pub, list) {
+  if (_sidebarMode === 'shinchi') {
+    await loadShinchiIndex();
+    // Build flat list of all shinchi sub-category IDs in order
+    const catNums = Object.keys(_shinchiIndex).sort((a, b) => parseInt(a) - parseInt(b));
+    _currentList = [];
+    for (const cn of catNums) {
+      for (const sub of _shinchiIndex[cn].sub_categories) {
+        if (sub.id) {
+          const entry = _searchIdx?.find(x => x.id === sub.id);
+          if (entry) _currentList.push(entry);
+        }
+      }
+    }
+    return;
+  }
+  if (_sidebarMode === 'book') {
+    // Book mode: get ordered list from publication_index
+    await loadPubIndex();
+    const pubName = pub || _pubIndex?.id_to_publication?.[item.id] || indexEntry?.publication || item.publication || '';
+    if (pubName && _pubIndex?.publications?.[pubName]) {
+      const pubData = _pubIndex.publications[pubName];
+      // Build list from teaching IDs
+      _currentList = pubData.teaching_ids.map(tid => {
+        const entry = _searchIdx?.find(x => x.id === tid);
+        return entry || { id: tid, title: tid, part_file: '' };
+      }).filter(x => x.part_file); // Only include entries with content
+    } else {
+      // Fallback: category-based
+      const cat = indexEntry?.category || item.category || '';
+      _currentList = _searchIdx ? _searchIdx.filter(x => x.category === cat) : [];
+    }
+  } else if (_sidebarMode === 'list' && list) {
+    // List mode: get ordered list from section_tables
+    await Promise.all([loadSectionTables(), loadPubIndex()]);
+    const section = _sectionTables?.[list];
+    if (section?.rows) {
+      _currentList = section.rows
+        .filter(r => r.id) // Only rows matched to search index
+        .map(r => {
+          const entry = _searchIdx?.find(x => x.id === r.id);
+          return entry || { id: r.id, title: r.title || '', part_file: '' };
+        })
+        .filter(x => x.part_file);
+    } else {
+      // Fallback: category-based
+      const cat = indexEntry?.category || item.category || '';
+      _currentList = _searchIdx ? _searchIdx.filter(x => x.category === cat) : [];
+    }
+  } else {
+    // Default: category-based
+    await loadPubIndex();
+    const cat = indexEntry?.category || item.category || '';
+    _currentList = _searchIdx ? _searchIdx.filter(x => x.category === cat) : [];
   }
 }
 
@@ -153,6 +354,80 @@ async function loadPart(partFile) {
   const data = await res.json();
   _partCache[partFile] = data;
   return data;
+}
+
+async function loadPubIndex() {
+  if (_pubIndex) return;
+  if (_pubLoading) {
+    await new Promise(res => {
+      const iv = setInterval(() => { if (_pubIndex) { clearInterval(iv); res(); } }, 50);
+    });
+    return;
+  }
+  _pubLoading = true;
+  try {
+    const res = await fetch('data/publication_index.json');
+    _pubIndex = await res.json();
+  } finally {
+    _pubLoading = false;
+  }
+}
+
+async function loadSectionTables() {
+  if (_sectionTables) return;
+  if (_secLoading) {
+    await new Promise(res => {
+      const iv = setInterval(() => { if (_sectionTables) { clearInterval(iv); res(); } }, 50);
+    });
+    return;
+  }
+  _secLoading = true;
+  try {
+    const res = await fetch('data/section_tables.json');
+    _sectionTables = await res.json();
+  } finally {
+    _secLoading = false;
+  }
+}
+
+// Load publications metadata for cover images and details
+let _pubMeta = null;
+let _pubMetaLoading = false;
+async function loadPubMeta() {
+  if (_pubMeta) return;
+  if (_pubMetaLoading) {
+    await new Promise(res => {
+      const iv = setInterval(() => { if (_pubMeta) { clearInterval(iv); res(); } }, 50);
+    });
+    return;
+  }
+  _pubMetaLoading = true;
+  try {
+    const res = await fetch('data/publications_enriched.json');
+    const arr = await res.json();
+    _pubMeta = {};
+    arr.forEach(p => { _pubMeta[p.id] = p; });
+  } finally {
+    _pubMetaLoading = false;
+  }
+}
+
+// Load shinchi thematic index
+async function loadShinchiIndex() {
+  if (_shinchiIndex) return;
+  if (_shinchiLoading) {
+    await new Promise(res => {
+      const iv = setInterval(() => { if (_shinchiIndex) { clearInterval(iv); res(); } }, 50);
+    });
+    return;
+  }
+  _shinchiLoading = true;
+  try {
+    const res = await fetch('data/shinchi_index.json');
+    _shinchiIndex = await res.json();
+  } finally {
+    _shinchiLoading = false;
+  }
 }
 
 // ─── Render ───────────────────────────────────────────────────
@@ -239,6 +514,8 @@ function renderTeaching(item, indexEntry, searchQuery) {
     </nav>
 
     <article class="teaching-article">
+      ${_sidebarMode !== 'book' ? buildBookBadge(indexEntry, item) : ''}
+
       <header class="teaching-header">
         ${status}
         ${category ? `<div class="teaching-category">${escHtml(category)}</div>` : ''}
@@ -296,6 +573,66 @@ function renderTeaching(item, indexEntry, searchQuery) {
 
   // Update progress bar
   updateProgress();
+
+  // If shinchi mode: extract headings and update sidebar topic texts, then scroll if needed
+  if (_sidebarMode === 'shinchi') {
+    requestAnimationFrame(() => {
+      syncShinchiTopics();
+      if (_activeTopic >= 0) scrollToTopic(_activeTopic);
+    });
+  }
+}
+
+// Extract PT headings from rendered content and update shinchi sidebar topic labels
+function syncShinchiTopics() {
+  const topicEls = document.querySelectorAll('.shinchi-sb-topic-text');
+  if (!topicEls.length) return;
+
+  const h2s = document.querySelectorAll('.reader-content h2');
+  const headings = h2s.length >= topicEls.length
+    ? h2s
+    : document.querySelectorAll('.reader-content h2, .reader-content h3');
+
+  topicEls.forEach((el, i) => {
+    const h = headings[i];
+    if (h) {
+      const pt = h.textContent.trim();
+      if (pt && pt !== el.dataset.ja) {
+        el.textContent = pt;
+        el.title = el.dataset.ja; // keep JP as tooltip
+      }
+    }
+  });
+}
+
+// ─── Book badge (shown in list/planilha mode) ─────────────────
+function buildBookBadge(indexEntry, item) {
+  if (!_pubIndex) return '';
+
+  const pubName = _pubIndex?.id_to_publication?.[item.id] || indexEntry?.publication || item.publication || '';
+  if (!pubName) return '';
+
+  const pubData = _pubIndex?.publications?.[pubName];
+  if (!pubData) return '';
+
+  const titlePt = pubData.title_pt || pubName;
+  const titleJa = pubData.title_ja || '';
+  const coverImg = pubData.cover_image
+    ? `<img src="assets/img/${pubData.cover_image}" class="book-badge-cover" alt="" onerror="this.style.display='none'">`
+    : `<div class="book-badge-icon"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>`;
+
+  const bookUrl = `reader.html?id=${encodeURIComponent(item.id)}&part=${encodeURIComponent(getParams().part)}&mode=book&pub=${encodeURIComponent(pubName)}`;
+
+  return `
+    <div class="book-badge" onclick="window.location.href='${bookUrl}'">
+      ${coverImg}
+      <div class="book-badge-info">
+        <span class="book-badge-label">Este artigo faz parte de</span>
+        <strong class="book-badge-title">${escHtml(titlePt)}</strong>
+        ${titleJa && titleJa !== titlePt ? `<span class="book-badge-title-ja">${escHtml(titleJa)}</span>` : ''}
+      </div>
+      <span class="book-badge-link">Abrir Livro →</span>
+    </div>`;
 }
 
 // ─── Content rendering ────────────────────────────────────────
@@ -373,85 +710,367 @@ function buildSidebar(indexEntry) {
 
   const layout = document.getElementById('readerLayout');
   const currentId = indexEntry?.id || _currentItem?.id || '';
+  const { pub, list } = getParams();
 
-  // ── 1. Build context index (siblings in same category/context) ──
+  // ── Build mode toggle ──
+  const modeToggle = buildModeToggle(pub, list);
+
+  // ── Shinchi (神智之光) mode sidebar ──
+  if (_sidebarMode === 'shinchi') {
+    buildShinchiSidebar(sidebar, layout, indexEntry, currentId);
+    return;
+  }
+
+  // ── Book mode sidebar ──
+  if (_sidebarMode === 'book') {
+    buildBookSidebar(sidebar, layout, indexEntry, currentId, pub, modeToggle);
+    return;
+  }
+
+  // ── List/planilha mode sidebar ──
+  if (_sidebarMode === 'list' && list) {
+    buildListSidebar(sidebar, layout, indexEntry, currentId, list, modeToggle);
+    return;
+  }
+
+  // ── Fallback: category-based sidebar (existing behavior) ──
   if (_searchIdx && _currentList && _currentList.length > 1) {
-    const siblings = _currentList;
-    const typeLabel = indexEntry?.category || _currentItem?.category || 'Ensinamentos';
+    buildCategorySidebar(sidebar, layout, indexEntry, currentId, modeToggle);
+    return;
+  }
 
-      const currentIdx = siblings.findIndex(x => x.id === currentId);
-
-      const items = siblings.map((x, i) => {
-        const isActive = x.id === currentId;
-        let eraStr = '';
-        if (x.date_iso) {
-          try {
-            const parts = x.date_iso.split('-');
-            const y = parseInt(parts[0]);
-            if (!isNaN(y)) {
-              eraStr = `S${y - 1925}`;
-              const m = parseInt(parts[1]);
-              if (!isNaN(m)) eraStr += `.${m}`;
-              const d = parseInt(parts[2]);
-              if (!isNaN(d)) eraStr += `.${d}`;
-            }
-          } catch(e) {}
-        }
-        if (!eraStr && x.year) eraStr = `S${x.year - 1925}`;
-        return `<a href="reader.html?id=${encodeURIComponent(x.id)}&part=${encodeURIComponent(x.part_file || '')}"
-          class="reader-nav-item${isActive ? ' active' : ''}"
-          onclick="navigateTo('${x.id}','${x.part_file || ''}'); return false;">
-          <span class="reader-nav-num">${i + 1}</span>
-          <span class="reader-nav-title">${escHtml((x.title || '').substring(0, 60))}</span>
-          ${eraStr ? `<span class="reader-nav-era">${eraStr}</span>` : ''}
-        </a>`;
-      }).join('');
-
-      sidebar.innerHTML = `
-        <div class="sidebar-section">
-          <div class="sidebar-label">${escHtml(typeLabel)}</div>
-          <div class="sidebar-count">${siblings.length} artigos</div>
-          <div class="reader-nav-list">${items}</div>
-        </div>`;
-
-      if (layout) layout.classList.remove('reader-layout--no-sidebar');
-
-      // Scroll active item into view
-      requestAnimationFrame(() => {
-        const active = sidebar.querySelector('.reader-nav-item.active');
-        if (active) active.scrollIntoView({ block: 'center', behavior: 'instant' });
-      });
-      return;
-    }
-
-  // ── 2. Fallback: TOC from headings within current article ──
+  // ── Fallback: TOC from headings within current article ──
   const container = document.getElementById('readerContent');
   const headings = container ? Array.from(container.querySelectorAll('.reader-content h2, .reader-content h3')) : [];
 
   if (headings.length > 2) {
-    const lang = localStorage.getItem('site_lang') || 'pt';
-    const isPt = lang === 'pt';
-    const label = isPt ? `<div class="sidebar-label">ÍNDICE</div>` : `<div class="sidebar-label">目次</div>`;
-
-    const tocItems = headings.map((h, i) => {
-      if (!h.id) {
-        const safeText = h.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-');
-        h.id = `toc-${i}-${safeText}`;
-      }
-      const isH3 = h.tagName.toLowerCase() === 'h3';
-      return `<a href="#${h.id}" class="reader-nav-item" style="padding-left: ${isH3 ? '24px' : '12px'}; font-size: ${isH3 ? '0.8rem' : '0.85rem'}">
-        ${escHtml(h.textContent)}
-      </a>`;
-    }).join('');
-
-    sidebar.innerHTML = `<div class="sidebar-section">${label}${tocItems}</div>`;
-    if (layout) layout.classList.remove('reader-layout--no-sidebar');
+    buildTocSidebar(sidebar, layout, headings);
     return;
   }
 
-  // ── 3. No sidebar content ──
+  // ── No sidebar content ──
   if (layout) layout.classList.add('reader-layout--no-sidebar');
   sidebar.innerHTML = '';
+}
+
+function buildModeToggle(pub, list) {
+  const isBook = _sidebarMode === 'book';
+  const isList = _sidebarMode === 'list';
+  return `
+    <div class="sidebar-mode-toggle">
+      <button class="mode-btn${isBook ? ' active' : ''}" onclick="switchSidebarMode('book')" title="Índice do livro original">
+        <svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        Livro
+      </button>
+      <button class="mode-btn${isList || (!isBook && !isList) ? ' active' : ''}" onclick="switchSidebarMode('list')" title="Índice por seção/assunto">
+        <svg viewBox="0 0 24 24" width="14" height="14"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        Planilha
+      </button>
+    </div>`;
+}
+
+window.switchSidebarMode = function(newMode) {
+  _sidebarMode = newMode;
+  localStorage.setItem('reader_sidebar_mode', newMode);
+
+  // Update URL
+  const p = new URLSearchParams(window.location.search);
+  p.set('mode', newMode);
+  window.history.replaceState({}, '', `reader.html?${p.toString()}`);
+
+  // Rebuild with current item
+  if (_currentItem) {
+    const indexEntry = _searchIdx?.find(x => x.id === _currentItem.id);
+    const { pub, list } = getParams();
+    buildCurrentList(indexEntry, _currentItem, pub, list).then(() => {
+      buildSidebar(indexEntry);
+      // Re-render to update badge and nav buttons
+      const { search } = getParams();
+      renderTeaching(_currentItem, indexEntry, search);
+    });
+  }
+};
+
+// ── Book mode sidebar ──
+function buildBookSidebar(sidebar, layout, indexEntry, currentId, pub, modeToggle) {
+  const pubName = pub || _pubIndex?.id_to_publication?.[currentId] || indexEntry?.publication || _currentItem?.publication || '';
+  const pubData = _pubIndex?.publications?.[pubName];
+
+  if (!pubData || !_currentList.length) {
+    // Fallback to category if no publication data
+    buildCategorySidebar(sidebar, layout, indexEntry, currentId, modeToggle);
+    return;
+  }
+
+  // Find publication metadata for cover
+  let coverImg = '';
+  let titleJa = pubData.title_ja || pubName;
+  let titlePt = pubData.title_pt || pubName;
+
+  if (pubData.cover_image) {
+    coverImg = `<img src="assets/img/${pubData.cover_image}" class="sidebar-book-cover" alt="${escHtml(titlePt)}" onerror="this.style.display='none'">`;
+  }
+
+  // Group items by issue ranges for large publications
+  const siblings = _currentList;
+  const GROUP_SIZE = 50;
+  const needsGrouping = siblings.length > GROUP_SIZE;
+
+  let navHtml = '';
+  if (needsGrouping) {
+    navHtml = buildGroupedNav(siblings, currentId, GROUP_SIZE);
+  } else {
+    navHtml = `<div class="reader-nav-list">${buildNavItems(siblings, currentId)}</div>`;
+  }
+
+  sidebar.innerHTML = `
+    <div class="sidebar-section">
+      <div class="sidebar-book-header">
+        ${coverImg}
+        <div class="sidebar-book-info">
+          <div class="sidebar-book-title">${escHtml(titlePt)}</div>
+          ${titleJa !== titlePt ? `<div class="sidebar-book-title-ja">${escHtml(titleJa)}</div>` : ''}
+          <div class="sidebar-count">${pubData.total} artigos</div>
+        </div>
+      </div>
+      ${modeToggle}
+      ${navHtml}
+    </div>`;
+
+  if (layout) layout.classList.remove('reader-layout--no-sidebar');
+  scrollToActive(sidebar);
+}
+
+// ── Shinchi (神智之光) accordion sidebar ──
+function buildShinchiSidebar(sidebar, layout, indexEntry, currentId) {
+  if (!_shinchiIndex) {
+    sidebar.innerHTML = '<div class="sidebar-section"><p>Carregando…</p></div>';
+    return;
+  }
+
+  // Find which category/sub the current article belongs to
+  let activeCat = null, activeSub = null;
+  const catNums = Object.keys(_shinchiIndex).sort((a, b) => parseInt(a) - parseInt(b));
+  for (const cn of catNums) {
+    const cat = _shinchiIndex[cn];
+    for (let si = 0; si < cat.sub_categories.length; si++) {
+      if (cat.sub_categories[si].id === currentId) {
+        activeCat = cn;
+        activeSub = si;
+        break;
+      }
+    }
+    if (activeCat) break;
+  }
+
+  let navHtml = '';
+  for (const cn of catNums) {
+    const cat = _shinchiIndex[cn];
+    const isCatActive = cn === activeCat;
+
+    let subsHtml = '';
+    cat.sub_categories.forEach((sub, si) => {
+      const isSubActive = isCatActive && si === activeSub;
+      const hasContent = !!sub.id;
+      const label = sub.label_ja || sub.title_pt;
+      const topicCount = sub.topics?.length || 0;
+
+      // Topics list (shown inside sub-category) — clickable, with auto-scroll
+      let topicsHtml = '';
+      if (sub.topics?.length) {
+        topicsHtml = '<div class="shinchi-sb-topics">' +
+          sub.topics.map((t, ti) => {
+            const partFile = (_searchIdx?.find(x => x.id === sub.id))?.part_file || '';
+            const isTopicActive = isSubActive && ti === _activeTopic;
+            // If already on this article, just scroll; otherwise navigate then scroll
+            const clickHandler = isSubActive
+              ? `scrollToTopic(${ti})`
+              : `navigateTo('${sub.id}','${partFile}',${ti})`;
+            return `<div class="shinchi-sb-topic${isTopicActive ? ' active' : ''}" data-topic-idx="${ti}"
+              onclick="${clickHandler}">
+              <span class="shinchi-sb-topic-text" data-ja="${escHtml(t.topic_ja)}">${escHtml(t.topic_ja)}</span>
+              ${t.date ? `<span class="shinchi-sb-date">${t.date}</span>` : ''}
+            </div>`;
+          }).join('') + '</div>';
+      }
+
+      if (hasContent) {
+        subsHtml += `
+          <details class="shinchi-sb-sub" ${isSubActive ? 'open' : ''}>
+            <summary class="shinchi-sb-sub-header${isSubActive ? ' active' : ''}"
+              onclick="event.preventDefault();navigateTo('${sub.id}','${(_searchIdx?.find(x=>x.id===sub.id))?.part_file||''}')">
+              <span class="shinchi-sb-sub-label">${escHtml(label)}</span>
+              <span class="shinchi-sb-sub-count">${topicCount}</span>
+            </summary>
+            ${isSubActive ? topicsHtml : ''}
+          </details>`;
+      } else {
+        subsHtml += `
+          <div class="shinchi-sb-sub">
+            <div class="shinchi-sb-sub-header shinchi-sb-nolink">
+              <span class="shinchi-sb-sub-label">${escHtml(label)}</span>
+              <span class="shinchi-sb-sub-count">${topicCount}</span>
+            </div>
+          </div>`;
+      }
+    });
+
+    navHtml += `
+      <details class="shinchi-sb-cat" ${isCatActive ? 'open' : ''}>
+        <summary class="shinchi-sb-cat-header${isCatActive ? ' active' : ''}">
+          <span class="shinchi-sb-cat-num">${cn}</span>
+          <span class="shinchi-sb-cat-title">${escHtml(cat.cat_title_ja)}</span>
+        </summary>
+        <div class="shinchi-sb-cat-body">${subsHtml}</div>
+      </details>`;
+  }
+
+  sidebar.innerHTML = `
+    <div class="sidebar-section shinchi-sidebar">
+      <div class="sidebar-book-header">
+        <img src="assets/img/gokowa1.jpg" class="sidebar-book-cover" alt="神智之光" onerror="this.style.display='none'">
+        <div class="sidebar-book-info">
+          <div class="sidebar-book-title">神智之光</div>
+          <div class="sidebar-book-title-ja">Shinchi no Hikari</div>
+          <div class="sidebar-count">50 篇 · 348 seções</div>
+        </div>
+      </div>
+      <div class="shinchi-sb-tree">${navHtml}</div>
+    </div>`;
+
+  if (layout) layout.classList.remove('reader-layout--no-sidebar');
+
+  // Auto-scroll to active sub-category
+  requestAnimationFrame(() => {
+    const active = sidebar.querySelector('.shinchi-sb-sub-header.active');
+    if (active) active.scrollIntoView({ block: 'center', behavior: 'instant' });
+  });
+}
+
+function buildGroupedNav(siblings, currentId, groupSize) {
+  const groups = [];
+  for (let i = 0; i < siblings.length; i += groupSize) {
+    const group = siblings.slice(i, i + groupSize);
+    const start = i + 1;
+    const end = Math.min(i + groupSize, siblings.length);
+    const hasActive = group.some(x => x.id === currentId);
+    groups.push({ start, end, items: group, hasActive });
+  }
+
+  return groups.map(g => {
+    const items = buildNavItems(g.items, currentId, g.start - 1);
+    return `
+      <details class="sidebar-group" ${g.hasActive ? 'open' : ''}>
+        <summary class="sidebar-group-header">
+          <span>${g.start}–${g.end}</span>
+          <svg viewBox="0 0 24 24" width="12" height="12"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <div class="reader-nav-list">${items}</div>
+      </details>`;
+  }).join('');
+}
+
+function buildNavItems(items, currentId, offset = 0) {
+  return items.map((x, i) => {
+    const isActive = x.id === currentId;
+    let eraStr = '';
+    if (x.date_iso) {
+      try {
+        const parts = x.date_iso.split('-');
+        const y = parseInt(parts[0]);
+        if (!isNaN(y)) {
+          eraStr = `S${y - 1925}`;
+          const m = parseInt(parts[1]);
+          if (!isNaN(m)) eraStr += `.${m}`;
+          const d = parseInt(parts[2]);
+          if (!isNaN(d)) eraStr += `.${d}`;
+        }
+      } catch(e) {}
+    }
+    if (!eraStr && x.year) eraStr = `S${x.year - 1925}`;
+    return `<a href="reader.html?id=${encodeURIComponent(x.id)}&part=${encodeURIComponent(x.part_file || '')}"
+      class="reader-nav-item${isActive ? ' active' : ''}"
+      onclick="navigateTo('${x.id}','${x.part_file || ''}'); return false;">
+      <span class="reader-nav-num">${offset + i + 1}</span>
+      <span class="reader-nav-title">${escHtml((x.title || '').substring(0, 60))}</span>
+      ${eraStr ? `<span class="reader-nav-era">${eraStr}</span>` : ''}
+    </a>`;
+  }).join('');
+}
+
+// ── List/planilha mode sidebar ──
+function buildListSidebar(sidebar, layout, indexEntry, currentId, listKey, modeToggle) {
+  const section = _sectionTables?.[listKey];
+  const label = section?.title_pt || listKey;
+  const labelJa = section?.title_ja || '';
+
+  if (!_currentList.length) {
+    buildCategorySidebar(sidebar, layout, indexEntry, currentId, modeToggle);
+    return;
+  }
+
+  const navItems = buildNavItems(_currentList, currentId);
+
+  sidebar.innerHTML = `
+    <div class="sidebar-section">
+      <div class="sidebar-list-header">
+        <div class="sidebar-label">${escHtml(label)}</div>
+        ${labelJa ? `<div class="sidebar-label-ja">${escHtml(labelJa)}</div>` : ''}
+        <div class="sidebar-count">${_currentList.length} artigos</div>
+      </div>
+      ${modeToggle}
+      <div class="reader-nav-list">${navItems}</div>
+    </div>`;
+
+  if (layout) layout.classList.remove('reader-layout--no-sidebar');
+  scrollToActive(sidebar);
+}
+
+// ── Category-based sidebar (original behavior) ──
+function buildCategorySidebar(sidebar, layout, indexEntry, currentId, modeToggle) {
+  const siblings = _currentList;
+  const typeLabel = indexEntry?.category || _currentItem?.category || 'Ensinamentos';
+
+  const navItems = buildNavItems(siblings, currentId);
+
+  sidebar.innerHTML = `
+    <div class="sidebar-section">
+      <div class="sidebar-label">${escHtml(typeLabel)}</div>
+      <div class="sidebar-count">${siblings.length} artigos</div>
+      ${modeToggle || ''}
+      <div class="reader-nav-list">${navItems}</div>
+    </div>`;
+
+  if (layout) layout.classList.remove('reader-layout--no-sidebar');
+  scrollToActive(sidebar);
+}
+
+// ── TOC sidebar (headings from article) ──
+function buildTocSidebar(sidebar, layout, headings) {
+  const lang = localStorage.getItem('site_lang') || 'pt';
+  const isPt = lang === 'pt';
+  const label = isPt ? `<div class="sidebar-label">ÍNDICE</div>` : `<div class="sidebar-label">目次</div>`;
+
+  const tocItems = headings.map((h, i) => {
+    if (!h.id) {
+      const safeText = h.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      h.id = `toc-${i}-${safeText}`;
+    }
+    const isH3 = h.tagName.toLowerCase() === 'h3';
+    return `<a href="#${h.id}" class="reader-nav-item" style="padding-left: ${isH3 ? '24px' : '12px'}; font-size: ${isH3 ? '0.8rem' : '0.85rem'}">
+      ${escHtml(h.textContent)}
+    </a>`;
+  }).join('');
+
+  sidebar.innerHTML = `<div class="sidebar-section">${label}${tocItems}</div>`;
+  if (layout) layout.classList.remove('reader-layout--no-sidebar');
+}
+
+function scrollToActive(sidebar) {
+  requestAnimationFrame(() => {
+    const active = sidebar.querySelector('.reader-nav-item.active');
+    if (active) active.scrollIntoView({ block: 'center', behavior: 'instant' });
+  });
 }
 
 // Classify a search index entry by type (same logic as browse.js)
@@ -575,21 +1194,48 @@ function getSiblings() {
   };
 }
 
-window.navigateTo = function(id, partFile) {
+window.navigateTo = function(id, partFile, topicIdx) {
   const p = new URLSearchParams(window.location.search);
   const cat = p.get('cat') || '';
   const search = p.get('search') || p.get('s') || '';
-  
+  const mode = p.get('mode') || '';
+  const pub = p.get('pub') || '';
+  const list = p.get('list') || '';
+
+  _activeTopic = (topicIdx !== undefined && topicIdx >= 0) ? topicIdx : -1;
+
   const newP = new URLSearchParams();
   newP.set('id', id);
   newP.set('part', partFile);
   if (cat) newP.set('cat', cat);
   if (search) newP.set('search', search);
-  
+  if (mode) newP.set('mode', mode);
+  if (pub) newP.set('pub', pub);
+  if (list) newP.set('list', list);
+
   const url = `reader.html?${newP.toString()}`;
-  window.history.pushState({ id, partFile, cat, search }, '', url);
+  window.history.pushState({ id, partFile, cat, search, mode, pub, list }, '', url);
   window.scrollTo({ top: 0, behavior: 'smooth' });
   initReader();
+};
+
+// Scroll to Nth heading in reader content and highlight it
+window.scrollToTopic = function(idx) {
+  _activeTopic = idx;
+  const headings = document.querySelectorAll('.reader-content h2, .reader-content h3, .reader-content strong:first-child');
+  const h2s = document.querySelectorAll('.reader-content h2');
+  // Prefer h2 headings (numbered topics), fall back to all headings
+  const targets = h2s.length > 1 ? h2s : headings;
+  const target = targets[idx];
+  if (target) {
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    target.classList.add('topic-highlight');
+    setTimeout(() => target.classList.remove('topic-highlight'), 2000);
+  }
+  // Update active state in sidebar
+  document.querySelectorAll('.shinchi-sb-topic').forEach((el, i) => {
+    el.classList.toggle('active', i === idx);
+  });
 };
 
 // ─── Favorites ────────────────────────────────────────────────

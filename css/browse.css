@@ -484,6 +484,12 @@
 .browse-table tr.unpublished td {
   opacity: 0.7;
 }
+.browse-table tr.no-link td {
+  opacity: 0.55;
+}
+.browse-table tr.no-link .td-title-nolink {
+  font-style: italic;
+}
 
 /* Column widths */
 .col-num    { width: 44px; text-align: right; color: var(--text-muted); font-size: 11px; }
@@ -696,6 +702,185 @@ mark.bh {
   }
   .col-pub, .col-notes { display: none; }
 }
+/* ─── 神智之光 総目次 (Table of Contents) ────────────────────── */
+.shinchi-toc-title td { padding: 0 !important; }
+.shinchi-toc-header {
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.5em;
+  padding: 16px;
+  background: var(--surface, #f0ede4);
+  border-bottom: 2px solid var(--accent, #B8860B);
+}
+.shinchi-toc-sub-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 20px;
+  font-size: 0.78rem;
+  color: var(--accent, #B8860B);
+  background: var(--surface, #f5f2ea);
+  border-bottom: 1px solid var(--border, #e0d8c8);
+}
+.shinchi-toc-row { cursor: pointer; }
+.shinchi-toc-row:hover td { background: var(--surface, #f8f5ed); }
+.shinchi-toc-num {
+  width: 40px;
+  text-align: center;
+  font-weight: 700;
+  color: var(--text-secondary, #888);
+  padding: 10px 8px !important;
+  vertical-align: top;
+}
+.shinchi-toc-name {
+  white-space: nowrap;
+  padding: 10px 12px !important;
+  vertical-align: top;
+}
+.shinchi-toc-name a {
+  color: #0066cc;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.shinchi-toc-name a:hover { text-decoration: underline; }
+.shinchi-toc-keywords {
+  font-size: 0.85rem;
+  color: var(--text-main, #444);
+  padding: 10px 12px !important;
+  line-height: 1.5;
+}
+.shinchi-kw-link {
+  color: #1a0dab;
+  text-decoration: none;
+  cursor: pointer;
+}
+.shinchi-kw-link:hover {
+  text-decoration: underline;
+  color: #008080;
+}
+.shinchi-label-highlight {
+  background: rgba(184, 134, 11, 0.15) !important;
+  transition: background 0.5s ease;
+}
+
+/* ─── 神智之光 Category detail view ──────────────────────────── */
+.shinchi-detail-nav td {
+  padding: 10px 16px !important;
+  background: var(--surface, #f5f2ea);
+  border-bottom: 1px solid var(--border, #e0d8c8);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.shinchi-back {
+  color: var(--accent, #B8860B);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.shinchi-back:hover { text-decoration: underline; }
+.shinchi-nav-arrows a {
+  color: #0066cc;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+.shinchi-nav-arrows a:hover { text-decoration: underline; }
+.shinchi-nav-sep { margin: 0 8px; color: var(--text-secondary, #ccc); }
+.shinchi-nav-disabled { color: var(--text-secondary, #ccc); font-size: 0.9rem; }
+
+.shinchi-detail-title td {
+  padding: 16px !important;
+  text-align: left;
+}
+.shinchi-detail-title-text {
+  font-size: 1.1rem;
+  margin-bottom: 6px;
+}
+.shinchi-detail-section {
+  font-size: 0.95rem;
+  color: var(--text-main, #333);
+  line-height: 1.6;
+}
+
+.shinchi-detail-thead td {
+  background: #008080;
+  color: #fff;
+  font-weight: 600;
+  padding: 8px 12px !important;
+  font-size: 0.85rem;
+}
+.shinchi-detail-th-topic { text-align: center; }
+.shinchi-detail-th-date { text-align: right; }
+
+/* Sub-category label (green link in left column) */
+.shinchi-detail-label {
+  vertical-align: top;
+  padding: 6px 12px !important;
+  width: 120px;
+  min-width: 100px;
+  border-right: 1px solid var(--border, #ddd);
+}
+.shinchi-label-link {
+  color: #008080;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.88rem;
+}
+.shinchi-label-link:hover { text-decoration: underline; color: #006666; }
+.shinchi-label-nolink {
+  color: var(--text-secondary, #999);
+  font-size: 0.88rem;
+}
+
+/* Topic rows */
+.shinchi-detail-row td {
+  padding: 4px 12px !important;
+  border-bottom: 1px dotted var(--border, #e8e4dc);
+}
+.shinchi-detail-row-first td {
+  border-top: 1px solid var(--border, #ddd);
+}
+.shinchi-detail-topic {
+  font-size: 0.88rem;
+  color: var(--text-main, #333);
+  line-height: 1.5;
+}
+.shinchi-detail-date {
+  font-size: 0.82rem;
+  color: var(--text-secondary, #888);
+  text-align: right;
+  white-space: nowrap;
+  vertical-align: top;
+}
+
+/* ─── 神智之光 search results (reuse cat header) ─────────────── */
+.shinchi-cat-header td {
+  background: var(--surface, #f5f0e8);
+  padding: 10px 16px !important;
+  border-bottom: 2px solid var(--accent, #B8860B);
+  border-top: 1px solid var(--border, #e0d8c8);
+}
+.shinchi-cat-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--accent, #B8860B);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.8rem;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+.shinchi-cat-ja {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-main, #2c2c2c);
+}
+
 @media (max-width: 600px) {
   .browse-toolbar { padding: 10px 14px; }
   .browse-table th, .browse-table td { padding: 8px 10px; }

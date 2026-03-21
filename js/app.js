@@ -63,10 +63,12 @@ let searchLoading = false;
 
 // ─── Init ─────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+  /* auth temporarily disabled for dev
   if (sessionStorage.getItem('mioshie_auth') !== 'true') {
     renderLoginOverlay();
     return;
   }
+  */
   document.documentElement.style.display = '';
   applyTheme(currentTheme, false);
   applyLanguage(currentLang, false);

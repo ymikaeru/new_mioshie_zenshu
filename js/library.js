@@ -614,21 +614,21 @@ function openModal(pub) {
       ${bookSvg}
       <span class="lang-pt">Ver Poemas</span>
     </a>`;
-    // Also show "Ler Ensinamentos" if there are teachings for this pub
+    // Also show "Abrir no Leitor" if there are teachings for this pub
     if (_pubNames.length >= 1) {
-      actionBtn += `<a class="btn-primary btn-primary--outline" href="browse.html?pub=${encodeURIComponent(_pubNames[0])}">
+      actionBtn += `<a class="btn-primary btn-primary--outline" href="reader.html?pub=${encodeURIComponent(_pubNames[0])}">
         ${bookSvg}
-        <span class="lang-pt">Ler Ensinamentos</span>
+        <span class="lang-pt">Abrir no Leitor</span>
       </a>`;
     }
   } else if (_pubNames.length === 1) {
-    actionBtn = `<a class="btn-primary" href="browse.html?pub=${encodeURIComponent(_pubNames[0])}">
+    actionBtn = `<a class="btn-primary" href="reader.html?pub=${encodeURIComponent(_pubNames[0])}">
       ${bookSvg}
-      <span class="lang-pt">Ler Ensinamentos</span>
+      <span class="lang-pt">Abrir no Leitor</span>
     </a>`;
   } else if (_pubNames.length > 1) {
     actionBtn = _pubNames.map(name =>
-      `<a class="btn-primary btn-primary--sm" href="browse.html?pub=${encodeURIComponent(name)}">
+      `<a class="btn-primary btn-primary--sm" href="reader.html?pub=${encodeURIComponent(name)}">
         ${bookSvg}
         ${escHtml(name)}
       </a>`
@@ -782,13 +782,12 @@ function renderEditionsTable(hakData, pub) {
           </a>
         </div>`;
     } else if (_edPubNames.length >= 1) {
-      const pubParam = _edPubNames.join('|||');
       readLink = `
         <div class="ed-card__actions">
-          <a class="btn-primary btn-primary--sm" href="browse.html?pub=${encodeURIComponent(pubParam)}">
+          ${_edPubNames.map(name => `<a class="btn-primary btn-primary--sm" href="reader.html?pub=${encodeURIComponent(name)}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-            Ler Ensinamentos
-          </a>
+            ${escHtml(name)}
+          </a>`).join('')}
         </div>`;
     }
 
