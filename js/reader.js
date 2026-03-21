@@ -36,7 +36,8 @@ let   _sectionTables = null; // section_tables.json
 let   _pubLoading = false;
 let   _secLoading = false;
 let   _sidebarMode = 'book'; // 'book', 'list', or 'shinchi'
-let   _shinchiIndex = null;  // shinchi_index.json
+let   _shinchiIndex  = null;  // shinchi_index.json
+let   _shinchiLabels = null;  // shinchi_labels.json (translations)
 let   _shinchiLoading = false;
 let   _activeTopic = -1;     // active topic index within current sub-category
 
@@ -428,6 +429,11 @@ async function loadShinchiIndex() {
   try {
     const res = await fetch('data/shinchi_index.json');
     _shinchiIndex = await res.json();
+    // Load translation labels if available
+    try {
+      const lr = await fetch('data/shinchi_labels.json');
+      _shinchiLabels = await lr.json();
+    } catch(e) { /* optional */ }
   } finally {
     _shinchiLoading = false;
   }
@@ -958,25 +964,17 @@ const SHINCHI_CAT_PT = {
   50: 'Astronomia e Geografia',
 };
 
-// Derive a compact Portuguese label from sub.title_pt
-function shortSubLabel(sub) {
-  const pt = (sub.title_pt || '').trim();
-  if (!pt) return sub.label_ja || '';
-  // Strip common collection-name prefixes up to a separator
-  let s = pt
-    .replace(/^(Coletânea|Coleção|Compilação|Compêndio)\s+de\s+(Teses|Artigos|Ensaios|Dissertações|Tratados|Escritos)\s+do\s+(Reverendo|Mestre)\s+[^–—:|]+[–—:|]\s*/i, '')
-    .replace(/^(Coletânea|Coleção)\s+de\s+[^–—:|]+[–—:|]\s*/i, '')
-    .trim();
-  // Split on remaining separators and pick the last meaningful segment
-  const parts = s.split(/\s*[–—:|]\s*/);
-  const last = parts[parts.length - 1].trim();
-  if (last.length > 8) s = last;
-  // Strip leading numbering like "001 " or "1 "
-  s = s.replace(/^\d+\s+/, '').trim();
-  // Remove trailing parenthetical for compactness
-  s = s.replace(/\s*[\(（].*/, '').trim();
-  // Truncate
-  return s.length > 40 ? s.slice(0, 38) + '…' : (s || sub.label_ja || '');
+// Return label for a shinchi sub-category.
+// Uses label_pt from shinchi_labels.json if available and filled, else label_ja.
+function shortSubLabel(sub, catNum) {
+  if (_shinchiLabels && catNum) {
+    const catLabels = _shinchiLabels[String(catNum)];
+    if (catLabels) {
+      const entry = catLabels.subs?.find(s => s.label_ja === sub.label_ja);
+      if (entry?.label_pt?.trim()) return entry.label_pt.trim();
+    }
+  }
+  return sub.label_ja || sub.title_pt || '';
 }
 
 function buildShinchiSidebar(sidebar, layout, indexEntry, currentId) {
@@ -1009,7 +1007,7 @@ function buildShinchiSidebar(sidebar, layout, indexEntry, currentId) {
     cat.sub_categories.forEach((sub, si) => {
       const isSubActive = isCatActive && si === activeSub;
       const hasContent = !!sub.id;
-      const label = shortSubLabel(sub);
+      const label = shortSubLabel(sub, cn);
       const topicCount = sub.topics?.length || 0;
 
       // Topics list (shown inside sub-category) — clickable, with auto-scroll
@@ -1056,7 +1054,11 @@ function buildShinchiSidebar(sidebar, layout, indexEntry, currentId) {
       <details class="shinchi-sb-cat" ${isCatActive ? 'open' : ''}>
         <summary class="shinchi-sb-cat-header${isCatActive ? ' active' : ''}">
           <span class="shinchi-sb-cat-num">${cn}</span>
-          <span class="shinchi-sb-cat-title">${escHtml(SHINCHI_CAT_PT[parseInt(cn)] || cat.cat_title_ja)}</span>
+          <span class="shinchi-sb-cat-title">${escHtml(
+            (_shinchiLabels?.[cn]?.cat_title_pt?.trim()) ||
+            SHINCHI_CAT_PT[parseInt(cn)] ||
+            cat.cat_title_ja
+          )}</span>
         </summary>
         <div class="shinchi-sb-cat-body">${subsHtml}</div>
       </details>`;
