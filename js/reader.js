@@ -136,7 +136,11 @@ async function initReader() {
   } else if (mode === 'list' || list) {
     _sidebarMode = 'list';
   } else {
-    _sidebarMode = localStorage.getItem('reader_sidebar_mode') || 'book';
+    // No explicit mode in URL — if browse.js saved a filtered list, use it
+    const hasBrowseList = (() => {
+      try { return !!(sessionStorage.getItem('browse_list')); } catch(e) { return false; }
+    })();
+    _sidebarMode = hasBrowseList ? 'browse' : (localStorage.getItem('reader_sidebar_mode') || 'book');
   }
 
   // No ID but shinchi: open first sub-category
@@ -895,6 +899,8 @@ function buildModeToggle(pub, list) {
 window.switchSidebarMode = function(newMode) {
   _sidebarMode = newMode;
   localStorage.setItem('reader_sidebar_mode', newMode);
+  // User explicitly chose a mode — clear browse planilha list so it doesn't override
+  try { sessionStorage.removeItem('browse_list'); } catch(e) {}
 
   // Update URL
   const p = new URLSearchParams(window.location.search);
