@@ -1278,6 +1278,12 @@ window.navigate = function(e, id, partFile) {
   } else {
     url = `${READER}?id=${encodeURIComponent(id)}`;
   }
+  // Save the current filtered list so the reader can preserve browse order
+  if (_filtered.length > 0) {
+    try {
+      sessionStorage.setItem('browse_list', JSON.stringify(_filtered.map(x => x.id)));
+    } catch(e) { /* storage full — skip */ }
+  }
   sessionStorage.setItem('browse_return', window.location.href);
   window.location.href = url;
 };

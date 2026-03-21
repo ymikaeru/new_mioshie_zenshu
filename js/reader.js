@@ -320,10 +320,22 @@ async function buildCurrentList(indexEntry, item, pub, list) {
       _currentList = _searchIdx ? _searchIdx.filter(x => x.category === cat) : [];
     }
   } else {
-    // Default: category-based
-    await loadPubIndex();
-    const cat = indexEntry?.category || item.category || '';
-    _currentList = _searchIdx ? _searchIdx.filter(x => x.category === cat) : [];
+    // Check if browse.js saved a filtered list for us
+    const savedList = (() => {
+      try { return JSON.parse(sessionStorage.getItem('browse_list') || 'null'); } catch(e) { return null; }
+    })();
+    if (savedList?.length) {
+      // Restore the exact browse order, keeping only entries present in search index
+      const idSet = new Set(savedList);
+      const byId = {};
+      (_searchIdx || []).forEach(x => { byId[x.id] = x; });
+      _currentList = savedList.map(id => byId[id]).filter(Boolean);
+    } else {
+      // Fallback: category-based
+      await loadPubIndex();
+      const cat = indexEntry?.category || item.category || '';
+      _currentList = _searchIdx ? _searchIdx.filter(x => x.category === cat) : [];
+    }
   }
 }
 
