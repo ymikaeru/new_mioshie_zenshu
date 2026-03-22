@@ -3,6 +3,9 @@
 <head>
   <script>if(sessionStorage.getItem('mioshie_auth')!=='true')document.documentElement.style.display='none';</script>
   <meta charset="UTF-8">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Timeline — Mioshie Zenshu</title>
   <meta name="description" content="Timeline cronológica dos ensinamentos de Meishu-Sama por era Showa.">
@@ -13,7 +16,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Noto+Serif+JP:wght@400;600&display=swap">
 
   <!-- Styles -->
-  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/styles.css?v=6">
 
   <!-- PWA -->
   <link rel="manifest" href="manifest.json">
@@ -202,6 +205,20 @@
       flex-shrink: 0;
     }
     .tl-year-row.open .tl-toggle-icon { transform: rotate(90deg); }
+    .tl-year-row.tl-highlight {
+      background: color-mix(in srgb, var(--accent, #B8860B) 12%, transparent);
+      border-radius: 8px;
+      transition: background 1.5s ease;
+    }
+
+    /* ─── Article highlight (from browse planilha era link) ── */
+    .tl-item-highlight {
+      background: color-mix(in srgb, var(--accent, #B8860B) 18%, transparent);
+      border-radius: 6px;
+      outline: 2px solid color-mix(in srgb, var(--accent, #B8860B) 60%, transparent);
+      outline-offset: 2px;
+      transition: background 2s ease, outline-color 2s ease;
+    }
 
     /* ─── Expanded teachings list ─────────────────────── */
     .tl-year-teachings {
@@ -388,7 +405,7 @@
 </footer>
 
 <!-- Scripts -->
-<script src="js/app.js?v=2" defer></script>
+<script src="js/app.js?v=12" defer></script>
 <script defer>
 const IDX_URL = 'data/search/advanced_search_index.json';
 
@@ -513,7 +530,7 @@ function renderTimeline() {
 
     html += `
       <div class="tl-era-group" data-era-group="${era}">
-        <div class="tl-year-row" onclick="toggleYear(this)">
+        <div class="tl-year-row" id="year-${year}" onclick="toggleYear(this)">
           <div class="tl-year-label">
             <div class="tl-year-showa">S${showa}</div>
             <div class="tl-year-greg">${year}</div>
@@ -556,12 +573,53 @@ function renderTimeline() {
   const style = document.createElement('style');
   style.textContent = '.tl-teaching-item.more-hidden { display: none; }';
   document.head.appendChild(style);
+
+  // Scroll to year + highlight specific article if hash present
+  // Format: #year-1949  or  #year-1949__articleId
+  const hash = window.location.hash;
+  if (hash && hash.startsWith('#year-')) {
+    const [yearPart, encodedId] = hash.slice(1).split('__');
+    const articleId = encodedId ? decodeURIComponent(encodedId) : null;
+
+    requestAnimationFrame(() => {
+      const yearRow = document.getElementById(yearPart);
+      if (!yearRow) return;
+
+      // Open the year row
+      if (!yearRow.classList.contains('open')) toggleYear(yearRow);
+
+      // Add data-id to each teaching item (inject during render or find by href)
+      if (articleId) {
+        // Find the teaching link whose href contains the article id
+        const teachings = yearRow.parentElement.querySelector('.tl-year-teachings');
+        const link = teachings?.querySelector(`a[href*="${encodeURIComponent(articleId)}"]`);
+        if (link) {
+          const item = link.closest('.tl-teaching-item');
+          if (item) {
+            // Remove more-hidden so it's visible
+            item.classList.remove('more-hidden');
+            item.classList.add('tl-item-highlight');
+            setTimeout(() => item.classList.remove('tl-item-highlight'), 3000);
+            // Scroll to the item after a short delay (year opens first)
+            setTimeout(() => item.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150);
+            return;
+          }
+        }
+      }
+
+      // Fallback: just scroll to year row
+      yearRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      yearRow.classList.add('tl-highlight');
+      setTimeout(() => yearRow.classList.remove('tl-highlight'), 2000);
+    });
+  }
 }
 </script>
 
 <script>
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(() => {}); });
+    navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()));
+    caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
   }
 </script>
 </body>

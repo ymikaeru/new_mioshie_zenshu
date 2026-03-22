@@ -93,6 +93,22 @@ const PUB_ROMAJI = {
 };
 function pubDisplay(name) { return PUB_ROMAJI[name] || name; }
 
+// Map publication names → book-mode reader URLs
+const PUB_BOOK_URL = {
+  'Mioshie-shu':    'reader.html?pub=Mioshie-shu&mode=book',
+  'Gosuiiji録':     'reader.html?pub=Gosuiiji録&mode=book',
+  '御Hikari話録':   'reader.html?pub=御Hikari話録&mode=book',
+  '御Hikari話録（補）': 'reader.html?pub=御Hikari話録&mode=book',
+  '浄霊法講座':     'reader.html?pub=浄霊法講座&mode=book',
+  'Gokowa':         'reader.html?pub=shinchi',
+};
+function pubBookUrl(pubName) {
+  if (!pubName) return null;
+  if (PUB_BOOK_URL[pubName]) return PUB_BOOK_URL[pubName];
+  // Generic book mode — reader will try and fallback gracefully
+  return `reader.html?pub=${encodeURIComponent(pubName)}&mode=book`;
+}
+
 // ─── Content type classification ──────────────────────────────
 // Priority order matters — first match wins
 const CONTENT_TYPES = [
@@ -649,13 +665,24 @@ async function applyFilters() {
       va = pa; vb = pb;
       if (pa === pb) { va = (a.title||'').toLowerCase(); vb = (b.title||'').toLowerCase(); }
     } else {
-      va = a.year || 9999;
-      vb = b.year || 9999;
-      if (va === vb) {
-        va = (a.title||'').toLowerCase();
-        vb = (b.title||'').toLowerCase();
+      // Era sort: date → publication → issue number → title
+      // (mirrors original planilha grouping)
+      const dateA = a.date_iso || (a.year ? String(a.year) : '9999');
+      const dateB = b.date_iso || (b.year ? String(b.year) : '9999');
+      if (dateA !== dateB) {
+        return _sortAsc ? dateA.localeCompare(dateB) : dateB.localeCompare(dateA);
       }
-      return _sortAsc ? (va > vb ? 1 : -1) : (va < vb ? 1 : -1);
+      const pubA = (a.publication || '').toLowerCase();
+      const pubB = (b.publication || '').toLowerCase();
+      if (pubA !== pubB) {
+        return _sortAsc ? pubA.localeCompare(pubB) : pubB.localeCompare(pubA);
+      }
+      const issA = parseInt((a.issue_page||'').replace(/\D/g,'')) || 0;
+      const issB = parseInt((b.issue_page||'').replace(/\D/g,'')) || 0;
+      if (issA !== issB) return _sortAsc ? issA - issB : issB - issA;
+      va = (a.title||'').toLowerCase();
+      vb = (b.title||'').toLowerCase();
+      return _sortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
     }
     return _sortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
   });
@@ -710,6 +737,13 @@ function renderTable() {
   const el   = document.getElementById('browseTableBody');
   const meta = document.getElementById('browseMeta');
   if (!el) return;
+
+  // Persist current filtered list to sessionStorage so reader.js can use it
+  if (_filtered.length > 0) {
+    try {
+      sessionStorage.setItem('browse_list', JSON.stringify(_filtered.map(x => x.id)));
+    } catch(e) { /* quota */ }
+  }
 
   const total = _filtered.length;
   const start = _page * _perPage;
@@ -797,9 +831,8 @@ function renderTable() {
       const hasLink = !!row.id;
       const sectionKey = row._sectionKey || _activeSectionKey;
 
-      // Build reader URL with mode=list&list=sectionKey
       const href = hasLink
-        ? `${READER}?id=${encodeURIComponent(row.id)}&mode=list&list=${encodeURIComponent(sectionKey)}`
+        ? `${READER}?id=${encodeURIComponent(row.id)}`
         : '#';
 
       const titleHl = hlText(row.title || '', terms);
@@ -833,7 +866,7 @@ function renderTable() {
         <td class="col-num">${num}</td>
         <td class="col-title">
           <div class="td-title">${hasLink
-            ? `<a href="${href}" onclick="navigateSection(event,${JSON.stringify(row.id)},${JSON.stringify(sectionKey)})">${titleHl}</a>`
+            ? `<a href="${href}" data-reader="1">${titleHl}</a>`
             : `<span class="td-title-nolink">${titleHl}</span>`}
           </div>
         </td>
@@ -842,7 +875,7 @@ function renderTable() {
         <td class="col-era"><span class="td-era">${date ? date.split('.')[0] || '' : ''}</span></td>
         <td class="col-notes td-pub">${esc(extra)}${notes ? (extra ? ' — ' : '') + esc(notes) : ''}</td>
         <td class="col-read">
-          ${hasLink ? `<a href="${href}" class="td-read-btn" onclick="navigateSection(event,${JSON.stringify(row.id)},${JSON.stringify(sectionKey)})" title="Ler">
+          ${hasLink ? `<a href="${href}" class="td-read-btn" data-reader="1" title="Ler">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
           </a>` : ''}
         </td>
@@ -854,8 +887,29 @@ function renderTable() {
   // Sonota entries use a different rendering
   const isSonota = slice.length > 0 && slice[0]._sonota;
 
+  // Year separator state — only shown when sorted by era
+  const showYearSep = _sortCol === 'era';
+  let _lastSepYear = null;
+
   el.innerHTML = slice.map((x, i) => {
     const num  = start + i + 1;
+
+    // ─── Year separator row ───────────────────────────────────
+    let yearSepHtml = '';
+    if (showYearSep && !x._sonota && x.year) {
+      const rowYear = parseInt(x.year);
+      if (!isNaN(rowYear) && rowYear !== _lastSepYear) {
+        _lastSepYear = rowYear;
+        const showa = rowYear - 1925;
+        const showaLabel = showa > 0 ? `昭和${showa}年` : (showa === 0 ? '昭和元年' : '');
+        yearSepHtml = `<tr class="year-sep-row">
+          <td colspan="7">
+            <span class="year-sep-greg">${rowYear}</span>
+            ${showaLabel ? `<span class="year-sep-showa">${showaLabel}</span>` : ''}
+          </td>
+        </tr>`;
+      }
+    }
 
     if (x._sonota) {
       const href = x.id && x.part_file
@@ -872,7 +926,7 @@ function renderTable() {
         <td class="col-num">${num}</td>
         <td class="col-title">
           <div class="td-title">${hasLink
-            ? `<a href="${href}" onclick="navigate(event,${JSON.stringify(x.id)},${JSON.stringify(x.part_file||'')})">${titleJa}</a>`
+            ? `<a href="${href}" data-reader="1">${titleJa}</a>`
             : `<span class="td-title-nolink">${titleJa}</span>`}
           </div>
           ${titlePt}
@@ -882,7 +936,7 @@ function renderTable() {
         <td class="col-era"><span class="td-era">${author}</span></td>
         <td class="col-notes td-pub"></td>
         <td class="col-read">
-          ${hasLink ? `<a href="${href}" class="td-read-btn" onclick="navigate(event,${JSON.stringify(x.id)},${JSON.stringify(x.part_file||'')})" title="Ler">
+          ${hasLink ? `<a href="${href}" class="td-read-btn" data-reader="1" title="Ler">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
           </a>` : ''}
         </td>
@@ -891,7 +945,7 @@ function renderTable() {
 
     const ct   = CONTENT_TYPES.find(t => t.id === x._type) || CONTENT_TYPES[CONTENT_TYPES.length-1];
     const href = x.part_file
-      ? `${READER}?id=${encodeURIComponent(x.id)}&part=${encodeURIComponent(x.part_file)}&mode=list&list=${encodeURIComponent(x._type || '')}`
+      ? `${READER}?id=${encodeURIComponent(x.id)}&part=${encodeURIComponent(x.part_file)}`
       : `${READER}?cat=${encodeURIComponent(x.category||'')}`;
     let eraLabel = '&mdash;';
     if (x.date_iso) {
@@ -911,25 +965,33 @@ function renderTable() {
       eraLabel = `S${x.year - 1925}`;
     }
     const titleHl     = hlText(x.title || '', terms);
-    const pub         = x.publication ? hlText(pubDisplay(String(x.publication)).substring(0,60), terms) : '';
+    const pubName     = x.publication ? String(x.publication) : '';
+    const pubUrl      = pubBookUrl(pubName);
+    const pubLabel    = pubName ? hlText(pubDisplay(pubName).substring(0, 60), terms) : '';
+    const pub         = pubName
+      ? `<a class="td-pub-link" href="${pubUrl}" data-reader="1" title="Abrir em modo livro">${pubLabel}</a>`
+      : '';
     const issue       = x.issue_page  ? esc(String(x.issue_page).substring(0,20)) : '';
     const relCount    = x.related ? x.related.length : 0;
     const unpubBadge  = x.unpublished ? `<span class="td-unpublished">inedito</span>` : '';
 
-    return `<tr class="${x.unpublished?'unpublished':''}">
+    return `${yearSepHtml}<tr class="${x.unpublished?'unpublished':''}">
       <td class="col-num">${num}</td>
       <td class="col-title">
         <span class="content-type-badge ${ct.css}">${ct.label}</span>
-        <div class="td-title"><a href="${href}" onclick="navigate(event,${JSON.stringify(x.id)},${JSON.stringify(x.part_file||'')})">
+        <div class="td-title"><a href="${href}" data-reader="1">
           ${titleHl}${unpubBadge}
         </a></div>
       </td>
       <td class="col-pub td-pub">${pub}</td>
       <td class="col-issue td-pub">${issue}</td>
-      <td class="col-era"><span class="td-era">${eraLabel}</span></td>
+      <td class="col-era">${x.year
+        ? `<a class="td-era td-era-link" href="timeline.html#year-${x.year}__${encodeURIComponent(x.id)}" title="Ver na Timeline">${eraLabel}</a>`
+        : `<span class="td-era">${eraLabel}</span>`
+      }</td>
       <td class="col-notes td-pub">${tagSnippet(x)}</td>
       <td class="col-read">
-        <a href="${href}" class="td-read-btn" onclick="navigate(event,${JSON.stringify(x.id)},${JSON.stringify(x.part_file||'')})" title="Ler">
+        <a href="${href}" class="td-read-btn" data-reader="1" title="Ler">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
         </a>
       </td>
@@ -1258,29 +1320,108 @@ function updateTableHeaders() {
   }
 }
 
-// ─── Navigate to reader (section mode) ────────────────────────
-window.navigateSection = function(e, id, sectionKey) {
-  e.preventDefault();
-  const url = `${READER}?id=${encodeURIComponent(id)}&mode=list&list=${encodeURIComponent(sectionKey)}`;
+// ─── Shared: save browse context before navigating ────────────
+function saveBrowseContext() {
+  sessionStorage.setItem('browse_override', '1');
   sessionStorage.setItem('browse_return', window.location.href);
-  window.location.href = url;
-};
+  sessionStorage.setItem('browse_scroll', String(window.scrollY));
+}
 
-// ─── Navigate to reader ───────────────────────────────────────
-window.navigate = function(e, id, partFile) {
-  e.preventDefault();
-  let url;
-  // If we're in section data mode, pass list param
-  if (_usingSectionData && _activeSectionKey) {
-    url = `${READER}?id=${encodeURIComponent(id)}&mode=list&list=${encodeURIComponent(_activeSectionKey)}`;
-  } else if (partFile) {
-    url = `${READER}?id=${encodeURIComponent(id)}&part=${encodeURIComponent(partFile)}`;
-  } else {
-    url = `${READER}?id=${encodeURIComponent(id)}`;
+// Restore scroll position when returning from reader (direct navigation fallback)
+(function restoreBrowseScroll() {
+  const saved = sessionStorage.getItem('browse_scroll');
+  if (saved) {
+    const y = parseInt(saved);
+    if (!isNaN(y) && y > 0) {
+      // Wait for table to render, then scroll
+      const check = setInterval(() => {
+        const rows = document.querySelectorAll('#browseTableBody tr');
+        if (rows.length > 0) {
+          clearInterval(check);
+          window.scrollTo(0, y);
+          sessionStorage.removeItem('browse_scroll');
+        }
+      }, 100);
+      // Fallback: clear after 5s
+      setTimeout(() => { clearInterval(check); sessionStorage.removeItem('browse_scroll'); }, 5000);
+    }
   }
-  sessionStorage.setItem('browse_return', window.location.href);
-  window.location.href = url;
-};
+})();
+
+// ─── Reader Modal (centered overlay) ──────────────────────────
+function openReaderModal(url) {
+  saveBrowseContext();
+
+  let modal = document.getElementById('readerModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'readerModal';
+    modal.className = 'reader-modal';
+    modal.innerHTML = `
+      <div class="reader-modal-container">
+        <button class="reader-modal-close" onclick="closeReaderModal()" title="Fechar (Esc)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+        <iframe id="readerFrame" class="reader-modal-frame" src="" allowfullscreen></iframe>
+      </div>`;
+    document.body.appendChild(modal);
+
+    // Click on backdrop (outside container) closes
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) closeReaderModal();
+    });
+
+    // ESC key closes modal
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && modal.classList.contains('open')) closeReaderModal();
+    });
+
+    // "Voltar" button inside iframe sends this message
+    window.addEventListener('message', function(e) {
+      if (e.data === 'close-reader') closeReaderModal();
+    });
+  }
+
+  const frame = document.getElementById('readerFrame');
+  frame.src = url;
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  history.pushState({ readerModal: url }, '', url);
+}
+
+function closeReaderModal() {
+  const modal = document.getElementById('readerModal');
+  if (!modal) return;
+  modal.classList.remove('open');
+  document.body.style.overflow = '';
+  const browseUrl = sessionStorage.getItem('browse_return') || 'browse.html';
+  history.replaceState({}, '', browseUrl);
+  setTimeout(() => {
+    const frame = document.getElementById('readerFrame');
+    if (frame) frame.src = '';
+  }, 300);
+}
+
+window.addEventListener('popstate', function() {
+  const modal = document.getElementById('readerModal');
+  if (modal && modal.classList.contains('open')) {
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+    setTimeout(() => { const f = document.getElementById('readerFrame'); if (f) f.src = ''; }, 300);
+  }
+});
+
+// ─── Event delegation: intercept all reader link clicks ───────
+document.addEventListener('click', function(e) {
+  const link = e.target.closest('a[data-reader]');
+  if (!link) return;
+  // Allow Cmd+click / Ctrl+click to open in new tab
+  if (e.ctrlKey || e.metaKey || e.shiftKey) return;
+  e.preventDefault();
+  openReaderModal(link.href);
+});
 
 // ─── Helpers ──────────────────────────────────────────────────
 function hlText(text, terms) {

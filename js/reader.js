@@ -36,7 +36,8 @@ let   _sectionTables = null; // section_tables.json
 let   _pubLoading = false;
 let   _secLoading = false;
 let   _sidebarMode = 'book'; // 'book', 'list', or 'shinchi'
-let   _shinchiIndex = null;  // shinchi_index.json
+let   _shinchiIndex  = null;  // shinchi_index.json
+let   _shinchiLabels = null;  // shinchi_labels.json (translations)
 let   _shinchiLoading = false;
 let   _activeTopic = -1;     // active topic index within current sub-category
 
@@ -70,14 +71,17 @@ function injectCollapseBtn() {
   };
   layout.appendChild(backdrop);
 
-  // Always start open so user sees the index, then auto-close after 3 s
+  // Always start open on page load for orientation
   layout.classList.remove('sidebar-collapsed');
-  setTimeout(() => {
+  // Auto-close after 3 seconds unless user has interacted with the sidebar
+  const autoCloseTimer = setTimeout(() => {
     if (!layout.classList.contains('sidebar-collapsed')) {
       layout.classList.add('sidebar-collapsed');
       localStorage.setItem('reader_sidebar_collapsed', '1');
     }
   }, 3000);
+  // Cancel auto-close if user manually toggles sidebar
+  btn.addEventListener('click', () => clearTimeout(autoCloseTimer), { once: true });
 }
 
 // ─── Init ─────────────────────────────────────────────────────
@@ -132,15 +136,31 @@ async function initReader() {
   const container = document.getElementById('readerContent');
   if (!container) return;
 
+  // One-shot flag: browse.js signals "use browse_list regardless of URL mode"
+  const browseOverride = (() => {
+    try {
+      const v = sessionStorage.getItem('browse_override') === '1';
+      if (v) sessionStorage.removeItem('browse_override'); // consume once
+      return v;
+    } catch(e) { return false; }
+  })();
+
   // Determine sidebar mode from URL params
-  if (pub === 'shinchi') {
+  if (browseOverride && sessionStorage.getItem('browse_list')) {
+    // Came directly from browse planilha — always honour browse order
+    _sidebarMode = 'browse';
+  } else if (pub === 'shinchi') {
     _sidebarMode = 'shinchi';
   } else if (mode === 'book' || (pub && mode !== 'list')) {
     _sidebarMode = 'book';
   } else if (mode === 'list' || list) {
     _sidebarMode = 'list';
   } else {
-    _sidebarMode = localStorage.getItem('reader_sidebar_mode') || 'book';
+    // No explicit mode in URL — check sessionStorage for browse list
+    const hasBrowseList = (() => {
+      try { return !!(sessionStorage.getItem('browse_list')); } catch(e) { return false; }
+    })();
+    _sidebarMode = hasBrowseList ? 'browse' : (localStorage.getItem('reader_sidebar_mode') || 'book');
   }
 
   // No ID but shinchi: open first sub-category
@@ -324,10 +344,22 @@ async function buildCurrentList(indexEntry, item, pub, list) {
       _currentList = _searchIdx ? _searchIdx.filter(x => x.category === cat) : [];
     }
   } else {
-    // Default: category-based
-    await loadPubIndex();
-    const cat = indexEntry?.category || item.category || '';
-    _currentList = _searchIdx ? _searchIdx.filter(x => x.category === cat) : [];
+    // Check if browse.js saved a filtered list for us
+    const savedList = (() => {
+      try { return JSON.parse(sessionStorage.getItem('browse_list') || 'null'); } catch(e) { return null; }
+    })();
+    if (savedList?.length) {
+      // Restore the exact browse order, keeping only entries present in search index
+      const idSet = new Set(savedList);
+      const byId = {};
+      (_searchIdx || []).forEach(x => { byId[x.id] = x; });
+      _currentList = savedList.map(id => byId[id]).filter(Boolean);
+    } else {
+      // Fallback: category-based
+      await loadPubIndex();
+      const cat = indexEntry?.category || item.category || '';
+      _currentList = _searchIdx ? _searchIdx.filter(x => x.category === cat) : [];
+    }
   }
 }
 
@@ -396,6 +428,7 @@ async function loadSectionTables() {
 // Load publications metadata for cover images and details
 let _pubMeta = null;
 let _pubMetaLoading = false;
+let _hakkousiRich = null;
 async function loadPubMeta() {
   if (_pubMeta) return;
   if (_pubMetaLoading) {
@@ -410,6 +443,13 @@ async function loadPubMeta() {
     const arr = await res.json();
     _pubMeta = {};
     arr.forEach(p => { _pubMeta[p.id] = p; });
+    // Load hakkousi_rich for extra images
+    try {
+      const hr = await fetch('data/hakkousi_rich.json');
+      const hrArr = await hr.json();
+      _hakkousiRich = {};
+      hrArr.forEach(h => { _hakkousiRich[h.file] = h; });
+    } catch(e) { /* optional */ }
   } finally {
     _pubMetaLoading = false;
   }
@@ -428,6 +468,11 @@ async function loadShinchiIndex() {
   try {
     const res = await fetch('data/shinchi_index.json');
     _shinchiIndex = await res.json();
+    // Load translation labels if available
+    try {
+      const lr = await fetch('data/shinchi_labels.json');
+      _shinchiLabels = await lr.json();
+    } catch(e) { /* optional */ }
   } finally {
     _shinchiLoading = false;
   }
@@ -469,6 +514,17 @@ function renderTeaching(item, indexEntry, searchQuery) {
   if (!date && item.year) {
     date = String(item.year).includes('昭和') ? item.year : `S${parseInt(item.year) - 1925}`;
   }
+  // Gregorian year for timeline link
+  let gregYear = 0;
+  if (item.date_iso) {
+    const yy = parseInt(item.date_iso.split('-')[0]);
+    if (!isNaN(yy)) gregYear = yy;
+  } else if (date) {
+    const m = date.match(/S\s*(\d+)/);
+    if (m) gregYear = parseInt(m[1]) + 1925;
+  }
+  if (!gregYear && item.year) gregYear = parseInt(item.year) || 0;
+
   const pub        = item.publication || '';
   const collection = item.collection  || '';
   const status     = item.status === 'Unpublished'
@@ -532,9 +588,8 @@ function renderTeaching(item, indexEntry, searchQuery) {
         ${titlePt && !isPt ? `<div class="teaching-title-ja">${escHtml(titlePt)}</div>` : ''}
 
         <div class="teaching-meta">
-          ${date       ? `<span><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${escHtml(date)}</span>` : ''}
-          ${pub        ? `<span><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>${escHtml(pub)}</span>` : ''}
-          ${collection ? `<span><svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>${escHtml(collection)}</span>` : ''}
+          ${date && gregYear ? `<a href="timeline.html#year-${gregYear}__${encodeURIComponent(item.id)}" class="meta-link" title="Ver na Timeline"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${escHtml(date)}</a>` : date ? `<span><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${escHtml(date)}</span>` : ''}
+          ${pub        ? `<a href="reader.html?id=${encodeURIComponent(item.id)}&part=${encodeURIComponent(getParams().part)}&mode=book&pub=${encodeURIComponent(pub)}" class="meta-link" title="Abrir livro"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>${escHtml(pub)}</a>` : ''}
         </div>
 
         <div class="teaching-actions">
@@ -650,6 +705,47 @@ function syncBookTopics() {
     ).join('') +
     '</div>';
 }
+
+// ─── Build cover gallery HTML from hakkousi_rich all_images ───
+function buildCoverGallery(hakkousiFile, mainCover) {
+  const entry = _hakkousiRich?.[hakkousiFile];
+  const imgs = entry?.all_images || (mainCover ? [mainCover] : []);
+  if (!imgs.length) return '';
+  return `<div class="sidebar-cover-gallery">` +
+    imgs.map((img, i) => {
+      const src = `assets/img/${img}`;
+      const isMain = i === 0;
+      return `<img src="${src}" class="sidebar-cover-thumb${isMain ? ' sidebar-cover-thumb--main' : ''}"
+        alt="Imagem ${i+1}" loading="lazy"
+        onclick="openCoverLightbox('${src}','Imagem ${i+1}')"
+        onerror="this.style.display='none'">`;
+    }).join('') + `</div>`;
+}
+
+// ─── Cover Lightbox ───────────────────────────────────────────
+window.openCoverLightbox = function(src, title) {
+  let lb = document.getElementById('cover-lightbox');
+  if (!lb) {
+    lb = document.createElement('div');
+    lb.id = 'cover-lightbox';
+    lb.className = 'cover-lightbox';
+    lb.innerHTML = `
+      <div class="cover-lightbox-backdrop"></div>
+      <div class="cover-lightbox-content">
+        <button class="cover-lightbox-close" aria-label="Fechar">✕</button>
+        <img class="cover-lightbox-img" src="" alt="">
+        <div class="cover-lightbox-caption"></div>
+      </div>`;
+    document.body.appendChild(lb);
+    lb.querySelector('.cover-lightbox-backdrop').onclick = () => lb.classList.remove('open');
+    lb.querySelector('.cover-lightbox-close').onclick   = () => lb.classList.remove('open');
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') lb.classList.remove('open'); });
+  }
+  lb.querySelector('.cover-lightbox-img').src = src;
+  lb.querySelector('.cover-lightbox-img').alt = title;
+  lb.querySelector('.cover-lightbox-caption').textContent = title;
+  lb.classList.add('open');
+};
 
 window.scrollToBookTopic = function(rawIdx) {
   let headings = [...document.querySelectorAll('.reader-content h2, .reader-content h3')];
@@ -773,9 +869,6 @@ function buildSidebar(indexEntry) {
   const currentId = indexEntry?.id || _currentItem?.id || '';
   const { pub, list } = getParams();
 
-  // ── Build mode toggle ──
-  const modeToggle = buildModeToggle(pub, list);
-
   // ── Shinchi (神智之光) mode sidebar ──
   if (_sidebarMode === 'shinchi') {
     buildShinchiSidebar(sidebar, layout, indexEntry, currentId);
@@ -784,19 +877,19 @@ function buildSidebar(indexEntry) {
 
   // ── Book mode sidebar ──
   if (_sidebarMode === 'book') {
-    buildBookSidebar(sidebar, layout, indexEntry, currentId, pub, modeToggle);
+    buildBookSidebar(sidebar, layout, indexEntry, currentId, pub);
     return;
   }
 
   // ── List/planilha mode sidebar ──
   if (_sidebarMode === 'list' && list) {
-    buildListSidebar(sidebar, layout, indexEntry, currentId, list, modeToggle);
+    buildListSidebar(sidebar, layout, indexEntry, currentId, list);
     return;
   }
 
-  // ── Fallback: category-based sidebar (existing behavior) ──
+  // ── Browse/category sidebar ──
   if (_searchIdx && _currentList && _currentList.length > 1) {
-    buildCategorySidebar(sidebar, layout, indexEntry, currentId, modeToggle);
+    buildCategorySidebar(sidebar, layout, indexEntry, currentId);
     return;
   }
 
@@ -814,38 +907,33 @@ function buildSidebar(indexEntry) {
   sidebar.innerHTML = '';
 }
 
-function buildModeToggle(pub, list) {
-  const isBook = _sidebarMode === 'book';
-  const isList = _sidebarMode === 'list';
+// Returns a "← Seleção" back button (shown in book mode when coming from browse)
+function buildBackToBrowseBtn() {
+  const hasBrowseList = (() => {
+    try { return !!(sessionStorage.getItem('browse_list')); } catch(e) { return false; }
+  })();
+  if (!hasBrowseList) return '';
   return `
-    <div class="sidebar-mode-toggle">
-      <button class="mode-btn${isBook ? ' active' : ''}" onclick="switchSidebarMode('book')" title="Índice do livro original">
-        <svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-        Livro
-      </button>
-      <button class="mode-btn${isList || (!isBook && !isList) ? ' active' : ''}" onclick="switchSidebarMode('list')" title="Índice por seção/assunto">
-        <svg viewBox="0 0 24 24" width="14" height="14"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-        Planilha
-      </button>
-    </div>`;
+    <button class="sidebar-back-btn" onclick="backToBrowse()" title="Voltar à seleção da planilha">
+      <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      Voltar à seleção
+    </button>`;
 }
 
-window.switchSidebarMode = function(newMode) {
-  _sidebarMode = newMode;
-  localStorage.setItem('reader_sidebar_mode', newMode);
-
-  // Update URL
+// Called when user clicks "← Voltar à seleção" in book-mode sidebar
+window.backToBrowse = function() {
+  _sidebarMode = 'browse';
+  // Remove mode=book from URL so browse_list is detected on next initReader
   const p = new URLSearchParams(window.location.search);
-  p.set('mode', newMode);
+  p.delete('mode');
+  p.delete('pub');
   window.history.replaceState({}, '', `reader.html?${p.toString()}`);
 
-  // Rebuild with current item
   if (_currentItem) {
     const indexEntry = _searchIdx?.find(x => x.id === _currentItem.id);
     const { pub, list } = getParams();
     buildCurrentList(indexEntry, _currentItem, pub, list).then(() => {
       buildSidebar(indexEntry);
-      // Re-render to update badge and nav buttons
       const { search } = getParams();
       renderTeaching(_currentItem, indexEntry, search);
     });
@@ -853,13 +941,13 @@ window.switchSidebarMode = function(newMode) {
 };
 
 // ── Book mode sidebar ──
-function buildBookSidebar(sidebar, layout, indexEntry, currentId, pub, modeToggle) {
+function buildBookSidebar(sidebar, layout, indexEntry, currentId, pub) {
   const pubName = pub || _pubIndex?.id_to_publication?.[currentId] || indexEntry?.publication || _currentItem?.publication || '';
   const pubData = _pubIndex?.publications?.[pubName];
 
   if (!pubData || !_currentList.length) {
     // Fallback to category if no publication data
-    buildCategorySidebar(sidebar, layout, indexEntry, currentId, modeToggle);
+    buildCategorySidebar(sidebar, layout, indexEntry, currentId);
     return;
   }
 
@@ -869,7 +957,8 @@ function buildBookSidebar(sidebar, layout, indexEntry, currentId, pub, modeToggl
   let titlePt = pubData.title_pt || pubName;
 
   if (pubData.cover_image) {
-    coverImg = `<img src="assets/img/${pubData.cover_image}" class="sidebar-book-cover" alt="${escHtml(titlePt)}" onerror="this.style.display='none'">`;
+    const src = `assets/img/${pubData.cover_image}`;
+    coverImg = `<img src="${src}" class="sidebar-book-cover sidebar-book-cover--clickable" alt="${escHtml(titlePt)}" onclick="openCoverLightbox('${src}','${escHtml(titlePt)}')" onerror="this.style.display='none'">`;
   }
 
   const siblings = _currentList;
@@ -885,18 +974,35 @@ function buildBookSidebar(sidebar, layout, indexEntry, currentId, pub, modeToggl
     navHtml = `<div class="reader-nav-list">${buildNavItems(siblings, currentId)}</div>`;
   }
 
+  const aboutHtml = (() => {
+    const hakFile = pubData.hakkousi_file;
+    const gallery = buildCoverGallery(hakFile, pubData.cover_image);
+    const desc = pubData.notes_pt || pubData.series_info_pt || pubData.description || '';
+    if (!gallery && !desc) return '';
+    return `<details class="shinchi-book-about">
+      <summary class="shinchi-book-about-summary">Sobre esta obra</summary>
+      <div class="shinchi-book-about-body">
+        ${desc ? `<p class="shinchi-book-about-desc">${escHtml(desc)}</p>` : ''}
+        ${gallery}
+      </div>
+    </details>`;
+  })();
+
   sidebar.innerHTML = `
     <div class="sidebar-section">
-      <div class="sidebar-book-header">
-        ${coverImg}
-        <div class="sidebar-book-info">
-          <div class="sidebar-book-title">${escHtml(titlePt)}</div>
-          ${titleJa !== titlePt ? `<div class="sidebar-book-title-ja">${escHtml(titleJa)}</div>` : ''}
-          <div class="sidebar-count">${pubData.total} artigos</div>
+      <div class="sidebar-sticky-header">
+        <div class="sidebar-book-header">
+          ${coverImg}
+          <div class="sidebar-book-info">
+            <div class="sidebar-book-title">${escHtml(titlePt)}</div>
+            ${titleJa !== titlePt ? `<div class="sidebar-book-title-ja">${escHtml(titleJa)}</div>` : ''}
+            <div class="sidebar-count">${pubData.total} artigos</div>
+          </div>
         </div>
+        ${buildBackToBrowseBtn()}
+        ${aboutHtml}
       </div>
-      ${modeToggle}
-      ${navHtml}
+      <div class="sidebar-book-nav">${navHtml}</div>
     </div>`;
 
   if (layout) layout.classList.remove('reader-layout--no-sidebar');
@@ -958,25 +1064,17 @@ const SHINCHI_CAT_PT = {
   50: 'Astronomia e Geografia',
 };
 
-// Derive a compact Portuguese label from sub.title_pt
-function shortSubLabel(sub) {
-  const pt = (sub.title_pt || '').trim();
-  if (!pt) return sub.label_ja || '';
-  // Strip common collection-name prefixes up to a separator
-  let s = pt
-    .replace(/^(Coletânea|Coleção|Compilação|Compêndio)\s+de\s+(Teses|Artigos|Ensaios|Dissertações|Tratados|Escritos)\s+do\s+(Reverendo|Mestre)\s+[^–—:|]+[–—:|]\s*/i, '')
-    .replace(/^(Coletânea|Coleção)\s+de\s+[^–—:|]+[–—:|]\s*/i, '')
-    .trim();
-  // Split on remaining separators and pick the last meaningful segment
-  const parts = s.split(/\s*[–—:|]\s*/);
-  const last = parts[parts.length - 1].trim();
-  if (last.length > 8) s = last;
-  // Strip leading numbering like "001 " or "1 "
-  s = s.replace(/^\d+\s+/, '').trim();
-  // Remove trailing parenthetical for compactness
-  s = s.replace(/\s*[\(（].*/, '').trim();
-  // Truncate
-  return s.length > 40 ? s.slice(0, 38) + '…' : (s || sub.label_ja || '');
+// Return label for a shinchi sub-category.
+// Uses label_pt from shinchi_labels.json if available and filled, else label_ja.
+function shortSubLabel(sub, catNum) {
+  if (_shinchiLabels && catNum) {
+    const catLabels = _shinchiLabels[String(catNum)];
+    if (catLabels) {
+      const entry = catLabels.subs?.find(s => s.label_ja === sub.label_ja);
+      if (entry?.label_pt?.trim()) return entry.label_pt.trim();
+    }
+  }
+  return sub.label_ja || sub.title_pt || '';
 }
 
 function buildShinchiSidebar(sidebar, layout, indexEntry, currentId) {
@@ -1009,7 +1107,7 @@ function buildShinchiSidebar(sidebar, layout, indexEntry, currentId) {
     cat.sub_categories.forEach((sub, si) => {
       const isSubActive = isCatActive && si === activeSub;
       const hasContent = !!sub.id;
-      const label = shortSubLabel(sub);
+      const label = shortSubLabel(sub, cn);
       const topicCount = sub.topics?.length || 0;
 
       // Topics list (shown inside sub-category) — clickable, with auto-scroll
@@ -1056,7 +1154,11 @@ function buildShinchiSidebar(sidebar, layout, indexEntry, currentId) {
       <details class="shinchi-sb-cat" ${isCatActive ? 'open' : ''}>
         <summary class="shinchi-sb-cat-header${isCatActive ? ' active' : ''}">
           <span class="shinchi-sb-cat-num">${cn}</span>
-          <span class="shinchi-sb-cat-title">${escHtml(SHINCHI_CAT_PT[parseInt(cn)] || cat.cat_title_ja)}</span>
+          <span class="shinchi-sb-cat-title">${escHtml(
+            (_shinchiLabels?.[cn]?.cat_title_pt?.trim()) ||
+            SHINCHI_CAT_PT[parseInt(cn)] ||
+            cat.cat_title_ja
+          )}</span>
         </summary>
         <div class="shinchi-sb-cat-body">${subsHtml}</div>
       </details>`;
@@ -1064,23 +1166,26 @@ function buildShinchiSidebar(sidebar, layout, indexEntry, currentId) {
 
   sidebar.innerHTML = `
     <div class="sidebar-section shinchi-sidebar">
-      <div class="sidebar-book-header">
-        <img src="assets/img/gokowa1.jpg" class="sidebar-book-cover" alt="神智之光" onerror="this.style.display='none'">
-        <div class="sidebar-book-info">
-          <div class="sidebar-book-title">神智之光</div>
-          <div class="sidebar-book-title-ja">Shinchi no Hikari</div>
-          <div class="sidebar-count">50 篇 · 348 seções</div>
+      <div class="sidebar-sticky-header">
+        <div class="sidebar-book-header">
+          <img src="assets/img/gokowa1.jpg" class="sidebar-book-cover sidebar-book-cover--clickable" alt="神智之光" onclick="openCoverLightbox('assets/img/gokowa1.jpg','神智之光')" onerror="this.style.display='none'">
+          <div class="sidebar-book-info">
+            <div class="sidebar-book-title">神智之光</div>
+            <div class="sidebar-book-title-ja">Shinchi no Hikari</div>
+            <div class="sidebar-count">50 篇 · 348 seções</div>
+          </div>
         </div>
+        <details class="shinchi-book-about">
+          <summary class="shinchi-book-about-summary">Sobre esta obra</summary>
+          <div class="shinchi-book-about-body">
+            <div class="shinchi-book-meta-row"><span class="shinchi-book-meta-label">Subtítulo</span><span>Coleção de Palestras (Supl.)</span></div>
+            <div class="shinchi-book-meta-row"><span class="shinchi-book-meta-label">Publicação</span><span>Data desconhecida</span></div>
+            <div class="shinchi-book-meta-row"><span class="shinchi-book-meta-label">Organização</span><span>Inoue Motokichi</span></div>
+            <p class="shinchi-book-about-desc">Esta coletânea de perguntas e respostas foi organizada por Inoue Motokichi com autorização de Meishu-Sama e publicada pela Sekai Kyusei Kyo como "Coleção de Palestras (Supl.)". Contém aproximadamente 5.000 questões e respostas. Mistura respostas diretas de Meishu-Sama com partes transmitidas pelo Mestre Inoue. O material é denso e inclui conteúdos não destinados ao público geral — recomenda-se a leitura prévia do "Curso de Kannon" antes de prosseguir.</p>
+            ${buildCoverGallery('ohikari.html', 'gokowa1.jpg')}
+          </div>
+        </details>
       </div>
-      <details class="shinchi-book-about">
-        <summary class="shinchi-book-about-summary">Sobre esta obra</summary>
-        <div class="shinchi-book-about-body">
-          <div class="shinchi-book-meta-row"><span class="shinchi-book-meta-label">Subtítulo</span><span>Coleção de Palestras (Supl.)</span></div>
-          <div class="shinchi-book-meta-row"><span class="shinchi-book-meta-label">Publicação</span><span>Data desconhecida</span></div>
-          <div class="shinchi-book-meta-row"><span class="shinchi-book-meta-label">Organização</span><span>Inoue Motokichi</span></div>
-          <p class="shinchi-book-about-desc">Esta coletânea de perguntas e respostas foi organizada por Inoue Motokichi com autorização de Meishu-Sama e publicada pela Sekai Kyusei Kyo como "Coleção de Palestras (Supl.)". Contém aproximadamente 5.000 questões e respostas. Mistura respostas diretas de Meishu-Sama com partes transmitidas pelo Mestre Inoue. O material é denso e inclui conteúdos não destinados ao público geral — recomenda-se a leitura prévia do "Curso de Kannon" antes de prosseguir.</p>
-        </div>
-      </details>
       <div class="shinchi-sb-tree">${navHtml}</div>
     </div>`;
 
@@ -1185,13 +1290,13 @@ function buildNavItems(items, currentId, offset = 0) {
 }
 
 // ── List/planilha mode sidebar ──
-function buildListSidebar(sidebar, layout, indexEntry, currentId, listKey, modeToggle) {
+function buildListSidebar(sidebar, layout, indexEntry, currentId, listKey) {
   const section = _sectionTables?.[listKey];
   const label = section?.title_pt || listKey;
   const labelJa = section?.title_ja || '';
 
   if (!_currentList.length) {
-    buildCategorySidebar(sidebar, layout, indexEntry, currentId, modeToggle);
+    buildCategorySidebar(sidebar, layout, indexEntry, currentId);
     return;
   }
 
@@ -1199,12 +1304,13 @@ function buildListSidebar(sidebar, layout, indexEntry, currentId, listKey, modeT
 
   sidebar.innerHTML = `
     <div class="sidebar-section">
-      <div class="sidebar-list-header">
-        <div class="sidebar-label">${escHtml(label)}</div>
-        ${labelJa ? `<div class="sidebar-label-ja">${escHtml(labelJa)}</div>` : ''}
-        <div class="sidebar-count">${_currentList.length} artigos</div>
+      <div class="sidebar-sticky-header">
+        <div class="sidebar-list-header">
+          <div class="sidebar-label">${escHtml(label)}</div>
+          ${labelJa ? `<div class="sidebar-label-ja">${escHtml(labelJa)}</div>` : ''}
+          <div class="sidebar-count">${_currentList.length} artigos</div>
+        </div>
       </div>
-      ${modeToggle}
       <div class="reader-nav-list">${navItems}</div>
     </div>`;
 
@@ -1212,8 +1318,8 @@ function buildListSidebar(sidebar, layout, indexEntry, currentId, listKey, modeT
   scrollToActive(sidebar);
 }
 
-// ── Category-based sidebar (original behavior) ──
-function buildCategorySidebar(sidebar, layout, indexEntry, currentId, modeToggle) {
+// ── Category/browse sidebar ──
+function buildCategorySidebar(sidebar, layout, indexEntry, currentId) {
   const siblings = _currentList;
   const typeLabel = indexEntry?.category || _currentItem?.category || 'Ensinamentos';
 
@@ -1221,9 +1327,10 @@ function buildCategorySidebar(sidebar, layout, indexEntry, currentId, modeToggle
 
   sidebar.innerHTML = `
     <div class="sidebar-section">
-      <div class="sidebar-label">${escHtml(typeLabel)}</div>
-      <div class="sidebar-count">${siblings.length} artigos</div>
-      ${modeToggle || ''}
+      <div class="sidebar-sticky-header">
+        <div class="sidebar-label">${escHtml(typeLabel)}</div>
+        <div class="sidebar-count">${siblings.length} artigos</div>
+      </div>
       <div class="reader-nav-list">${navItems}</div>
     </div>`;
 

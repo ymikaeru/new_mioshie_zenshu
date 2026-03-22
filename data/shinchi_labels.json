@@ -1,0 +1,650 @@
+{
+  "1": {
+    "cat_title_ja": "神解明篇",
+    "cat_title_pt": "Elucidação sobre Deus",
+    "subs": [
+      { "label_ja": "神",       "label_pt": "Deus" },
+      { "label_ja": "御神格",   "label_pt": "Dignidade Divina" },
+      { "label_ja": "宇宙",     "label_pt": "Universo" },
+      { "label_ja": "太古",     "label_pt": "Antiguidade Primordial" },
+      { "label_ja": "神秘",     "label_pt": "Mistérios Divinos" },
+      { "label_ja": "神史",     "label_pt": "História Sagrada" },
+      { "label_ja": "天文地文", "label_pt": "Astronomia e Geografia" }
+    ]
+  },
+  "2": {
+    "cat_title_ja": "主神篇",
+    "cat_title_pt": "Deus Supremo (Sushin)",
+    "subs": [
+      { "label_ja": "主神",       "label_pt": "Deus Supremo" },
+      { "label_ja": "国常立尊",   "label_pt": "Kunitokotachi-no-Mikoto" },
+      { "label_ja": "伊都能売神", "label_pt": "Izunome-no-Kami" },
+      { "label_ja": "兄花姫",     "label_pt": "Enihanime" },
+      { "label_ja": "光明如来",   "label_pt": "Tathagata da Luz (Kōmyō Nyorai)" },
+      { "label_ja": "観世音",     "label_pt": "Kannon" },
+      { "label_ja": "五六七",     "label_pt": "Miroku (5-6-7)" },
+      { "label_ja": "御力",       "label_pt": "Poder Divino" },
+      { "label_ja": "応身と三身", "label_pt": "Ōshin e os Três Corpos" }
+    ]
+  },
+  "3": {
+    "cat_title_ja": "万神篇",
+    "cat_title_pt": "As Miríades de Divindades",
+    "subs": [
+      { "label_ja": "観音様",     "label_pt": "Kannon-sama" },
+      { "label_ja": "金龍神",     "label_pt": "Kin-Ryūjin (Deus Dragão Dourado)" },
+      { "label_ja": "神名解",     "label_pt": "Interpretação dos Nomes Divinos" },
+      { "label_ja": "諸神仏",     "label_pt": "Diversas Divindades e Budas" },
+      { "label_ja": "月系諸神",   "label_pt": "Divindades do Sistema Lunar" },
+      { "label_ja": "八幡・祓戸", "label_pt": "Hachiman e Haraedo" },
+      { "label_ja": "龍神、邪神", "label_pt": "Dragões Divinos e Espíritos Malignos" }
+    ]
+  },
+  "4": {
+    "cat_title_ja": "明主様篇",
+    "cat_title_pt": "Meishu-Sama",
+    "subs": [
+      { "label_ja": "御神格",   "label_pt": "Dignidade Divina" },
+      { "label_ja": "御偉徳",   "label_pt": "Virtudes e Grandeza" },
+      { "label_ja": "御事蹟",   "label_pt": "Feitos e Obras" },
+      { "label_ja": "神秘",     "label_pt": "Mistérios" },
+      { "label_ja": "型",       "label_pt": "Arquétipo Divino" },
+      { "label_ja": "御光奇象", "label_pt": "Fenômenos da Luz Divina" }
+    ]
+  },
+  "5": {
+    "cat_title_ja": "霊界篇",
+    "cat_title_pt": "O Mundo Espiritual",
+    "subs": [
+      { "label_ja": "三界経緯",   "label_pt": "Os Três Reinos e sua Estrutura" },
+      { "label_ja": "霊界諸界",   "label_pt": "Os Planos do Mundo Espiritual" },
+      { "label_ja": "霊界諸相",   "label_pt": "Aspectos do Mundo Espiritual" },
+      { "label_ja": "顕幽１",     "label_pt": "Mundo Visível e Invisível 1" },
+      { "label_ja": "顕幽２",     "label_pt": "Mundo Visível e Invisível 2" },
+      { "label_ja": "交流、霊現象","label_pt": "Intercâmbio e Fenômenos Espirituais" }
+    ]
+  },
+  "6": {
+    "cat_title_ja": "建設破壊篇",
+    "cat_title_pt": "Construção e Destruição",
+    "subs": [
+      { "label_ja": "大建設と破壊", "label_pt": "Grande Construção e Destruição" },
+      { "label_ja": "審判と洗礼",   "label_pt": "Julgamento e Purificação" },
+      { "label_ja": "転換期１",     "label_pt": "Período de Transição 1" },
+      { "label_ja": "転換期２",     "label_pt": "Período de Transição 2" },
+      { "label_ja": "大光明世界",   "label_pt": "Mundo da Grande Luz" },
+      { "label_ja": "昼の文化",     "label_pt": "Civilização do Dia" }
+    ]
+  },
+  "7": {
+    "cat_title_ja": "宗教概論篇",
+    "cat_title_pt": "Panorama das Religiões",
+    "subs": [
+      { "label_ja": "救世教",                       "label_pt": "Sekaikyuseikyou" },
+      { "label_ja": "仏教１",                       "label_pt": "Budismo 1" },
+      { "label_ja": "仏教２",                       "label_pt": "Budismo 2" },
+      { "label_ja": "仏教３",                       "label_pt": "Budismo 3" },
+      { "label_ja": "キリスト教",                   "label_pt": "Cristianismo" },
+      { "label_ja": "マホメット教、紅卍会、天理教", "label_pt": "Islamismo, Kō-Mankai e Tenrikyō" },
+      { "label_ja": "一般宗教事項",                 "label_pt": "Assuntos Gerais de Religião" }
+    ]
+  },
+  "8": {
+    "cat_title_ja": "宗教芸術篇",
+    "cat_title_pt": "Religião e Arte",
+    "subs": [
+      { "label_ja": "神と仏",       "label_pt": "Deus e o Buda" },
+      { "label_ja": "仏語仏教真解", "label_pt": "Interpretação Verdadeira dos Termos Budistas" },
+      { "label_ja": "基・回教",     "label_pt": "Cristianismo e Islamismo" },
+      { "label_ja": "大本教",       "label_pt": "Ōmoto-kyō" },
+      { "label_ja": "節句・祝日",   "label_pt": "Festividades e Datas Sagradas" },
+      { "label_ja": "芸術１",       "label_pt": "Arte 1" },
+      { "label_ja": "芸術２",       "label_pt": "Arte 2" },
+      { "label_ja": "芸術３",       "label_pt": "Arte 3" }
+    ]
+  },
+  "9": {
+    "cat_title_ja": "人間本体篇",
+    "cat_title_pt": "A Essência do Ser Humano",
+    "subs": [
+      { "label_ja": "人の真諦",     "label_pt": "A Verdadeira Natureza Humana" },
+      { "label_ja": "四魂、霊の分類","label_pt": "Os Quatro Espíritos e sua Classificação" },
+      { "label_ja": "宿命と運命",   "label_pt": "Destino e Sina" },
+      { "label_ja": "霊統",         "label_pt": "Linhagem Espiritual" },
+      { "label_ja": "守護神１",     "label_pt": "Divindades Guardiãs 1" },
+      { "label_ja": "守護神２",     "label_pt": "Divindades Guardiãs 2" }
+    ]
+  },
+  "10": {
+    "cat_title_ja": "想念言霊篇",
+    "cat_title_pt": "Pensamento e Kotodama",
+    "subs": [
+      { "label_ja": "言霊",     "label_pt": "Kotodama" },
+      { "label_ja": "言霊解",   "label_pt": "Interpretação do Kotodama" },
+      { "label_ja": "姓名字",   "label_pt": "Nome, Sobrenome e Caracteres" },
+      { "label_ja": "想念、行為","label_pt": "Pensamento e Ação" },
+      { "label_ja": "文字",     "label_pt": "Caracteres e Escrita" },
+      { "label_ja": "数の神秘", "label_pt": "Mistério dos Números" },
+      { "label_ja": "厄年",     "label_pt": "Anos de Infortúnio" }
+    ]
+  },
+  "11": {
+    "cat_title_ja": "民族、国土、迷信篇",
+    "cat_title_pt": "Povos, Nações e Superstições",
+    "subs": [
+      { "label_ja": "民族と系統", "label_pt": "Povos e Linhagens" },
+      { "label_ja": "日本",       "label_pt": "Japão" },
+      { "label_ja": "神話",       "label_pt": "Mitologia" },
+      { "label_ja": "伝説",       "label_pt": "Lendas" },
+      { "label_ja": "迷信",       "label_pt": "Superstições" },
+      { "label_ja": "年月日",     "label_pt": "Anos, Meses e Dias" },
+      { "label_ja": "行事",       "label_pt": "Eventos e Cerimônias" },
+      { "label_ja": "住居・風習", "label_pt": "Habitação e Costumes" }
+    ]
+  },
+  "12": {
+    "cat_title_ja": "信仰篇（特輯）",
+    "cat_title_pt": "Fé — Edição Especial",
+    "subs": [
+      { "label_ja": "大和魂、完成",  "label_pt": "Yamato-Damashii e Perfeição" },
+      { "label_ja": "信仰の道（時）","label_pt": "O Caminho da Fé e o Tempo" },
+      { "label_ja": "智の重要性",    "label_pt": "A Importância da Sabedoria" },
+      { "label_ja": "修行要項",      "label_pt": "Pontos Essenciais da Prática Espiritual" },
+      { "label_ja": "発展の道",      "label_pt": "O Caminho do Desenvolvimento" },
+      { "label_ja": "考え方",        "label_pt": "Forma de Pensar" }
+    ]
+  },
+  "13": {
+    "cat_title_ja": "信仰篇（救業、布教）",
+    "cat_title_pt": "Fé — Obra da Salvação e Propagação",
+    "subs": [
+      { "label_ja": "救業奉仕",   "label_pt": "Serviço na Obra da Salvação" },
+      { "label_ja": "指導と信徒", "label_pt": "Orientação e Fiéis" },
+      { "label_ja": "御報恩",     "label_pt": "Gratidão e Retribuição" },
+      { "label_ja": "信仰と経済", "label_pt": "Fé e Economia" },
+      { "label_ja": "布教の道１", "label_pt": "Caminho da Propagação 1" },
+      { "label_ja": "布教の道２", "label_pt": "Caminho da Propagação 2" },
+      { "label_ja": "布教の道３", "label_pt": "Caminho da Propagação 3" }
+    ]
+  },
+  "14": {
+    "cat_title_ja": "信仰篇（入信、信仰上の悩み）",
+    "cat_title_pt": "Fé — Ingresso e Dificuldades",
+    "subs": [
+      { "label_ja": "入信",       "label_pt": "Ingresso na Fé" },
+      { "label_ja": "入信後の浄化","label_pt": "Purificação após o Ingresso" },
+      { "label_ja": "信仰上の悩み","label_pt": "Angústias na Fé" },
+      { "label_ja": "反対１",     "label_pt": "Oposição 1" },
+      { "label_ja": "反対２",     "label_pt": "Oposição 2" },
+      { "label_ja": "転換",       "label_pt": "Conversão e Transformação" }
+    ]
+  },
+  "15": {
+    "cat_title_ja": "浄霊篇（上）",
+    "cat_title_pt": "Johrei (Parte I)",
+    "subs": [
+      { "label_ja": "御守１",     "label_pt": "Omamori (Amuleto Sagrado) 1" },
+      { "label_ja": "御守２",     "label_pt": "Omamori 2" },
+      { "label_ja": "御守３",     "label_pt": "Omamori 3" },
+      { "label_ja": "浄霊",       "label_pt": "Johrei" },
+      { "label_ja": "施行、方法", "label_pt": "Aplicação e Métodos" },
+      { "label_ja": "感応",       "label_pt": "Resposta Espiritual" },
+      { "label_ja": "異常",       "label_pt": "Manifestações Anormais" }
+    ]
+  },
+  "16": {
+    "cat_title_ja": "浄霊篇（下）",
+    "cat_title_pt": "Johrei (Parte II)",
+    "subs": [
+      { "label_ja": "浄霊による救済","label_pt": "Cura pelo Johrei" },
+      { "label_ja": "健康診査",      "label_pt": "Diagnóstico de Saúde" },
+      { "label_ja": "癌、肉腫",      "label_pt": "Câncer e Sarcoma" },
+      { "label_ja": "急所",          "label_pt": "Pontos Vitais" },
+      { "label_ja": "霊的病気１",    "label_pt": "Doenças Espirituais 1" },
+      { "label_ja": "霊的病気２",    "label_pt": "Doenças Espirituais 2" },
+      { "label_ja": "奇象",          "label_pt": "Fenômenos Extraordinários" }
+    ]
+  },
+  "17": {
+    "cat_title_ja": "医術篇（一）",
+    "cat_title_pt": "Arte da Medicina (I)",
+    "subs": [
+      { "label_ja": "脳溢血", "label_pt": "Derrame Cerebral" },
+      { "label_ja": "脳炎",   "label_pt": "Encefalite" },
+      { "label_ja": "眼疾１", "label_pt": "Doenças Oculares 1" },
+      { "label_ja": "眼疾２", "label_pt": "Doenças Oculares 2" },
+      { "label_ja": "眼疾３", "label_pt": "Doenças Oculares 3" }
+    ]
+  },
+  "18": {
+    "cat_title_ja": "医術篇（二）",
+    "cat_title_pt": "Arte da Medicina (II)",
+    "subs": [
+      { "label_ja": "眩暈、顔面",       "label_pt": "Vertigem e Face" },
+      { "label_ja": "耳",               "label_pt": "Ouvido" },
+      { "label_ja": "口・頚部",         "label_pt": "Boca e Região Cervical" },
+      { "label_ja": "咽喉",             "label_pt": "Garganta" },
+      { "label_ja": "感冒・肺炎・喘息", "label_pt": "Gripe, Pneumonia e Asma" },
+      { "label_ja": "結核１",           "label_pt": "Tuberculose 1" },
+      { "label_ja": "結核２",           "label_pt": "Tuberculose 2" }
+    ]
+  },
+  "19": {
+    "cat_title_ja": "医術篇（三）",
+    "cat_title_pt": "Arte da Medicina (III)",
+    "subs": [
+      { "label_ja": "癌、心臓",   "label_pt": "Câncer e Coração" },
+      { "label_ja": "胃",         "label_pt": "Estômago" },
+      { "label_ja": "背、肋膜、肝胆","label_pt": "Costas, Pleura e Fígado/Vesícula" },
+      { "label_ja": "カリエス",   "label_pt": "Cárie Óssea" },
+      { "label_ja": "腹部",       "label_pt": "Abdômen" },
+      { "label_ja": "腎、手術",   "label_pt": "Rins e Cirurgia" },
+      { "label_ja": "固結物",     "label_pt": "Depósitos e Endurecimentos" }
+    ]
+  },
+  "20": {
+    "cat_title_ja": "医術篇（四）",
+    "cat_title_pt": "Arte da Medicina (IV)",
+    "subs": [
+      { "label_ja": "痔、花柳病",     "label_pt": "Hemorroidas e Doenças Venéreas" },
+      { "label_ja": "婦人病１",       "label_pt": "Doenças Femininas 1" },
+      { "label_ja": "婦人病２",       "label_pt": "Doenças Femininas 2" },
+      { "label_ja": "婦人病３",       "label_pt": "Doenças Femininas 3" },
+      { "label_ja": "小児病",         "label_pt": "Doenças Infantis" },
+      { "label_ja": "血液に関する病", "label_pt": "Doenças do Sangue" }
+    ]
+  },
+  "21": {
+    "cat_title_ja": "医術篇（五）",
+    "cat_title_pt": "Arte da Medicina (V)",
+    "subs": [
+      { "label_ja": "四肢１",   "label_pt": "Membros 1" },
+      { "label_ja": "四肢２",   "label_pt": "Membros 2" },
+      { "label_ja": "四肢３",   "label_pt": "Membros 3" },
+      { "label_ja": "毛髪",     "label_pt": "Cabelo e Pelos" },
+      { "label_ja": "皮膚疾患１","label_pt": "Doenças de Pele 1" },
+      { "label_ja": "皮膚疾患２","label_pt": "Doenças de Pele 2" },
+      { "label_ja": "皮膚疾患３","label_pt": "Doenças de Pele 3" }
+    ]
+  },
+  "22": {
+    "cat_title_ja": "医術篇（六）",
+    "cat_title_pt": "Arte da Medicina (VI)",
+    "subs": [
+      { "label_ja": "熱、痛み",       "label_pt": "Febre e Dor" },
+      { "label_ja": "咳、息切れ",     "label_pt": "Tosse e Falta de Ar" },
+      { "label_ja": "嘔吐、浮腫、麻痺","label_pt": "Vômito, Edema e Paralisia" },
+      { "label_ja": "排泄",           "label_pt": "Excreção" },
+      { "label_ja": "近代病、新病種", "label_pt": "Doenças Modernas e Novas Enfermidades" }
+    ]
+  },
+  "23": {
+    "cat_title_ja": "医術篇（七）",
+    "cat_title_pt": "Arte da Medicina (VII)",
+    "subs": [
+      { "label_ja": "傷害、原子病",   "label_pt": "Ferimentos e Doenças Atômicas" },
+      { "label_ja": "打撲、骨折",     "label_pt": "Contusões e Fraturas" },
+      { "label_ja": "奇形",           "label_pt": "Malformações" },
+      { "label_ja": "シャックリ、咬毒","label_pt": "Soluço e Veneno de Mordida" },
+      { "label_ja": "癩",             "label_pt": "Lepra" },
+      { "label_ja": "中毒",           "label_pt": "Intoxicação" },
+      { "label_ja": "寄生虫",         "label_pt": "Parasitas" }
+    ]
+  },
+  "24": {
+    "cat_title_ja": "医術篇（八）",
+    "cat_title_pt": "Arte da Medicina (VIII)",
+    "subs": [
+      { "label_ja": "一般療法",   "label_pt": "Terapias Gerais" },
+      { "label_ja": "ギブス、除水","label_pt": "Gesso e Drenagem" },
+      { "label_ja": "誤謬１",     "label_pt": "Erros Médicos 1" },
+      { "label_ja": "誤謬２",     "label_pt": "Erros Médicos 2" },
+      { "label_ja": "誤謬３",     "label_pt": "Erros Médicos 3" },
+      { "label_ja": "誤謬４",     "label_pt": "Erros Médicos 4" }
+    ]
+  },
+  "25": {
+    "cat_title_ja": "医術篇（九）",
+    "cat_title_pt": "Arte da Medicina (IX)",
+    "subs": [
+      { "label_ja": "医術、浄化", "label_pt": "Medicina e Purificação" },
+      { "label_ja": "人体、毒素", "label_pt": "Corpo Humano e Toxinas" },
+      { "label_ja": "血液",       "label_pt": "Sangue" },
+      { "label_ja": "排泄",       "label_pt": "Excreção" },
+      { "label_ja": "食事",       "label_pt": "Alimentação" },
+      { "label_ja": "保健",       "label_pt": "Saúde e Higiene" },
+      { "label_ja": "生死",       "label_pt": "Vida e Morte" }
+    ]
+  },
+  "26": {
+    "cat_title_ja": "医術篇（十）",
+    "cat_title_pt": "Arte da Medicina (X)",
+    "subs": [
+      { "label_ja": "懐妊",     "label_pt": "Concepção" },
+      { "label_ja": "妊娠中",   "label_pt": "Durante a Gravidez" },
+      { "label_ja": "出産",     "label_pt": "Parto" },
+      { "label_ja": "産後",     "label_pt": "Pós-Parto" },
+      { "label_ja": "産後の浄化","label_pt": "Purificação Pós-Parto" },
+      { "label_ja": "育児",     "label_pt": "Criação dos Filhos" },
+      { "label_ja": "嬰児",     "label_pt": "Recém-Nascido e Lactente" },
+      { "label_ja": "転生・再生","label_pt": "Reencarnação e Renascimento" }
+    ]
+  },
+  "27": {
+    "cat_title_ja": "霊学篇",
+    "cat_title_pt": "Ciência Espiritual (I)",
+    "subs": [
+      { "label_ja": "精神病１",   "label_pt": "Doenças Mentais 1" },
+      { "label_ja": "精神病２",   "label_pt": "Doenças Mentais 2" },
+      { "label_ja": "癲癇１",     "label_pt": "Epilepsia 1" },
+      { "label_ja": "癲癇２",     "label_pt": "Epilepsia 2" },
+      { "label_ja": "霊体両因１", "label_pt": "Causas Físicas e Espirituais 1" },
+      { "label_ja": "霊体両因２", "label_pt": "Causas Físicas e Espirituais 2" },
+      { "label_ja": "霊体両因３", "label_pt": "Causas Físicas e Espirituais 3" },
+      { "label_ja": "霊体両因４", "label_pt": "Causas Físicas e Espirituais 4" }
+    ]
+  },
+  "28": {
+    "cat_title_ja": "霊学篇",
+    "cat_title_pt": "Ciência Espiritual (II)",
+    "subs": [
+      { "label_ja": "上体",       "label_pt": "Corpo Superior" },
+      { "label_ja": "中体",       "label_pt": "Corpo Médio" },
+      { "label_ja": "下体",       "label_pt": "Corpo Inferior" },
+      { "label_ja": "中風",       "label_pt": "Paralisia (Chūfū)" },
+      { "label_ja": "龍神",       "label_pt": "Ryūjin (Deus Dragão)" },
+      { "label_ja": "特殊病",     "label_pt": "Doenças Especiais" },
+      { "label_ja": "遺伝・その他","label_pt": "Hereditariedade e Outros" }
+    ]
+  },
+  "29": {
+    "cat_title_ja": "霊学篇",
+    "cat_title_pt": "Ciência Espiritual (III)",
+    "subs": [
+      { "label_ja": "再生１",     "label_pt": "Reencarnação 1" },
+      { "label_ja": "再生２",     "label_pt": "Reencarnação 2" },
+      { "label_ja": "前世１",     "label_pt": "Vidas Anteriores 1" },
+      { "label_ja": "前世２",     "label_pt": "Vidas Anteriores 2" },
+      { "label_ja": "前世３",     "label_pt": "Vidas Anteriores 3" },
+      { "label_ja": "転生",       "label_pt": "Transmigração da Alma" },
+      { "label_ja": "奇形",       "label_pt": "Malformações" },
+      { "label_ja": "動物の習性", "label_pt": "Comportamento Animal" }
+    ]
+  },
+  "30": {
+    "cat_title_ja": "霊学篇",
+    "cat_title_pt": "Ciência Espiritual (IV)",
+    "subs": [
+      { "label_ja": "罪１",     "label_pt": "Culpa Espiritual 1" },
+      { "label_ja": "罪２",     "label_pt": "Culpa Espiritual 2" },
+      { "label_ja": "祟り１",   "label_pt": "Maldição Espiritual 1" },
+      { "label_ja": "祟り２",   "label_pt": "Maldição Espiritual 2" },
+      { "label_ja": "土地の障り","label_pt": "Influências Malignas da Terra" }
+    ]
+  },
+  "31": {
+    "cat_title_ja": "霊学篇",
+    "cat_title_pt": "Ciência Espiritual (V)",
+    "subs": [
+      { "label_ja": "憑霊１",   "label_pt": "Possessão Espiritual 1" },
+      { "label_ja": "憑霊２",   "label_pt": "Possessão Espiritual 2" },
+      { "label_ja": "憑霊３",   "label_pt": "Possessão Espiritual 3" },
+      { "label_ja": "死霊生霊", "label_pt": "Espíritos dos Mortos e dos Vivos" },
+      { "label_ja": "特異症状", "label_pt": "Sintomas Incomuns" },
+      { "label_ja": "地獄霊",   "label_pt": "Espíritos Infernais" },
+      { "label_ja": "物への憑霊","label_pt": "Possessão em Objetos" }
+    ]
+  },
+  "32": {
+    "cat_title_ja": "霊学篇",
+    "cat_title_pt": "Ciência Espiritual (VI)",
+    "subs": [
+      { "label_ja": "霊示",     "label_pt": "Revelações Espirituais" },
+      { "label_ja": "霊視",     "label_pt": "Visão Espiritual" },
+      { "label_ja": "心霊現象", "label_pt": "Fenômenos Espirituais" },
+      { "label_ja": "霊術、呪詛","label_pt": "Práticas Espirituais e Maldições" },
+      { "label_ja": "夢１",     "label_pt": "Sonhos 1" },
+      { "label_ja": "夢２",     "label_pt": "Sonhos 2" },
+      { "label_ja": "夢３",     "label_pt": "Sonhos 3" },
+      { "label_ja": "夢４",     "label_pt": "Sonhos 4" },
+      { "label_ja": "夢解",     "label_pt": "Interpretação de Sonhos" }
+    ]
+  },
+  "33": {
+    "cat_title_ja": "霊学篇",
+    "cat_title_pt": "Ciência Espiritual (VII)",
+    "subs": [
+      { "label_ja": "祖霊",     "label_pt": "Espíritos Ancestrais" },
+      { "label_ja": "戒告１",   "label_pt": "Advertências Espirituais 1" },
+      { "label_ja": "戒告２",   "label_pt": "Advertências Espirituais 2" },
+      { "label_ja": "変死、地縛","label_pt": "Morte Violenta e Espíritos Presos" },
+      { "label_ja": "流産",     "label_pt": "Aborto Espontâneo" }
+    ]
+  },
+  "34": {
+    "cat_title_ja": "霊学篇",
+    "cat_title_pt": "Ciência Espiritual (VIII)",
+    "subs": [
+      { "label_ja": "龍神",         "label_pt": "Ryūjin (Deus Dragão)" },
+      { "label_ja": "蛇霊",         "label_pt": "Espírito Serpente" },
+      { "label_ja": "樹と龍神",     "label_pt": "Árvores e Ryūjin" },
+      { "label_ja": "井戸",         "label_pt": "Poços" },
+      { "label_ja": "水の清濁、仙人","label_pt": "Pureza da Água e Sennin" }
+    ]
+  },
+  "35": {
+    "cat_title_ja": "霊学篇",
+    "cat_title_pt": "Ciência Espiritual (IX)",
+    "subs": [
+      { "label_ja": "狐霊",     "label_pt": "Espírito da Raposa" },
+      { "label_ja": "憑依",     "label_pt": "Possessão" },
+      { "label_ja": "霊能",     "label_pt": "Poderes Espirituais" },
+      { "label_ja": "一般動物霊","label_pt": "Espíritos Animais em Geral" },
+      { "label_ja": "祟り",     "label_pt": "Maldições" },
+      { "label_ja": "怪異",     "label_pt": "Fenômenos Estranhos" },
+      { "label_ja": "変質",     "label_pt": "Transformação e Degeneração" }
+    ]
+  },
+  "36": {
+    "cat_title_ja": "農法篇",
+    "cat_title_pt": "Agricultura Natural",
+    "subs": [
+      { "label_ja": "原理",   "label_pt": "Princípios" },
+      { "label_ja": "状態",   "label_pt": "Condições do Solo" },
+      { "label_ja": "農耕法", "label_pt": "Métodos de Cultivo" },
+      { "label_ja": "種子",   "label_pt": "Sementes" },
+      { "label_ja": "技術",   "label_pt": "Técnicas Agrícolas" },
+      { "label_ja": "施肥",   "label_pt": "Adubação" },
+      { "label_ja": "処理",   "label_pt": "Tratamento" },
+      { "label_ja": "肥毒",   "label_pt": "Toxinas dos Fertilizantes" },
+      { "label_ja": "病虫害", "label_pt": "Pragas e Doenças" },
+      { "label_ja": "花卉果樹","label_pt": "Flores e Fruteiras" }
+    ]
+  },
+  "37": {
+    "cat_title_ja": "奇蹟奇象篇",
+    "cat_title_pt": "Milagres e Fenômenos Extraordinários",
+    "subs": [
+      { "label_ja": "御神体",     "label_pt": "Goshintai (Objeto Sagrado)" },
+      { "label_ja": "御浄霊",     "label_pt": "Johrei Sagrado" },
+      { "label_ja": "守護神、光", "label_pt": "Divindades Guardiãs e Luz" },
+      { "label_ja": "仏壇仏像人霊","label_pt": "Altar Budista, Estátuas e Espíritos" },
+      { "label_ja": "奇象",       "label_pt": "Fenômenos Extraordinários" },
+      { "label_ja": "死者新霊",   "label_pt": "Novos Espíritos dos Falecidos" },
+      { "label_ja": "龍神",       "label_pt": "Ryūjin" },
+      { "label_ja": "動植物",     "label_pt": "Animais e Plantas" }
+    ]
+  },
+  "38": {
+    "cat_title_ja": "祭事篇",
+    "cat_title_pt": "Rituais e Cerimônias (I)",
+    "subs": [
+      { "label_ja": "御神体",     "label_pt": "Goshintai" },
+      { "label_ja": "拝受、損傷", "label_pt": "Recebimento e Danos" },
+      { "label_ja": "御尊影",     "label_pt": "Retrato Sagrado de Meishu-Sama" },
+      { "label_ja": "御奉斎",     "label_pt": "Consagração (Enshrinement)" },
+      { "label_ja": "他神仏併祀", "label_pt": "Veneração Simultânea de Outras Divindades" },
+      { "label_ja": "奉斎許否",   "label_pt": "Permissão para Consagração" },
+      { "label_ja": "位置場所",   "label_pt": "Posição e Local" },
+      { "label_ja": "奉斎後",     "label_pt": "Após a Consagração" },
+      { "label_ja": "御書体",     "label_pt": "Estilo Caligráfico Sagrado" }
+    ]
+  },
+  "39": {
+    "cat_title_ja": "祭事篇",
+    "cat_title_pt": "Rituais e Cerimônias (II)",
+    "subs": [
+      { "label_ja": "観音様",   "label_pt": "Kannon-sama" },
+      { "label_ja": "大黒様",   "label_pt": "Daikoku-sama" },
+      { "label_ja": "大黒・恵比須","label_pt": "Daikoku e Ebisu" },
+      { "label_ja": "一般祭祀", "label_pt": "Rituais em Geral" },
+      { "label_ja": "一般祭祀２","label_pt": "Rituais em Geral 2" },
+      { "label_ja": "処分",     "label_pt": "Descarte de Objetos Sagrados" }
+    ]
+  },
+  "40": {
+    "cat_title_ja": "祭事篇",
+    "cat_title_pt": "Rituais e Cerimônias (III)",
+    "subs": [
+      { "label_ja": "祭式",     "label_pt": "Forma Ritual" },
+      { "label_ja": "礼拝",     "label_pt": "Culto e Veneração" },
+      { "label_ja": "供物",     "label_pt": "Oferendas" },
+      { "label_ja": "用語、祭具","label_pt": "Terminologia e Utensílios Rituais" },
+      { "label_ja": "善言讃詞", "label_pt": "Zengen Sanji (Oração de Louvor)" },
+      { "label_ja": "祝詞",     "label_pt": "Norito (Oração Sagrada)" },
+      { "label_ja": "祭典日",   "label_pt": "Datas dos Festivais Sagrados" }
+    ]
+  },
+  "41": {
+    "cat_title_ja": "霊祀篇",
+    "cat_title_pt": "Veneração dos Espíritos (I)",
+    "subs": [
+      { "label_ja": "御屏風観音様", "label_pt": "Kannon-sama no Biombo" },
+      { "label_ja": "祖霊供養",     "label_pt": "Culto aos Espíritos Ancestrais" },
+      { "label_ja": "宗教相違",     "label_pt": "Diferenças Religiosas" },
+      { "label_ja": "各宗特殊",     "label_pt": "Particularidades de Cada Seita" },
+      { "label_ja": "家系霊祀",     "label_pt": "Veneração dos Espíritos da Família" },
+      { "label_ja": "家と別祀",     "label_pt": "Casa e Veneração Separada" }
+    ]
+  },
+  "42": {
+    "cat_title_ja": "霊祀篇",
+    "cat_title_pt": "Veneração dos Espíritos (II)",
+    "subs": [
+      { "label_ja": "唱え言",   "label_pt": "Invocações e Orações" },
+      { "label_ja": "祖霊礼拝", "label_pt": "Reverência aos Espíritos Ancestrais" },
+      { "label_ja": "供養",     "label_pt": "Memorial (Kuyō)" },
+      { "label_ja": "お盆彼岸", "label_pt": "Obon e Higan" },
+      { "label_ja": "法式",     "label_pt": "Ritos e Formas Rituais" },
+      { "label_ja": "位牌",     "label_pt": "Tabuleta Memorial (Ihai)" },
+      { "label_ja": "戒名",     "label_pt": "Nome Póstumo Budista" },
+      { "label_ja": "仏壇",     "label_pt": "Altar Budista" }
+    ]
+  },
+  "43": {
+    "cat_title_ja": "霊祀篇",
+    "cat_title_pt": "Veneração dos Espíritos (III)",
+    "subs": [
+      { "label_ja": "仏霊",       "label_pt": "Espíritos Budistas" },
+      { "label_ja": "地縛・無縁", "label_pt": "Espíritos Presos e Sem Vínculos" },
+      { "label_ja": "龍神・動物霊","label_pt": "Ryūjin e Espíritos Animais" },
+      { "label_ja": "狐霊・地の神","label_pt": "Espírito da Raposa e Deuses da Terra" },
+      { "label_ja": "一般動物霊", "label_pt": "Espíritos Animais em Geral" },
+      { "label_ja": "処分１",     "label_pt": "Descarte 1" },
+      { "label_ja": "処分２",     "label_pt": "Descarte 2" }
+    ]
+  },
+  "44": {
+    "cat_title_ja": "霊祀篇",
+    "cat_title_pt": "Veneração dos Espíritos (IV)",
+    "subs": [
+      { "label_ja": "葬祭",  "label_pt": "Ritos Fúnebres" },
+      { "label_ja": "新霊",  "label_pt": "Novos Espíritos" },
+      { "label_ja": "埋葬",  "label_pt": "Sepultamento" },
+      { "label_ja": "分骨",  "label_pt": "Divisão dos Restos" },
+      { "label_ja": "死体",  "label_pt": "Corpo após a Morte" },
+      { "label_ja": "墓所１","label_pt": "Cemitério e Túmulo 1" },
+      { "label_ja": "墓所２","label_pt": "Cemitério e Túmulo 2" }
+    ]
+  },
+  "45": {
+    "cat_title_ja": "人事篇",
+    "cat_title_pt": "Assuntos Humanos (I)",
+    "subs": [
+      { "label_ja": "家",       "label_pt": "Família e Lar" },
+      { "label_ja": "親子",     "label_pt": "Pais e Filhos" },
+      { "label_ja": "夫婦",     "label_pt": "Marido e Esposa" },
+      { "label_ja": "離別",     "label_pt": "Separação e Divórcio" },
+      { "label_ja": "家系家庭", "label_pt": "Linhagem Familiar e Lar" },
+      { "label_ja": "恋愛",     "label_pt": "Amor Romântico" },
+      { "label_ja": "結婚",     "label_pt": "Casamento" },
+      { "label_ja": "結婚の良否","label_pt": "Adequação do Casamento" },
+      { "label_ja": "相性",     "label_pt": "Compatibilidade" }
+    ]
+  },
+  "46": {
+    "cat_title_ja": "人事篇",
+    "cat_title_pt": "Assuntos Humanos (II)",
+    "subs": [
+      { "label_ja": "建築",   "label_pt": "Arquitetura e Construção" },
+      { "label_ja": "家相",   "label_pt": "Geomância da Casa (Kasō)" },
+      { "label_ja": "方角１", "label_pt": "Direções e Orientações 1" },
+      { "label_ja": "方角２", "label_pt": "Direções e Orientações 2" },
+      { "label_ja": "人相",   "label_pt": "Fisiognomia" },
+      { "label_ja": "暦・易", "label_pt": "Calendário e I Ching" }
+    ]
+  },
+  "47": {
+    "cat_title_ja": "社会人事篇",
+    "cat_title_pt": "Sociedade e Assuntos Humanos",
+    "subs": [
+      { "label_ja": "経済",     "label_pt": "Economia" },
+      { "label_ja": "動植物・奇象","label_pt": "Animais, Plantas e Fenômenos" },
+      { "label_ja": "家相方位", "label_pt": "Geomância e Direções" },
+      { "label_ja": "曇と災禍", "label_pt": "Sombras Espirituais e Calamidades" },
+      { "label_ja": "家と土地", "label_pt": "Casa e Propriedade" },
+      { "label_ja": "信仰と災難","label_pt": "Fé e Adversidades" },
+      { "label_ja": "処世",     "label_pt": "Conduta na Vida" },
+      { "label_ja": "人事１",   "label_pt": "Relações Humanas 1" },
+      { "label_ja": "人事２",   "label_pt": "Relações Humanas 2" }
+    ]
+  },
+  "48": {
+    "cat_title_ja": "政治、経済、社会篇",
+    "cat_title_pt": "Política, Economia e Sociedade",
+    "subs": [
+      { "label_ja": "政治経済", "label_pt": "Política e Economia" },
+      { "label_ja": "世界",     "label_pt": "Mundo" },
+      { "label_ja": "社会",     "label_pt": "Sociedade" },
+      { "label_ja": "土地",     "label_pt": "Terra e Propriedade" },
+      { "label_ja": "俗言",     "label_pt": "Ditados Populares" },
+      { "label_ja": "行事風習", "label_pt": "Eventos e Tradições" }
+    ]
+  },
+  "49": {
+    "cat_title_ja": "学問篇",
+    "cat_title_pt": "Ciência e Conhecimento",
+    "subs": [
+      { "label_ja": "教育",     "label_pt": "Educação" },
+      { "label_ja": "学問思想", "label_pt": "Pensamento e Filosofia" },
+      { "label_ja": "科学",     "label_pt": "Ciência" },
+      { "label_ja": "動物",     "label_pt": "Animais" },
+      { "label_ja": "人間と動物","label_pt": "Seres Humanos e Animais" },
+      { "label_ja": "動物の霊作用","label_pt": "Ação Espiritual dos Animais" },
+      { "label_ja": "植物",     "label_pt": "Plantas" }
+    ]
+  },
+  "50": {
+    "cat_title_ja": "天文、地文篇",
+    "cat_title_pt": "Astronomia e Geografia",
+    "subs": [
+      { "label_ja": "太陽",   "label_pt": "Sol" },
+      { "label_ja": "星",     "label_pt": "Estrelas" },
+      { "label_ja": "天体",   "label_pt": "Corpos Celestes" },
+      { "label_ja": "地球",   "label_pt": "Terra (planeta)" },
+      { "label_ja": "地上現象","label_pt": "Fenômenos Terrestres" },
+      { "label_ja": "気象１", "label_pt": "Meteorologia 1" },
+      { "label_ja": "気象２", "label_pt": "Meteorologia 2" }
+    ]
+  }
+}
