@@ -872,6 +872,39 @@ mark.bh {
   vertical-align: top;
 }
 
+/* ─── Year separator rows ────────────────────────────────────── */
+.year-sep-row td {
+  padding: 28px 14px 8px;
+  background: transparent;
+  border-top: none;
+  border-bottom: 1px solid var(--border);
+  pointer-events: none;
+  user-select: none;
+}
+
+.year-sep-greg {
+  font-family: var(--font-ui, sans-serif);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+}
+
+.year-sep-showa {
+  font-family: var(--font-ui, sans-serif);
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-left: 8px;
+  letter-spacing: 0.05em;
+}
+
+/* First separator — less top padding */
+.year-sep-row:first-child td {
+  padding-top: 8px;
+}
+
+
 /* ─── 神智之光 search results (reuse cat header) ─────────────── */
 .shinchi-cat-header td {
   background: var(--surface, #f5f0e8);

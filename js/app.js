@@ -193,6 +193,52 @@ function buildHeader() {
   const header = document.querySelector('.header');
   if (!header) return;
 
+  // Show "Voltar" button on reader pages (both iframe modal and direct access)
+  const isReaderPage = window.location.pathname.includes('reader.html');
+  const inIframe = window.parent !== window;
+
+  if (isReaderPage) {
+    if (inIframe) {
+      // Hide nav links inside modal
+      const nav = header.querySelector('.header__nav');
+      if (nav) nav.style.display = 'none';
+    }
+
+    const backBtn = document.createElement('button');
+    backBtn.className = 'btn-back-modal';
+    backBtn.title = 'Voltar à lista (Esc)';
+    backBtn.setAttribute('aria-label', 'Fechar leitor');
+    backBtn.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+      <span>Voltar</span>
+    `;
+    backBtn.onclick = () => {
+      if (inIframe) {
+        window.parent.postMessage('close-reader', '*');
+      } else {
+        // Direct access: go back to browse.html
+        const returnUrl = sessionStorage.getItem('browse_return') || 'browse.html';
+        window.location.href = returnUrl;
+      }
+    };
+    const logo = header.querySelector('.header__logo');
+    if (logo) logo.after(backBtn);
+    else header.insertBefore(backBtn, header.firstChild);
+
+    // ESC closes
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        if (inIframe) window.parent.postMessage('close-reader', '*');
+        else {
+          const returnUrl = sessionStorage.getItem('browse_return') || 'browse.html';
+          window.location.href = returnUrl;
+        }
+      }
+    });
+  }
+
   // Controls div (right side)
   const controls = document.createElement('div');
   controls.className = 'header__controls';
@@ -200,13 +246,7 @@ function buildHeader() {
     <button class="btn-icon" id="btn-search" onclick="openSearch()" title="Buscar (/)">
       <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     </button>
-    <button class="btn-icon" id="btn-lang" onclick="toggleLanguage()" title="Mudar idioma">
-      <span id="lang-label" style="font-size:0.75rem;font-weight:700;letter-spacing:0.02em">日本語</span>
-    </button>
-    <button class="btn-icon" id="btn-theme" onclick="openThemePanel()" title="Temas">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
-    </button>
-    <button class="btn-icon mobile-menu-btn" id="btn-hamburger" onclick="openMobileNav()" aria-label="Menu de navegação">
+    <button class="btn-icon" id="btn-hamburger" onclick="openMobileNav()" aria-label="Menu">
       <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round">
         <line x1="3" y1="6" x2="21" y2="6"/>
         <line x1="3" y1="12" x2="21" y2="12"/>
@@ -222,39 +262,103 @@ function buildMobileNav() {
   const overlay = document.createElement('div');
   overlay.className = 'mobile-nav-overlay';
   overlay.id = 'mobileNavOverlay';
+
+  // Build theme swatches for inline picker
+  const swatchesHtml = THEMES.map(t => {
+    const m = THEME_META[t];
+    return `<button class="mn-theme-swatch${t === currentTheme ? ' active' : ''}" data-theme="${t}"
+      onclick="applyTheme('${t}'); _syncMenuTheme();"
+      title="${m.label}"
+      style="background:${m.swatch};${t === 'bold' ? 'border:1.5px solid #ccc;' : ''}">
+    </button>`;
+  }).join('');
+
   overlay.innerHTML = `
     <div class="mobile-nav-backdrop" onclick="closeMobileNav()"></div>
     <div class="mobile-nav-panel">
       <div class="mobile-nav-header">
-        <span>Mioshie Zenshu</span>
+        <span id="mobileMenuTitle">Mioshie Zenshu</span>
         <button class="mobile-nav-close btn-icon" onclick="closeMobileNav()" aria-label="Fechar menu">✕</button>
       </div>
       <div class="mobile-nav-body">
-        <div class="mobile-nav-section">Seções</div>
-        <a href="browse.html"      class="mobile-nav-link">
-          ${iconHtml('book')} Ensinamentos
-        </a>
-        <a href="reader.html"      class="mobile-nav-link">
-          ${iconHtml('book')} Leitor
-        </a>
-        <a href="poems.html"       class="mobile-nav-link">
-          ${iconHtml('feather')} Gosanka
-        </a>
-        <a href="library.html"     class="mobile-nav-link">
-          ${iconHtml('book')} Biblioteca
-        </a>
-        <a href="search.html"      class="mobile-nav-link">
-          ${iconHtml('search')} Busca
-        </a>
-        <div class="mobile-nav-section">Configurações</div>
-        <button class="mobile-nav-link" onclick="toggleLanguage(); closeMobileNav();">
-          ${iconHtml('globe')}
-          <span class="lang-pt">Mudar para Japonês</span>
-          <span class="lang-ja" style="display:none">Português に切替</span>
+
+        <!-- ── AÇÕES ── -->
+        <div class="mobile-nav-section">
+          <span class="lang-pt">Ações</span><span class="lang-ja" style="display:none">操作</span>
+        </div>
+
+        <button class="mobile-nav-link" onclick="openHistory(); closeMobileNav();">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span class="lang-pt">Histórico</span><span class="lang-ja" style="display:none">履歴</span>
         </button>
-        <button class="mobile-nav-link" onclick="openThemePanel(); closeMobileNav();">
-          ${iconHtml('settings')} <span class="lang-pt">Temas & Aparência</span><span class="lang-ja" style="display:none">テーマ設定</span>
+
+        <button class="mobile-nav-link" onclick="openFavorites(); closeMobileNav();">
+          <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          <span class="lang-pt">Salvos</span><span class="lang-ja" style="display:none">お気に入り</span>
         </button>
+
+        <!-- ── IDIOMA ── -->
+        <div class="mobile-nav-divider"></div>
+        <div class="mobile-nav-section">
+          <span class="lang-pt">Idioma</span><span class="lang-ja" style="display:none">言語</span>
+        </div>
+        <div class="mn-lang-row">
+          <button class="mn-lang-btn${currentLang === 'pt' ? ' active' : ''}" id="mnLangPt" onclick="_switchMenuLang('pt')">Português</button>
+          <button class="mn-lang-btn${currentLang === 'ja' ? ' active' : ''}" id="mnLangJa" onclick="_switchMenuLang('ja')">日本語</button>
+        </div>
+
+        <!-- ── TEMAS ── -->
+        <div class="mobile-nav-divider"></div>
+        <div class="mobile-nav-section">
+          <span class="lang-pt">Tema</span><span class="lang-ja" style="display:none">テーマ</span>
+        </div>
+        <div class="mn-theme-row" id="mnThemeRow">${swatchesHtml}</div>
+        <button class="mobile-nav-link mn-settings-link" onclick="openThemePanel(); closeMobileNav();" style="padding-top:6px;padding-bottom:6px;font-size:12px;color:var(--text-muted)">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span class="lang-pt">Fonte & Aparência</span><span class="lang-ja" style="display:none">フォント設定</span>
+        </button>
+
+        <!-- ── FONTE ── -->
+        <div class="mobile-nav-divider"></div>
+        <div class="mobile-nav-section">
+          <span class="lang-pt">Tamanho da Fonte</span><span class="lang-ja" style="display:none">フォントサイズ</span>
+        </div>
+        <div class="mobile-font-row">
+          <button class="mobile-font-btn" onclick="changeFontSize(-1)">A−</button>
+          <button class="mobile-font-btn" onclick="changeFontSize(1)">A+</button>
+        </div>
+
+        <!-- ── NAVEGAÇÃO ── -->
+        <div class="mobile-nav-divider"></div>
+        <div class="mobile-nav-section">
+          <span class="lang-pt">Navegação</span><span class="lang-ja" style="display:none">ナビゲーション</span>
+        </div>
+
+        <a href="browse.html" class="mobile-nav-link" onclick="closeMobileNav()">
+          ${iconHtml('book')}
+          <span class="lang-pt">Ensinamentos</span><span class="lang-ja" style="display:none">御教え</span>
+        </a>
+        <a href="reader.html" class="mobile-nav-link" onclick="closeMobileNav()">
+          <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          <span class="lang-pt">Leitor</span><span class="lang-ja" style="display:none">リーダー</span>
+        </a>
+        <a href="poems.html" class="mobile-nav-link" onclick="closeMobileNav()">
+          ${iconHtml('feather')}
+          <span class="lang-pt">Gosanka</span><span class="lang-ja" style="display:none">御歌</span>
+        </a>
+        <a href="library.html" class="mobile-nav-link" onclick="closeMobileNav()">
+          <svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg>
+          <span class="lang-pt">Biblioteca</span><span class="lang-ja" style="display:none">図書館</span>
+        </a>
+        <a href="timeline.html" class="mobile-nav-link" onclick="closeMobileNav()">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="2" x2="12" y2="22"/><circle cx="12" cy="6" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="18" r="2"/></svg>
+          <span class="lang-pt">Timeline</span><span class="lang-ja" style="display:none">年表</span>
+        </a>
+        <a href="search.html" class="mobile-nav-link" onclick="closeMobileNav()">
+          ${iconHtml('search')}
+          <span class="lang-pt">Busca</span><span class="lang-ja" style="display:none">検索</span>
+        </a>
+
       </div>
     </div>
   `;
@@ -263,15 +367,38 @@ function buildMobileNav() {
 
 function openMobileNav() {
   const overlay = document.getElementById('mobileNavOverlay');
-  if (overlay) {
-    overlay.classList.add('open');
-    applyLanguage(currentLang, false); // sync lang display inside nav
+  if (!overlay) return;
+  // Update title to current article title if on reader page
+  const titleEl = document.getElementById('mobileMenuTitle');
+  if (titleEl) {
+    const docTitle = document.title;
+    const match = docTitle.match(/^(.+?)\s*[—–-]\s*Mioshie Zenshu/);
+    titleEl.textContent = match ? match[1] : 'Mioshie Zenshu';
   }
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  applyLanguage(currentLang, false);
+  _syncMenuTheme();
 }
 
 function closeMobileNav() {
   const overlay = document.getElementById('mobileNavOverlay');
   if (overlay) overlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Sync language buttons in menu
+function _switchMenuLang(lang) {
+  applyLanguage(lang);
+  document.getElementById('mnLangPt')?.classList.toggle('active', lang === 'pt');
+  document.getElementById('mnLangJa')?.classList.toggle('active', lang === 'ja');
+}
+
+// Sync theme swatches active state
+function _syncMenuTheme() {
+  document.querySelectorAll('.mn-theme-swatch').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.theme === currentTheme);
+  });
 }
 
 // ─── Search ───────────────────────────────────────────────────
@@ -498,6 +625,76 @@ function applyStoredReaderPrefs() {
 
   const justifyToggle = document.getElementById('justifyToggle');
   if (justifyToggle) justifyToggle.checked = localStorage.getItem('reader_text_align') === 'justify';
+}
+
+// ─── Font size (hamburger menu) ───────────────────────────────
+function changeFontSize(delta) {
+  const current = parseFloat(localStorage.getItem('reader_font_size') || '21');
+  const next = Math.max(14, Math.min(32, current + delta * 2));
+  updateReaderVar('--reader-font-size', next + 'px');
+  const sl = document.getElementById('fontSizeSlider');
+  const lbl = document.getElementById('fontSizeVal');
+  if (sl) sl.value = next;
+  if (lbl) lbl.textContent = next + 'px';
+  showToast(`Fonte: ${next}px`);
+}
+
+// ─── History & Favorites panels ───────────────────────────────
+function openHistory() {
+  buildListModal('history');
+}
+
+function openFavorites() {
+  buildListModal('favorites');
+}
+
+function buildListModal(type) {
+  const isHistory = type === 'history';
+  const key = isHistory ? 'zenshu_history' : 'zenshu_favorites';
+  const titlePt = isHistory ? 'Histórico de Leitura' : 'Ensinamentos Salvos';
+  const titleJa = isHistory ? '閲覧履歴' : 'お気に入り';
+  const emptyPt = isHistory ? 'Nenhum ensinamento lido ainda.' : 'Nenhum ensinamento salvo.';
+  const emptyJa = isHistory ? 'まだ閲覧履歴はありません。' : 'お気に入りはまだありません。';
+
+  let items = [];
+  try { items = JSON.parse(localStorage.getItem(key) || '[]'); } catch(e) {}
+
+  // Remove existing
+  const existing = document.getElementById('listModal');
+  if (existing) existing.remove();
+
+  const isPt = currentLang === 'pt';
+
+  const modal = document.createElement('div');
+  modal.className = 'modal-overlay open';
+  modal.id = 'listModal';
+
+  const listHtml = items.length === 0
+    ? `<div class="search-empty" style="display:block">${isPt ? emptyPt : emptyJa}</div>`
+    : items.map(item => {
+        const href = `reader.html?id=${encodeURIComponent(item.id)}&part=${encodeURIComponent(item.part || '')}`;
+        const date = item.date ? `<span style="font-size:12px;color:var(--text-muted)">${item.date}</span>` : '';
+        return `<a href="${href}" class="search-result" style="display:block;padding:12px 16px;border-bottom:1px solid var(--border);text-decoration:none;color:var(--text-main)">
+          <div style="font-weight:500">${escHtml(item.title || item.id)}</div>
+          ${date}
+        </a>`;
+      }).join('');
+
+  modal.innerHTML = `
+    <div class="modal" role="dialog" style="max-width:500px">
+      <div class="modal__header" style="padding:16px;display:flex;align-items:center;justify-content:space-between">
+        <h2 style="font-size:1rem;font-weight:600;margin:0">${isPt ? titlePt : titleJa}</h2>
+        <button class="modal__close" onclick="document.getElementById('listModal').remove()">✕</button>
+      </div>
+      <div class="modal__body" style="max-height:60vh;overflow-y:auto;padding:0">
+        ${listHtml}
+      </div>
+      ${items.length > 0 && !isHistory ? '' : ''}
+    </div>
+  `;
+
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+  document.body.appendChild(modal);
 }
 
 // ─── Toast ────────────────────────────────────────────────────

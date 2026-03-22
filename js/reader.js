@@ -71,9 +71,17 @@ function injectCollapseBtn() {
   };
   layout.appendChild(backdrop);
 
-  // Always start open — user closes when they want
+  // Always start open on page load for orientation
   layout.classList.remove('sidebar-collapsed');
-  localStorage.removeItem('reader_sidebar_collapsed');
+  // Auto-close after 3 seconds unless user has interacted with the sidebar
+  const autoCloseTimer = setTimeout(() => {
+    if (!layout.classList.contains('sidebar-collapsed')) {
+      layout.classList.add('sidebar-collapsed');
+      localStorage.setItem('reader_sidebar_collapsed', '1');
+    }
+  }, 3000);
+  // Cancel auto-close if user manually toggles sidebar
+  btn.addEventListener('click', () => clearTimeout(autoCloseTimer), { once: true });
 }
 
 // ─── Init ─────────────────────────────────────────────────────
@@ -506,6 +514,17 @@ function renderTeaching(item, indexEntry, searchQuery) {
   if (!date && item.year) {
     date = String(item.year).includes('昭和') ? item.year : `S${parseInt(item.year) - 1925}`;
   }
+  // Gregorian year for timeline link
+  let gregYear = 0;
+  if (item.date_iso) {
+    const yy = parseInt(item.date_iso.split('-')[0]);
+    if (!isNaN(yy)) gregYear = yy;
+  } else if (date) {
+    const m = date.match(/S\s*(\d+)/);
+    if (m) gregYear = parseInt(m[1]) + 1925;
+  }
+  if (!gregYear && item.year) gregYear = parseInt(item.year) || 0;
+
   const pub        = item.publication || '';
   const collection = item.collection  || '';
   const status     = item.status === 'Unpublished'
@@ -569,9 +588,8 @@ function renderTeaching(item, indexEntry, searchQuery) {
         ${titlePt && !isPt ? `<div class="teaching-title-ja">${escHtml(titlePt)}</div>` : ''}
 
         <div class="teaching-meta">
-          ${date       ? `<span><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${escHtml(date)}</span>` : ''}
-          ${pub        ? `<span><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>${escHtml(pub)}</span>` : ''}
-          ${collection ? `<span><svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>${escHtml(collection)}</span>` : ''}
+          ${date && gregYear ? `<a href="timeline.html#year-${gregYear}__${encodeURIComponent(item.id)}" class="meta-link" title="Ver na Timeline"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${escHtml(date)}</a>` : date ? `<span><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${escHtml(date)}</span>` : ''}
+          ${pub        ? `<a href="reader.html?id=${encodeURIComponent(item.id)}&part=${encodeURIComponent(getParams().part)}&mode=book&pub=${encodeURIComponent(pub)}" class="meta-link" title="Abrir livro"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>${escHtml(pub)}</a>` : ''}
         </div>
 
         <div class="teaching-actions">

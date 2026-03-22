@@ -208,6 +208,7 @@ button {
   align-items: center;
   gap: 4px;
   flex-shrink: 0;
+  margin-left: auto;
 }
 
 .btn-icon {
@@ -236,9 +237,122 @@ button {
   stroke-linejoin: round;
 }
 
+/* ─── Reader Modal (centered overlay like mioshie_zenshu) ──── */
+.reader-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.reader-modal.open {
+  display: flex;
+  animation: modalFadeIn 0.25s ease both;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.reader-modal-container {
+  position: relative;
+  width: 100%;
+  max-width: 1100px;
+  height: 90vh;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--surface, #fff);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  animation: modalScaleIn 0.25s ease both;
+}
+
+@keyframes modalScaleIn {
+  from { opacity: 0; transform: scale(0.96) translateY(12px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.reader-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: var(--surface, #fff);
+  color: var(--text-muted, #666);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  transition: background 0.2s, color 0.2s;
+}
+
+.reader-modal-close:hover {
+  background: var(--accent, #B8860B);
+  color: #fff;
+}
+
+.reader-modal-frame {
+  width: 100%;
+  flex: 1;
+  border: none;
+  display: block;
+  border-radius: 0 0 16px 16px;
+}
+
+@media (max-width: 768px) {
+  .reader-modal { padding: 8px; }
+  .reader-modal-container {
+    height: 95vh;
+    border-radius: 12px;
+  }
+}
+
+/* ─── Back button injected inside iframe reader ─────────────── */
+.btn-back-modal {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px 6px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--border, #E5E5E0);
+  background: var(--surface, #fff);
+  color: var(--text-muted, #6E6E73);
+  font-family: var(--font-ui, sans-serif);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-right: 4px;
+  transition: color 0.2s, background 0.2s;
+}
+
+.btn-back-modal:hover {
+  color: var(--accent, #B8860B);
+  background: var(--accent-soft, rgba(184,134,11,0.08));
+  border-color: var(--accent, #B8860B);
+}
+
+.btn-back-modal svg {
+  width: 16px; height: 16px;
+  stroke: currentColor;
+}
+
 /* ─── Mobile hamburger ──────────────────────────────────────── */
 .mobile-menu-btn {
-  display: none;
+  display: flex;
   align-items: center;
   justify-content: center;
   width: 36px; height: 36px;
@@ -349,6 +463,104 @@ button {
   stroke-linecap: round;
   stroke-linejoin: round;
   flex-shrink: 0;
+}
+
+.mobile-nav-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 10px 20px;
+}
+
+.mobile-font-row {
+  display: flex;
+  gap: 10px;
+  padding: 8px 20px 12px;
+}
+
+.mobile-font-btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-main);
+  font-family: var(--font-ui);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.mobile-font-btn:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+/* ─── Menu — Language row ───────────────────────────────────── */
+.mn-lang-row {
+  display: flex;
+  gap: 8px;
+  padding: 8px 20px 12px;
+}
+
+.mn-lang-btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.mn-lang-btn:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--text-main);
+}
+
+.mn-lang-btn.active {
+  background: var(--text-main);
+  color: var(--surface);
+  border-color: var(--text-main);
+  font-weight: 600;
+}
+
+/* ─── Menu — Theme swatches row ─────────────────────────────── */
+.mn-theme-row {
+  display: flex;
+  gap: 8px;
+  padding: 8px 20px 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.mn-theme-swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s, border-color 0.15s;
+  padding: 0;
+  outline: none;
+}
+
+.mn-theme-swatch:hover {
+  transform: scale(1.15);
+}
+
+.mn-theme-swatch.active {
+  border-color: var(--accent);
+  transform: scale(1.1);
 }
 
 /* ─── Main Layout ───────────────────────────────────────────── */
@@ -1029,7 +1241,6 @@ button {
 /* ─── Responsive ────────────────────────────────────────────── */
 @media (max-width: 768px) {
   .header__nav { display: none; }
-  .mobile-menu-btn { display: flex; }
 
   .glass-pane { padding: 24px 20px; }
   .main { padding-top: calc(var(--nav-height) + 24px); }
